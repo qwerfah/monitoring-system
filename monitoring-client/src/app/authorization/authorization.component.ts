@@ -1,16 +1,16 @@
-import { Component, OnInit } from '@angular/core';
-import { AuthorizationModule } from './authorization.module';
+import { Component, OnInit } from "@angular/core";
+import { AuthorizationModule } from "./authorization.module";
 import {
   FormBuilder,
   FormGroup,
   FormControl,
   Validators,
-} from '@angular/forms';
+} from "@angular/forms";
 
 @Component({
-  selector: 'app-authorization',
-  templateUrl: './authorization.component.html',
-  styleUrls: ['./authorization.component.css'],
+  selector: "app-authorization",
+  templateUrl: "./authorization.component.html",
+  styleUrls: ["./authorization.component.css"],
 })
 export class AuthorizationComponent implements OnInit {
   credentials: FormGroup;
@@ -23,7 +23,7 @@ export class AuthorizationComponent implements OnInit {
         [
           Validators.required,
           Validators.minLength(6),
-          Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$'),
+          Validators.pattern("^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$"),
         ],
       ],
     });

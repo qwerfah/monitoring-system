@@ -31,13 +31,16 @@ export class AuthorizationComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  login(): void {
-    console.log(`Email: ${this.credentials.controls.email}`);
-    console.log(`Password: ${this.credentials.controls.password}`);
-  }
-
   submit(): void {
-    console.log(`Email: ${this.credentials.controls.email.value}`);
-    console.log(`Password: ${this.credentials.controls.password.value}`);
+    if (
+      this.credentials.controls["email"].invalid ||
+      this.credentials.controls["password"].invalid
+    ) {
+      this.credentials.controls["email"].markAsTouched();
+      this.credentials.controls["password"].markAsTouched();
+    } else {
+      console.log(`Email: ${this.credentials.controls.email.value}`);
+      console.log(`Password: ${this.credentials.controls.password.value}`);
+    }
   }
 }

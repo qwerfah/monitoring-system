@@ -1,11 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { AuthorizationModule } from "./authorization.module";
-import {
-  FormBuilder,
-  FormGroup,
-  FormControl,
-  Validators,
-} from "@angular/forms";
+import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 
 @Component({
   selector: "app-authorization",
@@ -17,7 +11,7 @@ export class AuthorizationComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {
     this.credentials = fb.group({
-      email: [null, [Validators.required, Validators.email]],
+      login: [null, [Validators.required]],
       password: [
         null,
         [
@@ -33,13 +27,13 @@ export class AuthorizationComponent implements OnInit {
 
   submit(): void {
     if (
-      this.credentials.controls["email"].invalid ||
-      this.credentials.controls["password"].invalid
+      this.credentials.controls.login.invalid ||
+      this.credentials.controls.password.invalid
     ) {
-      this.credentials.controls["email"].markAsTouched();
-      this.credentials.controls["password"].markAsTouched();
+      this.credentials.controls.login.markAsTouched();
+      this.credentials.controls.password.markAsTouched();
     } else {
-      console.log(`Email: ${this.credentials.controls.email.value}`);
+      console.log(`Email: ${this.credentials.controls.login.value}`);
       console.log(`Password: ${this.credentials.controls.password.value}`);
     }
   }

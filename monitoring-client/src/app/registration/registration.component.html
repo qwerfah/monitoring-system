@@ -1,1 +1,147 @@
-<p>registration works!</p>
+<div
+  class="filter blur-lg min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
+>
+  <div></div>
+  <div
+    class="transform scale-125 max-w-md w-full space-y-10 border-0 rounded-lg border-blue-300 py-5 px-5 bg-white shadow-lg"
+  >
+    <div>
+      <img
+        class="mx-auto h-12 w-auto"
+        src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
+        alt="Workflow"
+      />
+      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+        Регистрация
+      </h2>
+      <p class="mt-2 text-center text-sm text-gray-600">
+        Заполните форму или
+        <a
+          href="/login"
+          class="font-medium text-indigo-600 hover:text-indigo-500"
+        >
+          войдите в аккаунт
+        </a>
+      </p>
+    </div>
+    <form
+      [formGroup]="userInfo"
+      novalidate
+      (ngSubmit)="submit()"
+      class="mt-8 space-y-6"
+    >
+      <input type="hidden" name="remember" value="true" />
+      <div class="rounded-md -space-y-px">
+        <div class="form-group">
+          <label for="name" class="sr-only">ФИО</label>
+          <input
+            id="name"
+            name="name"
+            type="name"
+            autocomplete="current-password"
+            required
+            class="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-200 placeholder-gray-500 text-gray-900 focus: outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            placeholder="ФИО"
+            formControlName="name"
+          />
+        </div>
+        <div class="form-group">
+          <input
+            id="login-field"
+            name="login"
+            type="text"
+            autocomplete="email"
+            required
+            class="appearance-none mt-3 rounded-lg relative block w-full px-3 py-2 border border-gray-200 placeholder-gray-500 text-gray-900 focus: outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            placeholder="Логин"
+            formControlName="login"
+          />
+        </div>
+        <div class="form-group">
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autocomplete="current-password"
+            required
+            class="appearance-none mt-3 rounded-lg relative block w-full px-3 py-2 border border-gray-200 placeholder-gray-500 text-gray-900 focus: outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            placeholder="Пароль"
+            formControlName="password"
+          />
+        </div>
+        <div class="form-group">
+          <input
+            id="confirm"
+            name="confirm"
+            type="confirm"
+            autocomplete="current-password"
+            required
+            class="appearance-none mt-3 rounded-lg relative block w-full px-3 py-2 border border-gray-200 placeholder-gray-500 text-gray-900 focus: outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+            placeholder="Подтвердите пароль"
+            formControlName="confirm"
+          />
+        </div>
+      </div>
+
+      <div
+        class="bg-red-200 relative text-red-500 p-2 rounded-lg border border-red-500"
+        *ngIf="userInfo.controls.name.invalid && userInfo.controls.name.touched"
+      >
+        Требуется ввести ФИО
+      </div>
+
+      <div
+        class="bg-red-200 relative text-red-500 p-2 rounded-lg border border-red-500"
+        *ngIf="
+          userInfo.controls.login.invalid && userInfo.controls.login.touched
+        "
+      >
+        Требуется ввести логин
+      </div>
+
+      <div
+        class="bg-red-200 relative text-red-500 p-2 rounded-lg border border-red-500"
+        *ngIf="
+          userInfo.controls.password.invalid &&
+          userInfo.controls.password.touched
+        "
+      >
+        Неверный формат пароля
+      </div>
+
+      <div
+        class="bg-red-200 relative text-red-500 p-2 rounded-lg border border-red-500"
+        *ngIf="
+          userInfo.controls.confirm.invalid && userInfo.controls.confirm.touched
+        "
+      >
+        Повторите пароль
+      </div>
+
+      <div class="form-group">
+        <button
+          type="submit"
+          class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          <span class="absolute left-0 inset-y-0 flex items-center pl-3">
+            <!-- Heroicon name: solid/lock-closed -->
+            <svg
+              class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </span>
+          Регистрация
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

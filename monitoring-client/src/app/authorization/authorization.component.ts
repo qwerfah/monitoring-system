@@ -26,12 +26,8 @@ export class AuthorizationComponent implements OnInit {
   ngOnInit(): void {}
 
   submit(): void {
-    if (
-      this.credentials.controls.login.invalid ||
-      this.credentials.controls.password.invalid
-    ) {
-      this.credentials.controls.login.markAsTouched();
-      this.credentials.controls.password.markAsTouched();
+    if (this.credentials.invalid) {
+      this.credentials.markAllAsTouched();
     } else {
       console.log(`Email: ${this.credentials.controls.login.value}`);
       console.log(`Password: ${this.credentials.controls.password.value}`);

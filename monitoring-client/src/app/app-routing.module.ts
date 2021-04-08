@@ -1,8 +1,8 @@
 import { NgModule } from "@angular/core";
 import { RouterModule, Routes } from "@angular/router";
 
-import { AuthorizationComponent } from "./authorization/authorization.component";
-import { RegistrationComponent } from "./registration/registration.component";
+import { AuthorizationFormComponent } from "./authorization/authorization-form/authorization-form.component";
+import { RegistrationFormComponent } from "./registration/registration-form/registration-form.component";
 
 const routes: Routes = [
   {
@@ -12,11 +12,11 @@ const routes: Routes = [
   },
   {
     path: "login",
-    component: AuthorizationComponent,
+    component: AuthorizationFormComponent,
   },
   {
     path: "register",
-    component: RegistrationComponent,
+    component: RegistrationFormComponent,
   },
 ];
 

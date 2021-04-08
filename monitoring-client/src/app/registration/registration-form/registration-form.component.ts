@@ -3,11 +3,11 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { Router, ActivatedRoute, ParamMap } from "@angular/router";
 
 @Component({
-  selector: "app-registration",
-  templateUrl: "./registration.component.html",
-  styleUrls: ["./registration.component.css"],
+  selector: "registration-form",
+  templateUrl: "./registration-form.component.html",
+  styleUrls: ["./registration-form.component.css"],
 })
-export class RegistrationComponent implements OnInit {
+export class RegistrationFormComponent implements OnInit {
   userInfo: FormGroup;
 
   constructor(private fb: FormBuilder) {

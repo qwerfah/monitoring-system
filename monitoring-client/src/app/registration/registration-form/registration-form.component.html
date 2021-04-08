@@ -71,14 +71,14 @@
         </div>
         <div class="form-group">
           <input
-            id="confirm"
-            name="confirm"
-            type="confirm"
+            id="confirmation"
+            name="confirmation"
+            type="confirmation"
             autocomplete="current-password"
             required
             class="appearance-none mt-3 rounded-lg relative block w-full px-3 py-2 border border-gray-200 placeholder-gray-500 text-gray-900 focus: outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
             placeholder="Подтвердите пароль"
-            formControlName="confirm"
+            formControlName="confirmation"
           />
         </div>
       </div>
@@ -112,7 +112,8 @@
       <div
         class="bg-red-200 relative text-red-500 p-2 rounded-lg border border-red-500"
         *ngIf="
-          userInfo.controls.confirm.invalid && userInfo.controls.confirm.touched
+          userInfo.controls.confirmation.invalid &&
+          userInfo.controls.confirmation.touched
         "
       >
         Повторите пароль

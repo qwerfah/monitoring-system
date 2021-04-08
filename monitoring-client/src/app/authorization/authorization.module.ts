@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { AuthorizationComponent } from './authorization.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { NgModule } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { AuthorizationFormComponent } from "./authorization-form/authorization-form.component";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 @NgModule({
-  declarations: [AuthorizationComponent],
+  declarations: [AuthorizationFormComponent],
   imports: [CommonModule, FormsModule, ReactiveFormsModule],
-  exports: [AuthorizationComponent],
+  exports: [AuthorizationFormComponent],
 })
 export class AuthorizationModule {}

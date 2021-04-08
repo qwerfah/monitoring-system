@@ -3,12 +3,12 @@ import { RouterModule, Routes } from "@angular/router";
 
 import { AuthorizationFormComponent } from "./authorization/authorization-form/authorization-form.component";
 import { RegistrationFormComponent } from "./registration/registration-form/registration-form.component";
+import { MainFormComponent } from "./general/main-form/main-form.component";
 
 const routes: Routes = [
   {
     path: "",
-    redirectTo: "login",
-    pathMatch: "full",
+    component: MainFormComponent,
   },
   {
     path: "login",

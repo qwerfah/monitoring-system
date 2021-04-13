@@ -24,6 +24,7 @@
     "eslint": "^7.23.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-prettier": "^3.3.1",
+    "ng-click-outside": "^8.0.0",
     "postcss": "^8.2.9",
     "prettier": "^2.2.1",
     "rxjs": "~6.6.0",

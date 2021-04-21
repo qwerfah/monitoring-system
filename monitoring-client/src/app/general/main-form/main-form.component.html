@@ -1,34 +1,38 @@
-<mat-sidenav-container class="example-container">
-  <mat-sidenav
-    #sidenav
-    mode="side"
-    [(opened)]="opened"
-    (opened)="events.push('open!')"
-    (closed)="events.push('close!')"
-  >
-    <div class="flex flex-col">
-      <button mat-stroked-button color="primary">Модели оборудования</button>
-      <button mat-stroked-button color="primary">
-        Экземпляры оборудование
-      </button>
-      <button mat-stroked-button color="primary">Мониторинг</button>
-      <button mat-stroked-button color="primary">Статистика</button>
-      <button mat-stroked-button color="primary">Администрирование</button>
-    </div>
-  </mat-sidenav>
-
-  <mat-sidenav-content>
+<div class="w-screen h-screen">
+  <mat-toolbar class="bg-indigo-700">
     <button
-      mat-mini-fab
-      class="bg-indigo-600 rounded-full"
-      aria-label="Example icon button with a menu icon"
+      mat-icon-button
+      aria-label="Example icon-button with menu icon"
       (click)="sidenav.toggle()"
     >
       <mat-icon>menu</mat-icon>
     </button>
-    <p>Events:</p>
-    <div class="example-events">
-      <div *ngFor="let e of events">{{ e }}</div>
-    </div>
-  </mat-sidenav-content>
-</mat-sidenav-container>
+    <span>Мониторинг</span>
+    <span class="example-spacer"></span>
+  </mat-toolbar>
+
+  <mat-sidenav-container class="h-full">
+    <mat-sidenav
+      #sidenav
+      mode="side"
+      [(opened)]="opened"
+      (opened)="events.push('open!')"
+      (closed)="events.push('close!')"
+      class="shadow-lg"
+    >
+      <div class="flex flex-col p-4 space-y-2">
+        <button mat-stroked-button color="primary" class="rounded-lg">
+          Каталог оборудования
+        </button>
+        <button mat-stroked-button color="primary">
+          Развернутые экземпляры
+        </button>
+        <button mat-stroked-button color="primary">Мониторинг</button>
+        <button mat-stroked-button color="primary">Статистика</button>
+        <button mat-stroked-button color="primary">Администрирование</button>
+      </div>
+    </mat-sidenav>
+
+    <mat-sidenav-content> </mat-sidenav-content>
+  </mat-sidenav-container>
+</div>

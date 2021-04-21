@@ -8,6 +8,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatToolbarModule } from '@angular/material/toolbar';
 
 @NgModule({
   declarations: [MainFormComponent],
@@ -19,6 +20,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatCheckboxModule,
     MatIconModule,
     MatButtonModule,
+    MatToolbarModule,
   ],
   exports: [MainFormComponent],
 })

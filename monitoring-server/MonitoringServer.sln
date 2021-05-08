@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatewayService", "GatewaySe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SessionService", "SessionService\SessionService.csproj", "{100B1E88-EAF3-4C33-9137-876ED9B80D11}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EquipmentService", "EquipmentService\EquipmentService.csproj", "{AD1AC578-D3CC-421F-8E11-2CC00A63FAF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{100B1E88-EAF3-4C33-9137-876ED9B80D11}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{100B1E88-EAF3-4C33-9137-876ED9B80D11}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{100B1E88-EAF3-4C33-9137-876ED9B80D11}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD1AC578-D3CC-421F-8E11-2CC00A63FAF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD1AC578-D3CC-421F-8E11-2CC00A63FAF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD1AC578-D3CC-421F-8E11-2CC00A63FAF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD1AC578-D3CC-421F-8E11-2CC00A63FAF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

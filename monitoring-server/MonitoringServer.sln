@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatisticsService", "Statis
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocumentationService", "DocumentationService\DocumentationService.csproj", "{2F139639-92EB-4A85-9DA6-B7E3AFB410A4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneratorService", "GeneratorService\GeneratorService.csproj", "{E09AD923-FCE9-4AB6-B2C5-085135AD5414}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +47,10 @@ Global
 		{2F139639-92EB-4A85-9DA6-B7E3AFB410A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F139639-92EB-4A85-9DA6-B7E3AFB410A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F139639-92EB-4A85-9DA6-B7E3AFB410A4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E09AD923-FCE9-4AB6-B2C5-085135AD5414}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E09AD923-FCE9-4AB6-B2C5-085135AD5414}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E09AD923-FCE9-4AB6-B2C5-085135AD5414}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E09AD923-FCE9-4AB6-B2C5-085135AD5414}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

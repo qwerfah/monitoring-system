@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
-    <UserSecretsId>aspnet-MonitoringServer-A2833D31-5E1A-4D6B-B3E5-0443F4FBA603</UserSecretsId>
+    <UserSecretsId>aspnet-GatewayService-D17FEA77-E208-4A7C-A608-782AA6E48BA6</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 

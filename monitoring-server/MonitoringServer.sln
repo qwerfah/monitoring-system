@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SessionService", "SessionSe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EquipmentService", "EquipmentService\EquipmentService.csproj", "{AD1AC578-D3CC-421F-8E11-2CC00A63FAF0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatisticsService", "StatisticsService\StatisticsService.csproj", "{07B2F6BF-D101-4E7D-9528-A66B5DA5CC2E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{AD1AC578-D3CC-421F-8E11-2CC00A63FAF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD1AC578-D3CC-421F-8E11-2CC00A63FAF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD1AC578-D3CC-421F-8E11-2CC00A63FAF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{07B2F6BF-D101-4E7D-9528-A66B5DA5CC2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{07B2F6BF-D101-4E7D-9528-A66B5DA5CC2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{07B2F6BF-D101-4E7D-9528-A66B5DA5CC2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{07B2F6BF-D101-4E7D-9528-A66B5DA5CC2E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

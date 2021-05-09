@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Identity.Web;
 using Microsoft.OpenApi.Models;
+using StatisticsService.Contexts;
 
 namespace StatisticsService
 {
@@ -29,6 +31,11 @@ namespace StatisticsService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "StatisticsService", Version = "v1" });
             });
+
+            services.AddHealthChecks().AddNpgSql(Configuration["DbConnectionString"]);
+
+            services.AddDbContext<StatisticsContext>(
+                options => options.UseNpgsql(Configuration["DbConnectionString"]));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

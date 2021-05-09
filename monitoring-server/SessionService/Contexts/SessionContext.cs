@@ -48,8 +48,6 @@ namespace SessionService.Contexts
 
             builder.HasAlternateKey(u => new { u.UserUid, u.Login });
 
-            builder.Property(u => u.UserUid).IsRequired();
-            builder.Property(u => u.Login).IsRequired();
             builder.Property(u => u.PasswordHash).IsRequired();
             builder.Property(u => u.Salt).IsRequired();
         }

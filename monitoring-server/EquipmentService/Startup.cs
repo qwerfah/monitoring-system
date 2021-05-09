@@ -1,9 +1,11 @@
+using EquipmentService.Contexts;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -37,6 +39,11 @@ namespace EquipmentService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "EquipmentService", Version = "v1" });
             });
+
+            services.AddHealthChecks().AddNpgSql(Configuration["DbConnectionString"]);
+
+            services.AddDbContext<EquipmentContext>(
+                options => options.UseNpgsql(Configuration["DbConnectionString"]));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

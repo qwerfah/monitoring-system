@@ -25,6 +25,10 @@ namespace MonitoringService.Models
         /// </summary>
         public string Name { get; set; }
         /// <summary>
+        /// Monitor description (optional).
+        /// </summary>
+        public string Description { get; set; }
+        /// <summary>
         /// Equipment instance external identifier that monitor belongs to.
         /// </summary>
         public Guid EquipmentUid { get; set; }

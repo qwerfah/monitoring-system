@@ -23,6 +23,10 @@ namespace EquipmentService.Models
         /// </summary>
         public long EquipmentModelId { get; set; }
         /// <summary>
+        /// Equipment instance description (optional).
+        /// </summary>
+        public string Description { get; set; }
+        /// <summary>
         /// Equipment instance operational status.
         /// </summary>
         public EquipmentStatus Status { get; set; }

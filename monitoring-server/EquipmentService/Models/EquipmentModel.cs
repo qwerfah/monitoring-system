@@ -23,6 +23,10 @@ namespace EquipmentService.Models
         /// </summary>
         public string Name { get; set; }
         /// <summary>
+        /// Equipment model description (optional).
+        /// </summary>
+        public string Description { get; set; }
+        /// <summary>
         /// Navigation property to list of model params.
         /// </summary>
         public virtual List<Param> Params { get; set; }

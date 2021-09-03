@@ -20,8 +20,8 @@ class DataContext(val jdbcProfile: JdbcProfile) {
     }
 
     final class ParamTable(tag: Tag) extends Table[Param](tag, "PARAMS") {
-        def id = column[Int]("ID")
-        def uid = column[Guid]("UID")
+        def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
+        def uid = column[Guid]("UID", O.Unique)
         def modelId = column[Int]("MODEL_ID")
         def name = column[String]("NAME")
         def measurmentUnits = column[String]("MEASURMENT_UNITS")
@@ -34,7 +34,7 @@ class DataContext(val jdbcProfile: JdbcProfile) {
           measurmentUnits.?
         ) <> (Param.tupled, Param.unapply)
 
-        // def model = foreignKey("MODEL_FK", modelId, models)(_.id)
+        def model = foreignKey("MODEL_FK", modelId, models)(_.id)
     }
 
     /** Equipment instance db model.
@@ -57,10 +57,10 @@ class DataContext(val jdbcProfile: JdbcProfile) {
             )
 
         /** Internal instance identifier. */
-        def id = column[Int]("ID", O.PrimaryKey)
+        def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
 
         /** External instance identifier. */
-        def uid = column[Guid]("UID")
+        def uid = column[Guid]("UID", O.Unique)
 
         /** Internal id of equipment model associated with current instance. */
         def modelId = column[Int]("MODEL_ID")

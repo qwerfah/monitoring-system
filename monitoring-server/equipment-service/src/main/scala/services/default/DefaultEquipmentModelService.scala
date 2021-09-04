@@ -9,9 +9,8 @@ import services._
 
 class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](
   repo: EquipmentModelRepo[DB],
-  execute: DB ~> F
+  dbManager: DbManager[F, DB]
 ) extends EquipmentModelService[F] {
-    override def getById(id: Int): F[Option[EquipmentModel]] = execute(
-      repo.getById(id)
-    )
+    override def getById(id: Int): F[Option[EquipmentModel]] =
+        dbManager.execute(repo.getById(id))
 }

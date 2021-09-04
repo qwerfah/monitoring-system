@@ -2,28 +2,59 @@ package models
 
 import slick.jdbc.JdbcProfile
 
+/** Database scheme context base on jdbc profile provided.
+  * @param jdbcProfile
+  *   Current jdbc profile for interaction with db provider.
+  */
 class DataContext(val jdbcProfile: JdbcProfile) {
     import jdbcProfile.api._
 
+    /** Equipment models table definition.
+      * @param tag
+      *   Table tag.
+      */
     final class EquipmentModelTable(tag: Tag)
       extends Table[EquipmentModel](tag, "EQUIPMENT_MODEL") {
+
+        /** Internal model identifier. */
         def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
+
+        /** External model identifier. */
         def uid = column[Guid]("GUID", O.Unique)
+
+        /** Model name. */
         def name = column[String]("NAME")
+
+        /** Model description (optional). */
         def description = column[String]("DESCRIPTION")
+
         def * = (
           id.?,
           uid,
           name,
           description.?
-        ) <> (EquipmentModel.tupled, EquipmentModel.unapply)
+        ).<>(EquipmentModel.tupled, EquipmentModel.unapply)
     }
 
+    /** Equipment model parameters table definition.
+      * @param tag
+      *   Table tag.
+      */
     final class ParamTable(tag: Tag) extends Table[Param](tag, "PARAMS") {
+
+        /** Internal model parameter identifier. */
         def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
+
+        /** External model parameter identifier. */
         def uid = column[Guid]("UID", O.Unique)
+
+        /** Internal model identifier assosiated with current parameter. */
         def modelId = column[Int]("MODEL_ID")
+
+        /** Model param name. */
         def name = column[String]("NAME")
+
+        /** Model param measurment units (optional). */
         def measurmentUnits = column[String]("MEASURMENT_UNITS")
 
         def * = (
@@ -32,16 +63,14 @@ class DataContext(val jdbcProfile: JdbcProfile) {
           modelId,
           name,
           measurmentUnits.?
-        ) <> (Param.tupled, Param.unapply)
+        ).<>(Param.tupled, Param.unapply)
 
         def model = foreignKey("MODEL_FK", modelId, models)(_.id)
     }
 
-    /** Equipment instance db model.
+    /** Equipment instances table definition.
       * @param tag
       *   Table tag.
-      * @param models
-      *   Query instance for foreign key to the equipment model table.
       */
     final class EquipmentInstanceTable(tag: Tag)
       extends Table[EquipmentInstance](
@@ -84,8 +113,7 @@ class DataContext(val jdbcProfile: JdbcProfile) {
           name,
           description.?,
           status
-        ) <> (EquipmentInstance.tupled, EquipmentInstance.unapply)
-
+        ).<>(EquipmentInstance.tupled, EquipmentInstance.unapply)
     }
 
     /** Equipment models table query instance. */
@@ -99,7 +127,7 @@ class DataContext(val jdbcProfile: JdbcProfile) {
 
     val setup = DBIO.seq(
       // Create db schema
-      (models.schema ++ params.schema ++ instances.schema).create,
+      (models.schema ++ params.schema ++ instances.schema).createIfNotExists,
       // Insert equipment models
       models ++= Seq(
         EquipmentModel(

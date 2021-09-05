@@ -1,7 +1,6 @@
 package services.default
 
-import scala.concurrent.ExecutionContext
-import scalaz.{Monad, OptionT, ~>}
+import scalaz.Monad
 
 import repos._
 import models._

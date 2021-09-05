@@ -1,6 +1,8 @@
 package models
 
 import slick.jdbc.JdbcProfile
+import slick.jdbc.meta.MTable
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /** Database scheme context base on jdbc profile provided.
   * @param jdbcProfile
@@ -14,7 +16,7 @@ class DataContext(val jdbcProfile: JdbcProfile) {
       *   Table tag.
       */
     final class EquipmentModelTable(tag: Tag)
-      extends Table[EquipmentModel](tag, "EQUIPMENT_MODEL") {
+      extends Table[EquipmentModel](tag, "EQUIPMENT_MODELS") {
 
         /** Internal model identifier. */
         def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
@@ -75,7 +77,7 @@ class DataContext(val jdbcProfile: JdbcProfile) {
     final class EquipmentInstanceTable(tag: Tag)
       extends Table[EquipmentInstance](
         tag,
-        "EQUIPMENT"
+        "EQUIPMENT_INSTANCES"
       ) {
 
         /** Equipment status enum to string mapper. */
@@ -125,62 +127,78 @@ class DataContext(val jdbcProfile: JdbcProfile) {
     /** Equipment instances table query instance. */
     val instances = TableQuery[EquipmentInstanceTable]
 
+    /** Db schema initialization.2 */
     val setup = DBIO.seq(
       // Create db schema
       (models.schema ++ params.schema ++ instances.schema).createIfNotExists,
       // Insert equipment models
-      models ++= Seq(
-        EquipmentModel(
-          Some(1),
-          randomGuid,
-          "Model_1",
-          Some("Description of Model_1")
-        ),
-        EquipmentModel(
-          Some(2),
-          randomGuid,
-          "Model_2",
-          Some("Description of Model_2")
-        ),
-        EquipmentModel(
-          Some(3),
-          randomGuid,
-          "Model_3",
-          Some("Description of Model_3")
-        )
-      ),
+      models.exists.result flatMap { exisits =>
+          if (!exisits) models ++= initialModels
+          else DBIO.successful(None)
+      },
       // Insert model params
-      params ++= Seq(
-        Param(Some(1), randomGuid, 1, "Param_1", Some("m")),
-        Param(Some(2), randomGuid, 2, "Param_2", Some("kg")),
-        Param(Some(3), randomGuid, 3, "Param_3", Some("sec"))
-      ),
+      params.exists.result flatMap { exisits =>
+          if (!exisits) params ++= initialParams
+          else DBIO.successful(None)
+      },
       // Insert equipment instances
-      instances ++= Seq(
-        EquipmentInstance(
-          Some(1),
-          randomGuid,
-          1,
-          "Instance_1",
-          Some("Description of Instance_1"),
-          EquipmentStatus.Active
-        ),
-        EquipmentInstance(
-          Some(2),
-          java.util.UUID.randomUUID,
-          2,
-          "Instance_2",
-          Some("Description of Instance_2"),
-          EquipmentStatus.Active
-        ),
-        EquipmentInstance(
-          Some(3),
-          java.util.UUID.randomUUID,
-          3,
-          "Instance_3",
-          Some("Description of Instance_3"),
-          EquipmentStatus.Active
-        )
+      instances.exists.result flatMap { exists =>
+          if (!exists) instances ++= initialInstances
+          else DBIO.successful(None)
+      }
+    )
+
+    private val initialModels = Seq(
+      EquipmentModel(
+        Some(1),
+        randomGuid,
+        "Model_1",
+        Some("Description of Model_1")
+      ),
+      EquipmentModel(
+        Some(2),
+        randomGuid,
+        "Model_2",
+        Some("Description of Model_2")
+      ),
+      EquipmentModel(
+        Some(3),
+        randomGuid,
+        "Model_3",
+        Some("Description of Model_3")
+      )
+    )
+
+    private val initialParams = Seq(
+      Param(Some(1), randomGuid, 1, "Param_1", Some("m")),
+      Param(Some(2), randomGuid, 2, "Param_2", Some("kg")),
+      Param(Some(3), randomGuid, 3, "Param_3", Some("sec"))
+    )
+
+    private val initialInstances = Seq(
+      EquipmentInstance(
+        Some(1),
+        randomGuid,
+        1,
+        "Instance_1",
+        Some("Description of Instance_1"),
+        EquipmentStatus.Active
+      ),
+      EquipmentInstance(
+        Some(2),
+        java.util.UUID.randomUUID,
+        2,
+        "Instance_2",
+        Some("Description of Instance_2"),
+        EquipmentStatus.Active
+      ),
+      EquipmentInstance(
+        Some(3),
+        java.util.UUID.randomUUID,
+        3,
+        "Instance_3",
+        Some("Description of Instance_3"),
+        EquipmentStatus.Active
       )
     )
 }

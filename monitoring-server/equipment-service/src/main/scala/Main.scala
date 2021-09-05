@@ -46,13 +46,4 @@ object Main {
           )
         )
     }
-
-    private def dBIOTransformation(
-      profile: JdbcProfile,
-      db: Database
-    ): DBIO ~> Future = new (DBIO ~> Future) {
-        import profile.api._
-        override def apply[A](fa: DBIO[A]): Future[A] =
-            db.run(fa.transactionally)
-    }
 }

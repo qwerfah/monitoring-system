@@ -1,6 +1,6 @@
 // The simplest possible sbt build file is just one line:
 
-scalaVersion := "2.13.3"
+scalaVersion := "2.12.14"
 // That is, to create a valid sbt build, all you've got to do is define the
 // version of Scala you'd like your project to use.
 
@@ -30,8 +30,11 @@ libraryDependencies ++= Seq(
   "com.typesafe.slick" %% "slick-hikaricp" % "3.3.3",
   "org.postgresql" % "postgresql" % "42.2.23.jre7",
   "org.slf4j" % "slf4j-nop" % "1.6.4",
-  "com.lambdista" %% "config" % "0.8.1",
-  "org.scalaz" %% "scalaz-core" % "7.3.5"
+  "com.lambdista" %% "config" % "0.7.1",
+  "org.scalaz" %% "scalaz-core" % "7.3.5",
+  "com.github.finagle" %% "finch-core" % "0.31.0",
+  "com.github.finagle" %% "finch-circe" % "0.31.0",
+  "io.circe" %% "circe-generic" % "0.9.0"
 )
 
 // Here, `libraryDependencies` is a set of dependencies, and by using `+=`,

@@ -32,8 +32,8 @@ libraryDependencies ++= Seq(
   "org.slf4j" % "slf4j-nop" % "1.6.4",
   "com.lambdista" %% "config" % "0.7.1",
   "org.scalaz" %% "scalaz-core" % "7.3.5",
-  "com.github.finagle" %% "finch-core" % "0.31.0",
-  "com.github.finagle" %% "finch-circe" % "0.31.0",
+  "com.github.finagle" %% "finchx-core" % "0.32.1",
+  "com.github.finagle" %% "finchx-circe" % "0.32.1",
   "io.circe" %% "circe-generic" % "0.9.0"
 )
 

@@ -126,5 +126,8 @@
       }
     }
   },
-  "defaultProject": "monitoring-client"
+  "defaultProject": "monitoring-client",
+  "cli": {
+    "defaultCollection": "@ngrx/schematics"
+  }
 }

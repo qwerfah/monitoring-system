@@ -19,7 +19,7 @@ trait ParamRepo[DB[_]] {
       * @return
       *   Parameter with specified uid or None if not found.
       */
-    def getByGuid(uid: Guid): DB[Option[Param]]
+    def getByGuid(uid: Uid): DB[Option[Param]]
 
     /** Add new model parameter to storage.
       * @param param
@@ -51,7 +51,7 @@ trait ParamRepo[DB[_]] {
       * @return
       *   Number of records in storage affected (1 if successfull, otherwise 0).
       */
-    def removeByGuid(uid: Guid): DB[Int]
+    def removeByGuid(uid: Uid): DB[Int]
 }
 
 /** Defines apply method to get implicitily defined model parameters repository

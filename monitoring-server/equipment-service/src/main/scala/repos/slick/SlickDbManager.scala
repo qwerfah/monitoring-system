@@ -13,7 +13,7 @@ import repos.DbManager
   * @param profile
   *   Jdbc profile (specifies db config).
   */
-class SlickDbManager(db: Database, profile: JdbcProfile)
+class SlickDbManager(implicit db: Database, profile: JdbcProfile)
   extends DbManager[Future, DBIO] {
 
     /** Launch action execution and return Future result placeholder.

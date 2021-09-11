@@ -6,13 +6,14 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import repos._
 import models._
 
-class SlickParamRepo(val context: DataContext) extends ParamRepo[DBIO] {
+class SlickParamRepo(implicit val context: DataContext)
+  extends ParamRepo[DBIO] {
     import context.jdbcProfile.api._
 
     override def getById(id: Int): DBIO[Option[Param]] =
         context.params.filter(_.id === id).result.headOption
 
-    override def getByGuid(uid: Guid): DBIO[Option[Param]] =
+    override def getByGuid(uid: Uid): DBIO[Option[Param]] =
         context.params.filter(_.uid === uid).result.headOption
 
     override def add(param: Param): DBIO[Param] =
@@ -34,6 +35,6 @@ class SlickParamRepo(val context: DataContext) extends ParamRepo[DBIO] {
     override def removeById(id: Int): DBIO[Int] =
         context.params.filter(_.id === id).delete
 
-    override def removeByGuid(uid: Guid): DBIO[Int] =
+    override def removeByGuid(uid: Uid): DBIO[Int] =
         context.params.filter(_.uid === uid).delete
 }

@@ -1,5 +1,5 @@
 package object models {
-    type Guid = java.util.UUID
+    type Uid = java.util.UUID
     type EquipmentStatus = EquipmentStatus.Value
-    def randomGuid = java.util.UUID.randomUUID
+    def randomUid = java.util.UUID.randomUUID
 }

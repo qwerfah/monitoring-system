@@ -5,7 +5,7 @@ import slick.model.Table
 
 case class EquipmentInstance(
   id: Option[Int],
-  uid: Guid,
+  uid: Uid,
   modelId: Int,
   name: String,
   description: Option[String],

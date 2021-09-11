@@ -7,14 +7,16 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import repos._
 import models._
 
-class SlickEquipmentModelRepo(val context: DataContext)
+class SlickEquipmentModelRepo(implicit val context: DataContext)
   extends EquipmentModelRepo[DBIO] {
     import context.jdbcProfile.api._
+
+    override def get: DBIO[Seq[EquipmentModel]] = context.models.result
 
     override def getById(id: Int): DBIO[Option[EquipmentModel]] =
         context.models.filter(_.id === id).result.headOption
 
-    override def getByUid(uid: Guid): DBIO[Option[EquipmentModel]] =
+    override def getByGuid(uid: Uid): DBIO[Option[EquipmentModel]] =
         context.models.filter(_.uid === uid).result.headOption
 
     override def add(model: EquipmentModel): DBIO[EquipmentModel] =
@@ -26,7 +28,7 @@ class SlickEquipmentModelRepo(val context: DataContext)
         for {
             booleanOption <- targetRows.result.headOption
             updateActionOption = booleanOption.map(b =>
-                targetRows.update(model)
+                targetRows.update(model.copy(id = b.id))
             )
             affected <- updateActionOption.getOrElse(DBIO.successful(0))
         } yield affected
@@ -35,7 +37,7 @@ class SlickEquipmentModelRepo(val context: DataContext)
     override def removeById(id: Int): DBIO[Int] =
         context.models.filter(_.id === id).delete
 
-    override def removeByUid(uid: Guid): DBIO[Int] =
+    override def removeByGuid(uid: Uid): DBIO[Int] =
         context.models.filter(_.uid === uid).delete
 
 }

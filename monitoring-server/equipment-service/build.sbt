@@ -31,11 +31,14 @@ libraryDependencies ++= Seq(
   "org.postgresql" % "postgresql" % "42.2.23.jre7",
   "org.slf4j" % "slf4j-nop" % "1.6.4",
   "com.lambdista" %% "config" % "0.7.1",
-  "org.scalaz" %% "scalaz-core" % "7.3.5",
   "com.github.finagle" %% "finchx-core" % "0.32.1",
   "com.github.finagle" %% "finchx-circe" % "0.32.1",
-  "io.circe" %% "circe-generic" % "0.9.0"
+  "io.circe" %% "circe-generic" % "0.14.1",
+  "com.twitter" %% "twitter-server" % "21.8.0",
+  "com.rms.miu" %% "slick-cats" % "0.10.4"
 )
+
+addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1")
 
 // Here, `libraryDependencies` is a set of dependencies, and by using `+=`,
 // we're adding the scala-parser-combinators dependency to the set of dependencies

@@ -1,4 +1,4 @@
-package main
+package startup
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global

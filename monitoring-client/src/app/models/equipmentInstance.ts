@@ -1,4 +1,4 @@
-class EquipmentInstance {
+export class EquipmentInstance {
   constructor(
     public uid: string,
     public modelUid: string,

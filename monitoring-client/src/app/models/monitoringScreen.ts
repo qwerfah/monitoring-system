@@ -1,4 +1,4 @@
-class MonitoringScreen {
+export class MonitoringScreen {
   constructor(
     public uid: string,
     public instanceUid: string,

@@ -1,11 +1,11 @@
-import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { Router, ActivatedRoute, ParamMap } from "@angular/router";
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 @Component({
-  selector: "registration-form",
-  templateUrl: "./registration-form.component.html",
-  styleUrls: ["./registration-form.component.css"],
+  selector: 'registration-form',
+  templateUrl: './registration-form.component.html',
+  styleUrls: ['./registration-form.component.css'],
 })
 export class RegistrationFormComponent implements OnInit {
   userInfo: FormGroup;
@@ -19,7 +19,7 @@ export class RegistrationFormComponent implements OnInit {
         [
           Validators.required,
           Validators.minLength(6),
-          Validators.pattern("^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$"),
+          Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$'),
         ],
       ],
       confirmation: [
@@ -27,7 +27,7 @@ export class RegistrationFormComponent implements OnInit {
         [
           Validators.required,
           Validators.minLength(6),
-          Validators.pattern("^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$"),
+          Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$'),
         ],
       ],
     });

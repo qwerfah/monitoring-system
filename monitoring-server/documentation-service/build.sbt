@@ -1,4 +1,4 @@
-name := "equipment-service"
+name := "documentation-service"
 
 version := "1.0"
 

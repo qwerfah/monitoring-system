@@ -8,7 +8,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
   * @param jdbcProfile
   *   Current jdbc profile for interaction with db provider.
   */
-class DataContext(val jdbcProfile: JdbcProfile) {
+class DataContext(implicit val jdbcProfile: JdbcProfile) {
     import jdbcProfile.api._
 
     /** Equipment models table definition.
@@ -22,7 +22,7 @@ class DataContext(val jdbcProfile: JdbcProfile) {
         def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
 
         /** External model identifier. */
-        def uid = column[Guid]("GUID", O.Unique)
+        def uid = column[Uid]("GUID", O.Unique)
 
         /** Model name. */
         def name = column[String]("NAME")
@@ -48,7 +48,7 @@ class DataContext(val jdbcProfile: JdbcProfile) {
         def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
 
         /** External model parameter identifier. */
-        def uid = column[Guid]("UID", O.Unique)
+        def uid = column[Uid]("UID", O.Unique)
 
         /** Internal model identifier assosiated with current parameter. */
         def modelId = column[Int]("MODEL_ID")
@@ -91,7 +91,7 @@ class DataContext(val jdbcProfile: JdbcProfile) {
         def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
 
         /** External instance identifier. */
-        def uid = column[Guid]("UID", O.Unique)
+        def uid = column[Uid]("UID", O.Unique)
 
         /** Internal id of equipment model associated with current instance. */
         def modelId = column[Int]("MODEL_ID")
@@ -151,34 +151,34 @@ class DataContext(val jdbcProfile: JdbcProfile) {
     private val initialModels = Seq(
       EquipmentModel(
         Some(1),
-        randomGuid,
+        randomUid,
         "Model_1",
         Some("Description of Model_1")
       ),
       EquipmentModel(
         Some(2),
-        randomGuid,
+        randomUid,
         "Model_2",
         Some("Description of Model_2")
       ),
       EquipmentModel(
         Some(3),
-        randomGuid,
+        randomUid,
         "Model_3",
         Some("Description of Model_3")
       )
     )
 
     private val initialParams = Seq(
-      Param(Some(1), randomGuid, 1, "Param_1", Some("m")),
-      Param(Some(2), randomGuid, 2, "Param_2", Some("kg")),
-      Param(Some(3), randomGuid, 3, "Param_3", Some("sec"))
+      Param(Some(1), randomUid, 1, "Param_1", Some("m")),
+      Param(Some(2), randomUid, 2, "Param_2", Some("kg")),
+      Param(Some(3), randomUid, 3, "Param_3", Some("sec"))
     )
 
     private val initialInstances = Seq(
       EquipmentInstance(
         Some(1),
-        randomGuid,
+        randomUid,
         1,
         "Instance_1",
         Some("Description of Instance_1"),

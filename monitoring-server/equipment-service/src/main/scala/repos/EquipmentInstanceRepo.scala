@@ -5,6 +5,12 @@ import models._
 /** Equipment instance repository DSL. */
 trait EquipmentInstanceRepo[DB[_]] {
 
+    /** Get all equipment instances in repository.
+      * @return
+      *   All equipment instances in repository.
+      */
+    def get: DB[Seq[EquipmentInstance]]
+
     /** Get equipment instance by its internal id.
       * @param id
       *   Internal equipment instance id.
@@ -19,7 +25,7 @@ trait EquipmentInstanceRepo[DB[_]] {
       * @return
       *   Equipment instance with given uid or None if not found.
       */
-    def getByGuid(uid: Guid): DB[Option[EquipmentInstance]]
+          def getByGuid(uid: Uid): DB[Option[EquipmentInstance]]
 
     /** Add new instance to db table.
       * @param instance
@@ -51,7 +57,7 @@ trait EquipmentInstanceRepo[DB[_]] {
       * @return
       *   Number of storage records affected (1 if successfull, otherwise 0).
       */
-    def removeByGuid(uid: Guid): DB[Int]
+          def removeByGuid(uid: Uid): DB[Int]
 }
 
 /** Defines apply method to get implicitily defined equipment instance

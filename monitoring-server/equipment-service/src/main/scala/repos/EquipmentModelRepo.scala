@@ -5,6 +5,12 @@ import models._
 /** Equipment models repository DSL. */
 trait EquipmentModelRepo[DB[_]] {
 
+    /** Get all records from models storage.
+      * @return
+      *   All models in repository.
+      */
+    def get: DB[Seq[EquipmentModel]]
+
     /** Get equipment model by the internal id.
       * @param id
       *   Internal model id.
@@ -19,7 +25,7 @@ trait EquipmentModelRepo[DB[_]] {
       * @return
       *   Equipment model with given uid or None if not found.
       */
-    def getByUid(uid: Guid): DB[Option[EquipmentModel]]
+    def getByGuid(uid: Uid): DB[Option[EquipmentModel]]
 
     /** Add new equipment model to the storage.
       * @param model
@@ -51,7 +57,7 @@ trait EquipmentModelRepo[DB[_]] {
       * @return
       *   Number of storage records affected (1 if successfull, otherwise 0).
       */
-    def removeByUid(uid: Guid): DB[Int]
+    def removeByGuid(uid: Uid): DB[Int]
 }
 
 /** Defines apply method to get implicitily defined equipment models repository

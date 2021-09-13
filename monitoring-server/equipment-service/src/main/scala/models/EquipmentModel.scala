@@ -2,7 +2,7 @@ package models
 
 case class EquipmentModel(
   id: Option[Int],
-  uid: Guid,
+  uid: Uid,
   name: String,
   description: Option[String]
 )

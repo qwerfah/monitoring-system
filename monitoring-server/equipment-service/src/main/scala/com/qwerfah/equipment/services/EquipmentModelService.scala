@@ -1,14 +1,14 @@
 package com.qwerfah.equipment.services
 
 import com.qwerfah.equipment.models._
-import slick.lifted.TableQuery
+import com.qwerfah.equipment.resources._
 
 trait EquipmentModelService[F[_]] {
-    def get: F[ServiceResponse[Seq[EquipmentModel]]]
-    def getById(id: Int): F[ServiceResponse[EquipmentModel]]
-    def getByGuid(uid: Uid): F[ServiceResponse[EquipmentModel]]
-    def add(model: EquipmentModel): F[ServiceResponse[EquipmentModel]]
-    def update(uid: Uid, model: EquipmentModel): F[ServiceResponse[String]]
+    def get: F[ServiceResponse[Seq[ModelResponse]]]
+    def getById(id: Int): F[ServiceResponse[ModelResponse]]
+    def getByGuid(uid: Uid): F[ServiceResponse[ModelResponse]]
+    def add(model: ModelRequest): F[ServiceResponse[ModelResponse]]
+    def update(uid: Uid, model: ModelRequest): F[ServiceResponse[String]]
     def removeById(id: Int): F[ServiceResponse[String]]
     def removeByGuid(uid: Uid): F[ServiceResponse[String]]
 }

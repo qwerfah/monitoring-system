@@ -19,6 +19,7 @@ import com.qwerfah.equipment.services._
 import com.qwerfah.equipment.repos.slick._
 import com.qwerfah.equipment.services.default._
 import com.qwerfah.equipment.models._
+import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Startup
 
 object ModelsController {
@@ -57,8 +58,8 @@ object ModelsController {
     }
 
     private val addModel =
-        post("models" :: jsonBody[EquipmentModel]) { model: EquipmentModel =>
-            for { result <- modelsService.add(model) } yield result match {
+        post("models" :: jsonBody[ModelRequest]) { request: ModelRequest =>
+            for { result <- modelsService.add(request) } yield result match {
                 case ServiceResult(model) => Ok(model)
                 case ServiceEmpty =>
                     NotFound(new Exception("Model not found"))
@@ -66,10 +67,10 @@ object ModelsController {
         }
 
     private val updateModel =
-        patch("models" :: path[Uid] :: jsonBody[EquipmentModel]) {
-            (uid: Uid, model: EquipmentModel) =>
+        patch("models" :: path[Uid] :: jsonBody[ModelRequest]) {
+            (uid: Uid, request: ModelRequest) =>
                 for {
-                    result <- modelsService.update(uid, model)
+                    result <- modelsService.update(uid, request)
                 } yield result match {
                     case ServiceResult(message) => Ok(message)
                     case ServiceEmpty =>
@@ -92,12 +93,4 @@ object ModelsController {
     val api =
         (getModels :+: getModel :+: addModel :+: updateModel :+: deleteModel)
             .toServiceAs[Application.Json]
-    /*
-    val api = Bootstrap
-        .serve[Application.Json](getModels)
-        .serve[Application.Json](getModel)
-        .serve[Application.Json](addModel)
-        .serve[Text.Plain](updateModel)
-        .serve[Text.Plain](deleteModel)
-     */
 }

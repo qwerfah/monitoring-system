@@ -6,12 +6,14 @@ import cats.implicits._
 import com.qwerfah.equipment.repos._
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.services._
-import cats.data.OptionT
+import com.qwerfah.equipment.resources._
+import com.qwerfah.equipment.Mappings
 
 class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
   repo: EquipmentModelRepo[DB],
   dbManager: DbManager[F, DB]
 ) extends EquipmentModelService[F] {
+    import Mappings._
 
     private def validateGuid(uid: Uid): Boolean =
         try {
@@ -21,11 +23,11 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
             case _: IllegalArgumentException => false
         }
 
-    override def get: F[ServiceResponse[Seq[EquipmentModel]]] = for {
+    override def get: F[ServiceResponse[Seq[ModelResponse]]] = for {
         models <- dbManager.execute(repo.get)
     } yield ServiceResult(models)
 
-    override def getById(id: Int): F[ServiceResponse[EquipmentModel]] = for {
+    override def getById(id: Int): F[ServiceResponse[ModelResponse]] = for {
         model <- dbManager.execute(repo.getById(id))
     } yield model match {
         case Some(model) =>
@@ -33,7 +35,7 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
         case None => ServiceEmpty
     }
 
-    override def getByGuid(uid: Uid): F[ServiceResponse[EquipmentModel]] =
+    override def getByGuid(uid: Uid): F[ServiceResponse[ModelResponse]] =
         for {
             model <- dbManager.execute(repo.getByGuid(uid))
         } yield model match {
@@ -43,37 +45,36 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
         }
 
     override def add(
-      model: EquipmentModel
-    ): F[ServiceResponse[EquipmentModel]] = {
-        val guid = randomUid
-        val updated = model.copy(uid = guid)
+      request: ModelRequest
+    ): F[ServiceResponse[ModelResponse]] = {
         for {
-            result <- dbManager.execute(repo.add(updated))
+            result <- dbManager.execute(repo.add(request))
         } yield ServiceResult(result)
     }
 
     override def update(
       uuid: Uid,
-      model: EquipmentModel
+      request: ModelRequest
     ): F[ServiceResponse[String]] = {
+        val model: EquipmentModel = request
         for {
-            res <- dbManager.execute(repo.update(model.copy(uid = uuid)))
-        } yield res match {
+            result <- dbManager.execute(repo.update(model.copy(uid = uuid)))
+        } yield result match {
             case 1 => ServiceResult("Model updated")
             case _ => ServiceEmpty
         }
     }
 
     override def removeById(id: Int): F[ServiceResponse[String]] = for {
-        res <- dbManager.execute(repo.removeById(id))
-    } yield res match {
+        result <- dbManager.execute(repo.removeById(id))
+    } yield result match {
         case 1 => ServiceResult("Model removed")
         case _ => ServiceEmpty
     }
 
     override def removeByGuid(uid: Uid): F[ServiceResponse[String]] = for {
-        res <- dbManager.execute(repo.removeByGuid(uid))
-    } yield res match {
+        result <- dbManager.execute(repo.removeByGuid(uid))
+    } yield result match {
         case 1 => ServiceResult("Model removed")
         case _ => ServiceEmpty
     }

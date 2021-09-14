@@ -4,6 +4,8 @@ import slick.jdbc.JdbcProfile
 import slick.jdbc.meta.MTable
 import scala.concurrent.ExecutionContext.Implicits.global
 
+import com.qwerfah.equipment.resources._
+
 /** Database scheme context base on jdbc profile provided.
   * @param jdbcProfile
   *   Current jdbc profile for interaction with db provider.

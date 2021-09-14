@@ -6,6 +6,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import com.qwerfah.equipment.repos._
 import com.qwerfah.equipment.models._
+import com.qwerfah.equipment.resources._
 
 class SlickEquipmentInstanceRepo(implicit val context: DataContext)
   extends EquipmentInstanceRepo[DBIO] {

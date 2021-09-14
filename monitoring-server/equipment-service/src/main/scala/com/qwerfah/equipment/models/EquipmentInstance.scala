@@ -1,7 +1,6 @@
 package com.qwerfah.equipment.models
 
-import slick.lifted.Tag
-import slick.model.Table
+import com.qwerfah.equipment.resources._
 
 case class EquipmentInstance(
   id: Option[Int],

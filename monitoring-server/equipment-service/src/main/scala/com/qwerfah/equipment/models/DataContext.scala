@@ -53,7 +53,7 @@ class DataContext(implicit val jdbcProfile: JdbcProfile) {
         def uid = column[Uid]("UID", O.Unique)
 
         /** Internal model identifier assosiated with current parameter. */
-        def modelId = column[Int]("MODEL_ID")
+        def modelUid = column[Uid]("MODEL_UID")
 
         /** Model param name. */
         def name = column[String]("NAME")
@@ -64,12 +64,12 @@ class DataContext(implicit val jdbcProfile: JdbcProfile) {
         def * = (
           id.?,
           uid,
-          modelId,
+          modelUid,
           name,
           measurmentUnits.?
         ).<>(Param.tupled, Param.unapply)
 
-        def model = foreignKey("MODEL_FK", modelId, models)(_.id)
+        def model = foreignKey("MODEL_FK", modelUid, models)(_.uid)
     }
 
     /** Equipment instances table definition.
@@ -96,7 +96,7 @@ class DataContext(implicit val jdbcProfile: JdbcProfile) {
         def uid = column[Uid]("UID", O.Unique)
 
         /** Internal id of equipment model associated with current instance. */
-        def modelId = column[Int]("MODEL_ID")
+        def modelUid = column[Uid]("MODEL_UID")
 
         /** External id of equipment model associated with current instance. */
         // def modelUid = column[UUID]("MODEL_UID")
@@ -113,11 +113,13 @@ class DataContext(implicit val jdbcProfile: JdbcProfile) {
         def * = (
           id.?,
           uid,
-          modelId,
+          modelUid,
           name,
           description.?,
           status
         ).<>(EquipmentInstance.tupled, EquipmentInstance.unapply)
+
+        def model = foreignKey("MODEL_FK", modelUid, models)(_.uid)
     }
 
     /** Equipment models table query instance. */
@@ -150,38 +152,40 @@ class DataContext(implicit val jdbcProfile: JdbcProfile) {
       }
     )
 
+    private val modelUids = Seq(randomUid, randomUid, randomUid)
+
     private val initialModels = Seq(
       EquipmentModel(
         Some(1),
-        randomUid,
+        modelUids(0),
         "Model_1",
         Some("Description of Model_1")
       ),
       EquipmentModel(
         Some(2),
-        randomUid,
+        modelUids(1),
         "Model_2",
         Some("Description of Model_2")
       ),
       EquipmentModel(
         Some(3),
-        randomUid,
+        modelUids(2),
         "Model_3",
         Some("Description of Model_3")
       )
     )
 
     private val initialParams = Seq(
-      Param(Some(1), randomUid, 1, "Param_1", Some("m")),
-      Param(Some(2), randomUid, 2, "Param_2", Some("kg")),
-      Param(Some(3), randomUid, 3, "Param_3", Some("sec"))
+      Param(Some(1), randomUid, modelUids(0), "Param_1", Some("m")),
+      Param(Some(2), randomUid, modelUids(1), "Param_2", Some("kg")),
+      Param(Some(3), randomUid, modelUids(2), "Param_3", Some("sec"))
     )
 
     private val initialInstances = Seq(
       EquipmentInstance(
         Some(1),
         randomUid,
-        1,
+        modelUids(0),
         "Instance_1",
         Some("Description of Instance_1"),
         EquipmentStatus.Active
@@ -189,7 +193,7 @@ class DataContext(implicit val jdbcProfile: JdbcProfile) {
       EquipmentInstance(
         Some(2),
         java.util.UUID.randomUUID,
-        2,
+        modelUids(1),
         "Instance_2",
         Some("Description of Instance_2"),
         EquipmentStatus.Active
@@ -197,7 +201,7 @@ class DataContext(implicit val jdbcProfile: JdbcProfile) {
       EquipmentInstance(
         Some(3),
         java.util.UUID.randomUUID,
-        3,
+        modelUids(2),
         "Instance_3",
         Some("Description of Instance_3"),
         EquipmentStatus.Active

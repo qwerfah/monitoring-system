@@ -5,7 +5,7 @@ import com.qwerfah.equipment.resources._
 case class Param(
   id: Option[Int],
   uid: Uid,
-  modelId: Int,
+  modelUid: Uid,
   name: String,
   measurmentUnits: Option[String]
 )

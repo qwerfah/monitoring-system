@@ -5,7 +5,7 @@ import com.qwerfah.equipment.resources._
 case class EquipmentInstance(
   id: Option[Int],
   uid: Uid,
-  modelId: Int,
+  modelUid: Uid,
   name: String,
   description: Option[String],
   status: EquipmentStatus

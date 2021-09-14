@@ -18,4 +18,38 @@ object Mappings {
           model.name,
           model.description
         )
+
+    implicit def requestToInstance(
+      request: InstanceRequest
+    ): EquipmentInstance =
+        EquipmentInstance(
+          None,
+          randomUid,
+          request.modelUid,
+          request.name,
+          request.description,
+          request.status
+        )
+
+    implicit def instanceToResponse(
+      instance: EquipmentInstance
+    ): InstanceResponse =
+        InstanceResponse(
+          instance.uid,
+          instance.modelUid,
+          instance.name,
+          instance.description,
+          instance.status
+        )
+
+    implicit def instancesToResponses(
+      instances: Seq[EquipmentInstance]
+    ): Seq[InstanceResponse] =
+        for { instance <- instances } yield InstanceResponse(
+          instance.uid,
+          instance.modelUid,
+          instance.name,
+          instance.description,
+          instance.status
+        )
 }

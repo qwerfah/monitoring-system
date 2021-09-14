@@ -15,7 +15,8 @@ lazy val global = project
       equipment,
       documentation,
       generator,
-      monitoring
+      monitoring,
+      equipmentApi
     )
 
 lazy val common = project
@@ -34,9 +35,7 @@ lazy val gateway = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(
-      common
-    )
+    .dependsOn(common)
 
 lazy val session = project
     .in(file("session-service"))
@@ -45,9 +44,7 @@ lazy val session = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(
-      common
-    )
+    .dependsOn(common)
 
 lazy val reporting = project
     .in(file("reporting-service"))
@@ -56,9 +53,7 @@ lazy val reporting = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(
-      common
-    )
+    .dependsOn(common)
 
 lazy val equipment = project
     .in(file("equipment-service"))
@@ -67,9 +62,7 @@ lazy val equipment = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(
-      common
-    )
+    .dependsOn(common, equipmentApi)
 
 lazy val documentation = project
     .in(file("documentation-service"))
@@ -78,9 +71,7 @@ lazy val documentation = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(
-      common
-    )
+    .dependsOn(common)
 
 lazy val generator = project
     .in(file("generator-service"))
@@ -89,9 +80,7 @@ lazy val generator = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(
-      common
-    )
+    .dependsOn(common)
 
 lazy val monitoring = project
     .in(file("monitoring-service"))
@@ -100,9 +89,16 @@ lazy val monitoring = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(
-      common
+    .dependsOn(common)
+
+lazy val equipmentApi = project
+    .in(file("equipment-service-api"))
+    .settings(
+      name := "equipment-service-api",
+      settings,
+      libraryDependencies ++= commonDependencies
     )
+    .disablePlugins(AssemblyPlugin)
 
 lazy val commonDependencies = Seq(
   "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2",

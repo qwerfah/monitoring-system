@@ -1,4 +1,4 @@
-package models
+package com.qwerfah.equipment.models
 
 import slick.lifted.Tag
 import slick.model.Table

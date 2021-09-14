@@ -1,4 +1,4 @@
-package repos
+package com.qwerfah.equipment.repos
 
 /** Database manager trait. Services are suppose to use dbManager to explicitly
   * separate repository concept from db mechanism. Also provides ability to

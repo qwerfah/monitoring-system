@@ -1,4 +1,4 @@
-package models
+package com.qwerfah.equipment.models
 
 case class Param(
   id: Option[Int],

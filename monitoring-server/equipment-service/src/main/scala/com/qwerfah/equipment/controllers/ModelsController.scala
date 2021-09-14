@@ -1,4 +1,4 @@
-package controllers
+package com.qwerfah.equipment.controllers
 
 import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -15,13 +15,14 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 import io.finch.circe._
 
-import services._
-import repos.slick._
-import services.default._
-import models._
+import com.qwerfah.equipment.services._
+import com.qwerfah.equipment.repos.slick._
+import com.qwerfah.equipment.services.default._
+import com.qwerfah.equipment.models._
+import com.qwerfah.equipment.Startup
 
 object ModelsController {
-    import startup.Startup._
+    import Startup._
 
     def encodeErrorList(es: List[Exception]): Json = {
         val messages = es.map(x => Json.fromString(x.getMessage))

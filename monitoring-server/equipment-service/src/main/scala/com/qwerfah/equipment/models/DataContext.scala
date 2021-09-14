@@ -1,4 +1,4 @@
-package models
+package com.qwerfah.equipment.models
 
 import slick.jdbc.JdbcProfile
 import slick.jdbc.meta.MTable

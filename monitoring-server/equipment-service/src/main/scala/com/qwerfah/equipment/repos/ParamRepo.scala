@@ -1,6 +1,6 @@
-package repos
+package com.qwerfah.equipment.repos
 
-import models._
+import com.qwerfah.equipment.models._
 
 /** Equipment model params repository DSL. */
 trait ParamRepo[DB[_]] {

@@ -1,4 +1,4 @@
-package startup
+package com.qwerfah.equipment
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -8,10 +8,10 @@ import slick.jdbc.{PostgresProfile, JdbcProfile}
 import slick.jdbc.JdbcBackend.Database
 import slick.dbio._
 
-import models._
-import repos.slick._
-import repos._
-import services.default._
+import com.qwerfah.equipment.models._
+import com.qwerfah.equipment.repos.slick._
+import com.qwerfah.equipment.repos._
+import com.qwerfah.equipment.services.default._
 
 import com.rms.miu.slickcats.DBIOInstances._
 

@@ -1,10 +1,10 @@
-package repos.slick
+package com.qwerfah.equipment.repos.slick
 
 import slick.dbio._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-import repos._
-import models._
+import com.qwerfah.equipment.repos._
+import com.qwerfah.equipment.models._
 
 class SlickParamRepo(implicit val context: DataContext)
   extends ParamRepo[DBIO] {

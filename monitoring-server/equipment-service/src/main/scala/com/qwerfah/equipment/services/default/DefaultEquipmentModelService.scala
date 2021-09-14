@@ -1,11 +1,11 @@
-package services.default
+package com.qwerfah.equipment.services.default
 
 import cats.Monad
 import cats.implicits._
 
-import repos._
-import models._
-import services._
+import com.qwerfah.equipment.repos._
+import com.qwerfah.equipment.models._
+import com.qwerfah.equipment.services._
 import cats.data.OptionT
 
 class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit

@@ -1,6 +1,6 @@
-package services
+package com.qwerfah.equipment.services
 
-import models._
+import com.qwerfah.equipment.models._
 import slick.lifted.TableQuery
 
 trait EquipmentModelService[F[_]] {

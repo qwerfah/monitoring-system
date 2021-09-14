@@ -1,4 +1,4 @@
-package models
+package com.qwerfah.equipment.models
 
 /** Equipment instance functioning status. */
 object EquipmentStatus extends Enumeration {

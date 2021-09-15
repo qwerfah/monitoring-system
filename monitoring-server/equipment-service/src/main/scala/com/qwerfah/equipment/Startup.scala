@@ -21,9 +21,9 @@ import com.rms.miu.slickcats.DBIOInstances._
   */
 object Startup {
     // Db dependencies
-    implicit val pgdb: Database = Database.forConfig("postgres")
+    implicit val pgdb = Database.forConfig("postgres")
     implicit val dbProfile = PostgresProfile
-    implicit val context: DataContext = new DataContext
+    implicit val context = new DataContext
 
     // Repository dependencies
     implicit val modelRepo = new SlickEquipmentModelRepo
@@ -32,9 +32,9 @@ object Startup {
     implicit val dbManager = new SlickDbManager
 
     // Service dependencies
-    implicit val modelService =
+    implicit val defaultModelService =
         new DefaultEquipmentModelService[Future, DBIO]
-    implicit val instanceService =
+    implicit val defaultInstanceService =
         new DefaultEquipmentInstanceService[Future, DBIO]
 
     def startup() =

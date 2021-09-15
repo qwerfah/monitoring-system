@@ -1,14 +1,18 @@
+package com.qwerfah.equipment
+
 import com.twitter.finagle.{Http, ListeningServer}
 import com.twitter.server.TwitterServer
 import com.twitter.finagle.http.{Request, Response}
 
+import com.qwerfah.equipment.controllers._
 import io.finch.Application
 
-import com.qwerfah.equipment.controllers._
-import com.qwerfah.equipment.Startup
+import io.finch.circe._
+import io.circe.generic.auto._
 
 object Main extends TwitterServer {
     import Startup._
+    import Encoders._
 
     startup()
 

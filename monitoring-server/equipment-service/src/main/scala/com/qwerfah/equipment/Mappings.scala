@@ -109,4 +109,36 @@ object Mappings {
           instance.description,
           instance.status
         )
+
+    implicit def addRequestToParam(request: AddParamRequest): Param = Param(
+      None,
+      randomUid,
+      request.modelUid,
+      request.name,
+      request.measurmentUnits
+    )
+
+    implicit def updateRequestToParam(request: UpdateParamRequest): Param =
+        Param(
+          None,
+          randomUid,
+          randomUid,
+          request.name,
+          request.measurmentUnits
+        )
+
+    implicit def paramToResponse(param: Param): ParamResponse = ParamResponse(
+      param.uid,
+      param.modelUid,
+      param.name,
+      param.measurmentUnits
+    )
+
+    implicit def paramsToResponses(params: Seq[Param]): Seq[ParamResponse] =
+        for { param <- params } yield ParamResponse(
+          param.uid,
+          param.modelUid,
+          param.name,
+          param.measurmentUnits
+        )
 }

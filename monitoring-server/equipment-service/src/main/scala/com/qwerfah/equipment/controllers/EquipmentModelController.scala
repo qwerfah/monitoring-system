@@ -23,6 +23,8 @@ object EquipmentModelController {
     import Startup._
 
     private val modelService = implicitly[EquipmentModelService[Future]]
+    private val instanceService = implicitly[EquipmentInstanceService[Future]]
+    private val paramService = implicitly[ParamService[Future]]
 
     private val getModels = get("models") {
         for { result <- modelService.get } yield result match {
@@ -38,6 +40,30 @@ object EquipmentModelController {
             case ServiceResult(model) => Ok(model)
             case ServiceEmpty => NotFound(new Exception("Model not found"))
         }
+    } handle { case e: Exception =>
+        InternalServerError(e)
+    }
+
+    private val getModelInstances = get("models" :: path[Uid] :: "instances") {
+        uid: Uid =>
+            for {
+                result <- instanceService.getByModelUid(uid)
+            } yield result match {
+                case ServiceResult(instances) => Ok(instances)
+                case ServiceEmpty => NotFound(new Exception("Model not found"))
+            }
+    } handle { case e: Exception =>
+        InternalServerError(e)
+    }
+
+    private val getModelParams = get("models" :: path[Uid] :: "params") {
+        uid: Uid =>
+            for {
+                result <- paramService.getByModelUid(uid)
+            } yield result match {
+                case ServiceResult(params) => Ok(params)
+                case ServiceEmpty => NotFound(new Exception("Model not found"))
+            }
     } handle { case e: Exception =>
         InternalServerError(e)
     }
@@ -80,5 +106,5 @@ object EquipmentModelController {
     }
 
     val api =
-        getModels :+: getModel :+: addModel :+: updateModel :+: deleteModel
+        getModels :+: getModel :+: getModelInstances :+: getModelParams :+: addModel :+: updateModel :+: deleteModel
 }

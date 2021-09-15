@@ -26,7 +26,7 @@ object EquipmentInstanceController {
 
     private val getInstances = get("instances") {
         for { result <- instanceService.get } yield result match {
-            case ServiceResult(models) => Ok(models)
+            case ServiceResult(instances) => Ok(instances)
             case ServiceEmpty => NotFound(new Exception("Instance not found"))
         }
     } handle { case e: Exception =>
@@ -35,7 +35,7 @@ object EquipmentInstanceController {
 
     private val getInstance = get("instances" :: path[Uid]) { uid: Uid =>
         for { result <- instanceService.getByUid(uid) } yield result match {
-            case ServiceResult(model) => Ok(model)
+            case ServiceResult(instance) => Ok(instance)
             case ServiceEmpty => NotFound(new Exception("Instance not found"))
         }
     } handle { case e: Exception =>
@@ -48,7 +48,7 @@ object EquipmentInstanceController {
                 for {
                     result <- instanceService.add(request)
                 } yield result match {
-                    case ServiceResult(model) => Ok(model)
+                    case ServiceResult(instance) => Ok(instance)
                     case ServiceEmpty =>
                         NotFound(new Exception("Model not found"))
                 }

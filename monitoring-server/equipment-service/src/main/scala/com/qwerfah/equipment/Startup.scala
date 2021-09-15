@@ -36,6 +36,8 @@ object Startup {
         new DefaultEquipmentModelService[Future, DBIO]
     implicit val defaultInstanceService =
         new DefaultEquipmentInstanceService[Future, DBIO]
+    implicit val defaultParamService =
+        new DefaultParamService[Future, DBIO]
 
     def startup() =
         Await.result(dbManager.execute(context.setup), Duration.Inf)

@@ -19,7 +19,7 @@ object Main extends TwitterServer {
     val server =
         Http.serve(
           ":8081",
-          (EquipmentModelController.api :+: EquipmentInstanceController.api)
+          (EquipmentModelController.api :+: EquipmentInstanceController.api :+: ParamController.api)
               .toServiceAs[Application.Json]
         )
     onExit { server.close() }

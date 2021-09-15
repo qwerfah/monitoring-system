@@ -26,7 +26,9 @@ trait EquipmentInstanceRepo[DB[_]] {
       * @return
       *   Equipment instance with given uid or None if not found.
       */
-    def getByGuid(uid: Uid): DB[Option[EquipmentInstance]]
+    def getByUid(uid: Uid): DB[Option[EquipmentInstance]]
+
+    def getByModelUid
 
     /** Add new instance to db table.
       * @param instance
@@ -58,7 +60,7 @@ trait EquipmentInstanceRepo[DB[_]] {
       * @return
       *   Number of storage records affected (1 if successfull, otherwise 0).
       */
-    def removeByGuid(uid: Uid): DB[Int]
+    def removeByUid(uid: Uid): DB[Int]
 }
 
 /** Defines apply method to get implicitily defined equipment instance

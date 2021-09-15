@@ -26,7 +26,7 @@ trait EquipmentModelRepo[DB[_]] {
       * @return
       *   Equipment model with given uid or None if not found.
       */
-    def getByGuid(uid: Uid): DB[Option[EquipmentModel]]
+    def getByUid(uid: Uid): DB[Option[EquipmentModel]]
 
     /** Add new equipment model to the storage.
       * @param model
@@ -58,7 +58,7 @@ trait EquipmentModelRepo[DB[_]] {
       * @return
       *   Number of storage records affected (1 if successfull, otherwise 0).
       */
-    def removeByGuid(uid: Uid): DB[Int]
+    def removeByUid(uid: Uid): DB[Int]
 }
 
 /** Defines apply method to get implicitily defined equipment models repository

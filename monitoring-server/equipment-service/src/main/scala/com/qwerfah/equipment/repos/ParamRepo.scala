@@ -3,8 +3,14 @@ package com.qwerfah.equipment.repos
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
 
-/** Equipment model params repository DSL. */
+/** Equipment model parameters repository DSL. */
 trait ParamRepo[DB[_]] {
+
+    /** Get all parameters in repository.
+      * @return
+      *   All parameters in repository.
+      */
+    def get: DB[Seq[Param]]
 
     /** Get model parameter by its internal id.
       * @param id
@@ -20,7 +26,15 @@ trait ParamRepo[DB[_]] {
       * @return
       *   Parameter with specified uid or None if not found.
       */
-    def getByGuid(uid: Uid): DB[Option[Param]]
+    def getByUid(uid: Uid): DB[Option[Param]]
+
+    /** Get all parameters of specified equipment model.
+      * @param modelUid
+      *   Equipment model uid.
+      * @return
+      *   All parameters of specified equipment model
+      */
+    def getByModelUid(modelUid: Uid): DB[Seq[Param]]
 
     /** Add new model parameter to storage.
       * @param param
@@ -52,7 +66,7 @@ trait ParamRepo[DB[_]] {
       * @return
       *   Number of records in storage affected (1 if successfull, otherwise 0).
       */
-    def removeByGuid(uid: Uid): DB[Int]
+    def removeByUid(uid: Uid): DB[Int]
 }
 
 /** Defines apply method to get implicitily defined model parameters repository

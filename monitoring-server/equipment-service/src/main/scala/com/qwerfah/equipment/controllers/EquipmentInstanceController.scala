@@ -34,7 +34,7 @@ object EquipmentInstanceController {
     }
 
     private val getInstance = get("instances" :: path[Uid]) { uid: Uid =>
-        for { result <- instanceService.getByGuid(uid) } yield result match {
+        for { result <- instanceService.getByUid(uid) } yield result match {
             case ServiceResult(model) => Ok(model)
             case ServiceEmpty => NotFound(new Exception("Instance not found"))
         }
@@ -72,7 +72,7 @@ object EquipmentInstanceController {
 
     private val deleteInstance = delete("instances" :: path[Uid]) { uid: Uid =>
         for {
-            result <- instanceService.removeByGuid(uid)
+            result <- instanceService.removeByUid(uid)
         } yield result match {
             case ServiceResult(message) => Ok(message)
             case ServiceEmpty =>

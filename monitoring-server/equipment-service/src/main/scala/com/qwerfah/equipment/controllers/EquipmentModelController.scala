@@ -34,7 +34,7 @@ object EquipmentModelController {
     }
 
     private val getModel = get("models" :: path[Uid]) { uid: Uid =>
-        for { result <- modelService.getByGuid(uid) } yield result match {
+        for { result <- modelService.getByUid(uid) } yield result match {
             case ServiceResult(model) => Ok(model)
             case ServiceEmpty => NotFound(new Exception("Model not found"))
         }
@@ -69,7 +69,7 @@ object EquipmentModelController {
 
     private val deleteModel = delete("models" :: path[Uid]) { guid: Uid =>
         for {
-            result <- modelService.removeByGuid(guid)
+            result <- modelService.removeByUid(guid)
         } yield result match {
             case ServiceResult(message) => Ok(message)
             case ServiceEmpty =>

@@ -28,9 +28,9 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
         case None => ServiceEmpty
     }
 
-    override def getByGuid(uid: Uid): F[ServiceResponse[InstanceResponse]] =
+    override def getByUid(uid: Uid): F[ServiceResponse[InstanceResponse]] =
         for {
-            instance <- dbManager.execute(instanceRepo.getByGuid(uid))
+            instance <- dbManager.execute(instanceRepo.getByUid(uid))
         } yield instance match {
             case Some(instance) =>
                 ServiceResult(instance)
@@ -40,7 +40,7 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
     override def add(
       request: AddInstanceRequest
     ): F[ServiceResponse[InstanceResponse]] = {
-        dbManager.execute(modelRepo.getByGuid(request.modelUid)) flatMap {
+        dbManager.execute(modelRepo.getByUid(request.modelUid)) flatMap {
             case Some(model) =>
                 dbManager.execute(instanceRepo.add(request)) map { instance =>
                     ServiceResult(instance)
@@ -84,8 +84,8 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
         case _ => ServiceEmpty
     }
 
-    override def removeByGuid(uid: Uid): F[ServiceResponse[String]] = for {
-        result <- dbManager.execute(instanceRepo.removeByGuid(uid))
+    override def removeByUid(uid: Uid): F[ServiceResponse[String]] = for {
+        result <- dbManager.execute(instanceRepo.removeByUid(uid))
     } yield result match {
         case 1 => ServiceResult("Instance removed")
         case _ => ServiceEmpty

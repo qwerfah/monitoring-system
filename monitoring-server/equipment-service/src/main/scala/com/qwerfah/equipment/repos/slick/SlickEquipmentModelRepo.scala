@@ -10,14 +10,14 @@ import com.qwerfah.equipment.resources._
 
 class SlickEquipmentModelRepo(implicit val context: DataContext)
   extends EquipmentModelRepo[DBIO] {
-    import context.jdbcProfile.api._
+    import context.profile.api._
 
     override def get: DBIO[Seq[EquipmentModel]] = context.models.result
 
     override def getById(id: Int): DBIO[Option[EquipmentModel]] =
         context.models.filter(_.id === id).result.headOption
 
-    override def getByGuid(uid: Uid): DBIO[Option[EquipmentModel]] =
+    override def getByUid(uid: Uid): DBIO[Option[EquipmentModel]] =
         context.models.filter(_.uid === uid).result.headOption
 
     override def add(model: EquipmentModel): DBIO[EquipmentModel] =
@@ -38,7 +38,7 @@ class SlickEquipmentModelRepo(implicit val context: DataContext)
     override def removeById(id: Int): DBIO[Int] =
         context.models.filter(_.id === id).delete
 
-    override def removeByGuid(uid: Uid): DBIO[Int] =
+    override def removeByUid(uid: Uid): DBIO[Int] =
         context.models.filter(_.uid === uid).delete
 
 }

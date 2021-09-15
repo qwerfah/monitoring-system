@@ -4,14 +4,22 @@ import slick.jdbc.JdbcProfile
 import slick.jdbc.meta.MTable
 import scala.concurrent.ExecutionContext.Implicits.global
 
+import enumeratum._
+
 import com.qwerfah.equipment.resources._
+import slick.profile.RelationalProfile
 
 /** Database scheme context base on jdbc profile provided.
   * @param jdbcProfile
   *   Current jdbc profile for interaction with db provider.
   */
-class DataContext(implicit val jdbcProfile: JdbcProfile) {
-    import jdbcProfile.api._
+class DataContext(implicit jdbcProfile: JdbcProfile) extends SlickEnumSupport {
+
+    override val profile = jdbcProfile
+
+    import profile.api._
+
+    implicit lazy val statusMapper = mappedColumnTypeForEnum(EquipmentStatus)
 
     /** Equipment models table definition.
       * @param tag

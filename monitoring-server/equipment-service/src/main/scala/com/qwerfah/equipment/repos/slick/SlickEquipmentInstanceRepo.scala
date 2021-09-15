@@ -20,7 +20,7 @@ class SlickEquipmentInstanceRepo(implicit val context: DataContext)
     override def getByUid(uid: Uid): DBIO[Option[EquipmentInstance]] =
         context.instances.filter(_.uid === uid).result.headOption
 
-    def getByModelUid(modelUid: Uid): DBIO[Seq[EquipmentInstance]] =
+    override def getByModelUid(modelUid: Uid): DBIO[Seq[EquipmentInstance]] =
         context.instances.filter(_.modelUid === modelUid).result
 
     override def add(instance: EquipmentInstance): DBIO[EquipmentInstance] =

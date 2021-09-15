@@ -37,6 +37,12 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
             case None => ServiceEmpty
         }
 
+    override def getByModelUid(
+      modelUid: Uid
+    ): F[ServiceResponse[Seq[InstanceResponse]]] = for {
+        instances <- dbManager.execute(instanceRepo.getByModelUid(modelUid))
+    } yield ServiceResult(instances)
+
     override def add(
       request: AddInstanceRequest
     ): F[ServiceResponse[InstanceResponse]] = {

@@ -1,6 +1,7 @@
 package com.qwerfah.equipment.services.default
 
 import cats.Monad
+import cats.data.EitherT
 import cats.implicits._
 
 import com.qwerfah.equipment.repos._
@@ -37,16 +38,33 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
         }
 
     override def add(
-      request: InstanceRequest
+      request: AddInstanceRequest
     ): F[ServiceResponse[InstanceResponse]] = {
+        dbManager.execute(repo.getByGuid(request.modelUid)) flatMap {
+            case Some(model) =>
+                dbManager.execute(repo.add(request)) map { instance =>
+                    ServiceResult(instance)
+                }
+            case None => Monad[F].pure(ServiceEmpty)
+        }
+        /*
         for {
-            result <- dbManager.execute(repo.add(request))
-        } yield ServiceResult(result)
+            model <- dbManager.execute(repo.getByGuid(request.modelUid))
+            result <- EitherT.cond[F](
+              model.isEmpty,
+              Monad[F].pure(ServiceEmpty),
+              dbManager.execute(repo.add(request))
+            )
+        } yield result match {
+            case ServiceEmpty => ServiceEmpty
+
+        }
+         */
     }
 
     override def update(
       uuid: Uid,
-      request: InstanceRequest
+      request: UpdateInstanceRequest
     ): F[ServiceResponse[String]] = {
         val instance: EquipmentInstance = request
         for {

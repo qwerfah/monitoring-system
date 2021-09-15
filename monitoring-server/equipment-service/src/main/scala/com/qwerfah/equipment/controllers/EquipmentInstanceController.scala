@@ -29,6 +29,8 @@ object EquipmentInstanceController {
             case ServiceResult(models) => Ok(models)
             case ServiceEmpty => NotFound(new Exception("Instance not found"))
         }
+    } handle { case e: Exception =>
+        InternalServerError(e)
     }
 
     private val getInstance = get("instances" :: path[Uid]) { uid: Uid =>
@@ -36,6 +38,8 @@ object EquipmentInstanceController {
             case ServiceResult(model) => Ok(model)
             case ServiceEmpty => NotFound(new Exception("Instance not found"))
         }
+    } handle { case e: Exception =>
+        InternalServerError(e)
     }
 
     private val addInstance =
@@ -46,8 +50,10 @@ object EquipmentInstanceController {
                 } yield result match {
                     case ServiceResult(model) => Ok(model)
                     case ServiceEmpty =>
-                        NotFound(new Exception("Instance not found"))
+                        NotFound(new Exception("Model not found"))
                 }
+        } handle { case e: Exception =>
+            InternalServerError(e)
         }
 
     private val updateInstance =
@@ -72,6 +78,8 @@ object EquipmentInstanceController {
             case ServiceEmpty =>
                 NotFound(new Exception("Instance not found"))
         }
+    } handle { case e: Exception =>
+        InternalServerError(e)
     }
 
     val api =

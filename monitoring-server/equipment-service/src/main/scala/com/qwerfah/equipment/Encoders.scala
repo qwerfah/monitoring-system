@@ -1,9 +1,9 @@
-package com.qwerfah.equipment.controllers
+package com.qwerfah.equipment
 
 import io.circe.{Encoder, Json}
 
-trait Controller {
-    private def encodeErrorList(es: List[Exception]): Json = {
+object Encoders {
+    def encodeErrorList(es: List[Exception]): Json = {
         val messages = es.map(x => Json.fromString(x.getMessage))
         Json.obj("errors" -> Json.arr(messages: _*))
     }

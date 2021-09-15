@@ -19,13 +19,25 @@ object Mappings {
           model.description
         )
 
-    implicit def requestToInstance(
-      request: InstanceRequest
+    implicit def addRequestToInstance(
+      request: AddInstanceRequest
     ): EquipmentInstance =
         EquipmentInstance(
           None,
           randomUid,
           request.modelUid,
+          request.name,
+          request.description,
+          request.status
+        )
+
+    implicit def updateRequestToInstance(
+      request: UpdateInstanceRequest
+    ): EquipmentInstance =
+        EquipmentInstance(
+          None,
+          randomUid,
+          randomUid,
           request.name,
           request.description,
           request.status

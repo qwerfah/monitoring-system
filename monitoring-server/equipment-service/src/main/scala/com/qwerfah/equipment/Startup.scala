@@ -11,6 +11,7 @@ import slick.dbio._
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.repos.slick._
 import com.qwerfah.equipment.repos._
+import com.qwerfah.equipment.services._
 import com.qwerfah.equipment.services.default._
 
 import com.rms.miu.slickcats.DBIOInstances._
@@ -33,6 +34,8 @@ object Startup {
     // Service dependencies
     implicit val modelService =
         new DefaultEquipmentModelService[Future, DBIO]
+    implicit val instanceService =
+        new DefaultEquipmentInstanceService[Future, DBIO]
 
     def startup() =
         Await.result(dbManager.execute(context.setup), Duration.Inf)

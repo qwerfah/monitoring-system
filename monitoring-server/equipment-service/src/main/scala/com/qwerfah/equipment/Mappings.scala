@@ -3,13 +3,33 @@ package com.qwerfah.equipment
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
 
+/** Provides implicit mappings for different resources. */
 object Mappings {
+
+    /** Equipment model request to equipment model mapping.
+      * @param request
+      *   Equipment model request.
+      * @return
+      *   Equipment model.
+      */
     implicit def requestToModel(request: ModelRequest): EquipmentModel =
         EquipmentModel(None, randomUid, request.name, request.description)
 
+    /** Equipment model to equipment model response mapping.
+      * @param model
+      *   Equipment model.
+      * @return
+      *   Equipment model response.
+      */
     implicit def modelToResponse(model: EquipmentModel): ModelResponse =
         ModelResponse(model.uid, model.name, model.description)
 
+    /** Equipment model sequence to equipment model resource sequence mapping.
+      * @param models
+      *   Equipment model sequence.
+      * @return
+      *   Equipment model resource sequence.
+      */
     implicit def modelsToResponses(
       models: Seq[EquipmentModel]
     ): Seq[ModelResponse] =
@@ -19,6 +39,12 @@ object Mappings {
           model.description
         )
 
+    /** Equipment instance adding request to equipment instance mapping.
+      * @param request
+      *   Equipment instance adding request.
+      * @return
+      *   Equipment instance.
+      */
     implicit def addRequestToInstance(
       request: AddInstanceRequest
     ): EquipmentInstance =
@@ -31,6 +57,12 @@ object Mappings {
           request.status
         )
 
+    /** Equipment instance updating request to equipment instance mapping.
+      * @param request
+      *   Equipment instance updating request.
+      * @return
+      *   Equipment instance.
+      */
     implicit def updateRequestToInstance(
       request: UpdateInstanceRequest
     ): EquipmentInstance =
@@ -43,6 +75,12 @@ object Mappings {
           request.status
         )
 
+    /** Equipment instance to equipment instance response mapping.
+      * @param instance
+      *   Equipment instance.
+      * @return
+      *   Equipment instance response.
+      */
     implicit def instanceToResponse(
       instance: EquipmentInstance
     ): InstanceResponse =
@@ -54,6 +92,13 @@ object Mappings {
           instance.status
         )
 
+    /** Equipment instance sequence to equipment instance response sequence
+      * mapping.
+      * @param instances
+      *   Equipment instance sequence.
+      * @return
+      *   Equipment instance response sequence.
+      */
     implicit def instancesToResponses(
       instances: Seq[EquipmentInstance]
     ): Seq[InstanceResponse] =

@@ -111,7 +111,9 @@ lazy val commonDependencies = Seq(
   "com.github.finagle" %% "finchx-circe" % "0.32.1",
   "io.circe" %% "circe-generic" % "0.14.1",
   "com.twitter" %% "twitter-server" % "21.8.0",
-  "com.rms.miu" %% "slick-cats" % "0.10.4"
+  "com.rms.miu" %% "slick-cats" % "0.10.4",
+  "com.beachape" %% "enumeratum-circe" % "1.7.0",
+  "com.beachape" %% "enumeratum-slick" % "1.7.0"
 )
 
 lazy val settings = Seq(

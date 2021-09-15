@@ -12,8 +12,6 @@ import io.finch._
 import io.finch.circe._
 
 import io.circe.generic.auto._
-import io.circe.syntax._
-import io.circe.{Encoder, Json}
 
 import com.qwerfah.equipment.services._
 import com.qwerfah.equipment.repos.slick._
@@ -21,7 +19,7 @@ import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Startup
 
-object EquipmentModelController extends Controller {
+object EquipmentModelController {
     import Startup._
 
     private val modelService = implicitly[EquipmentModelService[Future]]

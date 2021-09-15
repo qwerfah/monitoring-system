@@ -12,16 +12,14 @@ import io.finch._
 import io.finch.circe._
 
 import io.circe.generic.auto._
-import io.circe.syntax._
-import io.circe.{Encoder, Json}
 
 import com.qwerfah.equipment.services._
 import com.qwerfah.equipment.repos.slick._
+import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Startup
-import com.qwerfah.equipment.services.default.DefaultEquipmentInstanceService
 
-object EquipmentInstanceController extends Controller {
+object EquipmentInstanceController {
     import Startup._
 
     private val instanceService = implicitly[EquipmentInstanceService[Future]]

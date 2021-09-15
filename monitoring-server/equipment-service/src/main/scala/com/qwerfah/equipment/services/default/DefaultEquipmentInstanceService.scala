@@ -1,7 +1,6 @@
 package com.qwerfah.equipment.services.default
 
 import cats.Monad
-import cats.data.EitherT
 import cats.implicits._
 
 import com.qwerfah.equipment.repos._
@@ -11,17 +10,18 @@ import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Mappings
 
 class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
-  repo: EquipmentInstanceRepo[DB],
+  modelRepo: EquipmentModelRepo[DB],
+  instanceRepo: EquipmentInstanceRepo[DB],
   dbManager: DbManager[F, DB]
 ) extends EquipmentInstanceService[F] {
     import Mappings._
 
     override def get: F[ServiceResponse[Seq[InstanceResponse]]] = for {
-        instances <- dbManager.execute(repo.get)
+        instances <- dbManager.execute(instanceRepo.get)
     } yield ServiceResult(instances)
 
     override def getById(id: Int): F[ServiceResponse[InstanceResponse]] = for {
-        instance <- dbManager.execute(repo.getById(id))
+        instance <- dbManager.execute(instanceRepo.getById(id))
     } yield instance match {
         case Some(instance) =>
             ServiceResult(instance)
@@ -30,7 +30,7 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
 
     override def getByGuid(uid: Uid): F[ServiceResponse[InstanceResponse]] =
         for {
-            instance <- dbManager.execute(repo.getByGuid(uid))
+            instance <- dbManager.execute(instanceRepo.getByGuid(uid))
         } yield instance match {
             case Some(instance) =>
                 ServiceResult(instance)
@@ -40,9 +40,9 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
     override def add(
       request: AddInstanceRequest
     ): F[ServiceResponse[InstanceResponse]] = {
-        dbManager.execute(repo.getByGuid(request.modelUid)) flatMap {
+        dbManager.execute(modelRepo.getByGuid(request.modelUid)) flatMap {
             case Some(model) =>
-                dbManager.execute(repo.add(request)) map { instance =>
+                dbManager.execute(instanceRepo.add(request)) map { instance =>
                     ServiceResult(instance)
                 }
             case None => Monad[F].pure(ServiceEmpty)
@@ -68,7 +68,9 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
     ): F[ServiceResponse[String]] = {
         val instance: EquipmentInstance = request
         for {
-            result <- dbManager.execute(repo.update(instance.copy(uid = uuid)))
+            result <- dbManager.execute(
+              instanceRepo.update(instance.copy(uid = uuid))
+            )
         } yield result match {
             case 1 => ServiceResult("Instance updated")
             case _ => ServiceEmpty
@@ -76,14 +78,14 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
     }
 
     override def removeById(id: Int): F[ServiceResponse[String]] = for {
-        result <- dbManager.execute(repo.removeById(id))
+        result <- dbManager.execute(instanceRepo.removeById(id))
     } yield result match {
         case 1 => ServiceResult("Instance removed")
         case _ => ServiceEmpty
     }
 
     override def removeByGuid(uid: Uid): F[ServiceResponse[String]] = for {
-        result <- dbManager.execute(repo.removeByGuid(uid))
+        result <- dbManager.execute(instanceRepo.removeByGuid(uid))
     } yield result match {
         case 1 => ServiceResult("Instance removed")
         case _ => ServiceEmpty

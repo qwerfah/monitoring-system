@@ -6,6 +6,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import com.qwerfah.equipment.repos._
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
+import com.qwerfah.common.Uid
 
 class SlickParamRepo(implicit val context: DataContext)
   extends ParamRepo[DBIO] {

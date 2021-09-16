@@ -2,6 +2,7 @@ package com.qwerfah.equipment.repos
 
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
+import com.qwerfah.common.Uid
 
 /** Equipment instance repository DSL. */
 trait EquipmentInstanceRepo[DB[_]] {

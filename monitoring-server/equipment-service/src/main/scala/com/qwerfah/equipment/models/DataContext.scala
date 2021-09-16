@@ -7,7 +7,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import enumeratum._
 
 import com.qwerfah.equipment.resources._
-import slick.profile.RelationalProfile
+import com.qwerfah.common.{Uid, randomUid}
 
 /** Database scheme context base on jdbc profile provided.
   * @param jdbcProfile
@@ -38,13 +38,13 @@ class DataContext(implicit jdbcProfile: JdbcProfile) extends SlickEnumSupport {
         def name = column[String]("NAME")
 
         /** Model description (optional). */
-        def description = column[String]("DESCRIPTION")
+        def description = column[Option[String]]("DESCRIPTION")
 
         def * = (
           id.?,
           uid,
           name,
-          description.?
+          description
         ).<>(EquipmentModel.tupled, EquipmentModel.unapply)
     }
 
@@ -67,14 +67,14 @@ class DataContext(implicit jdbcProfile: JdbcProfile) extends SlickEnumSupport {
         def name = column[String]("NAME")
 
         /** Model param measurment units (optional). */
-        def measurmentUnits = column[String]("MEASURMENT_UNITS")
+        def measurmentUnits = column[Option[String]]("MEASURMENT_UNITS")
 
         def * = (
           id.?,
           uid,
           modelUid,
           name,
-          measurmentUnits.?
+          measurmentUnits
         ).<>(Param.tupled, Param.unapply)
 
         def model = foreignKey("MODEL_FK", modelUid, models)(_.uid)
@@ -113,7 +113,7 @@ class DataContext(implicit jdbcProfile: JdbcProfile) extends SlickEnumSupport {
         def name = column[String]("NAME")
 
         /** Instance description. */
-        def description = column[String]("DESCRIPTION")
+        def description = column[Option[String]]("DESCRIPTION")
 
         /** Equipment instance status. */
         def status = column[EquipmentStatus]("STATUS")
@@ -123,7 +123,7 @@ class DataContext(implicit jdbcProfile: JdbcProfile) extends SlickEnumSupport {
           uid,
           modelUid,
           name,
-          description.?,
+          description,
           status
         ).<>(EquipmentInstance.tupled, EquipmentInstance.unapply)
 

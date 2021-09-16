@@ -1,6 +1,6 @@
 package com.qwerfah.equipment.models
 
-import com.qwerfah.equipment.resources._
+import com.qwerfah.common.Uid
 
 case class EquipmentModel(
   id: Option[Int],

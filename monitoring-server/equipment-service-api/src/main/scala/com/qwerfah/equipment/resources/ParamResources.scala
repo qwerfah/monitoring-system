@@ -1,5 +1,7 @@
 package com.qwerfah.equipment.resources
 
+import com.qwerfah.common.Uid
+
 final case class AddParamRequest(
   modelUid: Uid,
   name: String,

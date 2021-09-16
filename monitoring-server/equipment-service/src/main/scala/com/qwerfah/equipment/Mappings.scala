@@ -2,6 +2,7 @@ package com.qwerfah.equipment
 
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
+import com.qwerfah.common.randomUid
 
 /** Provides implicit mappings for different resources. */
 object Mappings {

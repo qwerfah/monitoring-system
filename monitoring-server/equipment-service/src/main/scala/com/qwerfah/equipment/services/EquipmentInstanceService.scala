@@ -1,6 +1,7 @@
 package com.qwerfah.equipment.services
 
 import com.qwerfah.equipment.resources._
+import com.qwerfah.common.Uid
 
 trait EquipmentInstanceService[F[_]] {
     def get: F[ServiceResponse[Seq[InstanceResponse]]]

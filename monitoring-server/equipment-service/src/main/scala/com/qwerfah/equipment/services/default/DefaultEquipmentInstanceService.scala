@@ -8,6 +8,7 @@ import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.services._
 import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Mappings
+import com.qwerfah.common.Uid
 
 class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
   modelRepo: EquipmentModelRepo[DB],
@@ -72,14 +73,23 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
       uuid: Uid,
       request: UpdateInstanceRequest
     ): F[ServiceResponse[String]] = {
-        val instance: EquipmentInstance = request
-        for {
-            result <- dbManager.execute(
-              instanceRepo.update(instance.copy(uid = uuid))
-            )
-        } yield result match {
-            case 1 => ServiceResult("Instance updated")
-            case _ => ServiceEmpty
+        val updated: EquipmentInstance = request
+
+        dbManager.execute(instanceRepo.getByUid(uuid)) flatMap {
+            case Some(instance) =>
+                dbManager.execute(
+                  instanceRepo.update(
+                    updated.copy(
+                      id = instance.id,
+                      uid = uuid,
+                      modelUid = instance.modelUid
+                    )
+                  )
+                ) map {
+                    case 1 => ServiceResult("Instance updated")
+                    case _ => ServiceEmpty
+                }
+            case None => Monad[F].pure(ServiceEmpty)
         }
     }
 

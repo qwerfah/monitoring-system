@@ -20,9 +20,9 @@ lazy val global = project
     )
 
 lazy val common = project
-    .in(file("common-service"))
+    .in(file("common"))
     .settings(
-      name := "common-service",
+      name := "common",
       settings,
       libraryDependencies ++= commonDependencies
     )
@@ -98,6 +98,7 @@ lazy val equipmentApi = project
       settings,
       libraryDependencies ++= commonDependencies
     )
+    .dependsOn(common)
     .disablePlugins(AssemblyPlugin)
 
 lazy val commonDependencies = Seq(
@@ -113,11 +114,14 @@ lazy val commonDependencies = Seq(
   "com.twitter" %% "twitter-server" % "21.8.0",
   "com.rms.miu" %% "slick-cats" % "0.10.4",
   "com.beachape" %% "enumeratum-circe" % "1.7.0",
-  "com.beachape" %% "enumeratum-slick" % "1.7.0"
+  "com.beachape" %% "enumeratum-slick" % "1.7.0",
+  "io.circe" %% "circe-json-schema" % "0.2.0",
+  "io.circe" % "circe-literal_2.12" % "0.15.0-M1"
 )
 
 lazy val settings = Seq(
-  scalacOptions ++= compilerOptions
+  scalacOptions ++= compilerOptions,
+  resolvers += "jitpack".at("https://jitpack.io")
 )
 
 lazy val compilerOptions = Seq(

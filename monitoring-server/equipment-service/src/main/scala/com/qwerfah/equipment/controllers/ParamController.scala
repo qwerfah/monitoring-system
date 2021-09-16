@@ -18,9 +18,12 @@ import com.qwerfah.equipment.repos.slick._
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Startup
+import com.qwerfah.common.Uid
+import com.qwerfah.equipment.json.Decoders
 
 object ParamController {
     import Startup._
+    import Decoders._
 
     private val paramService = implicitly[ParamService[Future]]
 

@@ -17,10 +17,14 @@ import com.qwerfah.equipment.services._
 import com.qwerfah.equipment.repos.slick._
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
+import com.qwerfah.common.Exceptions._
+import com.qwerfah.common.Uid
 import com.qwerfah.equipment.Startup
+import com.qwerfah.equipment.json.Decoders
 
 object EquipmentInstanceController {
     import Startup._
+    import Decoders._
 
     private val instanceService = implicitly[EquipmentInstanceService[Future]]
 
@@ -52,8 +56,10 @@ object EquipmentInstanceController {
                     case ServiceEmpty =>
                         NotFound(new Exception("Model not found"))
                 }
-        } handle { case e: Exception =>
-            InternalServerError(e)
+        } handle {
+            case e: InvalidJsonBodyException => BadRequest(e)
+            case e: Exception =>
+                InternalServerError(e)
         }
 
     private val updateInstance =
@@ -66,8 +72,10 @@ object EquipmentInstanceController {
                     case ServiceEmpty =>
                         NotFound(new Exception("Instance not found"))
                 }
-        } handle { case e: Exception =>
-            BadRequest(e)
+        } handle {
+            case e: InvalidJsonBodyException => BadRequest(e)
+            case e: Exception =>
+                InternalServerError(e)
         }
 
     private val deleteInstance = delete("instances" :: path[Uid]) { uid: Uid =>

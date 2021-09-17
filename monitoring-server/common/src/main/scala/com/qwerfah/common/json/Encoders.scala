@@ -1,4 +1,4 @@
-package com.qwerfah.equipment.json
+package com.qwerfah.common.json
 
 import io.circe.{Encoder, Json}
 

@@ -9,7 +9,7 @@ import io.finch.circe._
 import io.circe.generic.auto._
 
 import com.qwerfah.equipment.controllers._
-import com.qwerfah.equipment.json.Encoders
+import com.qwerfah.common.json.Encoders
 
 object Main extends TwitterServer {
     import Startup._

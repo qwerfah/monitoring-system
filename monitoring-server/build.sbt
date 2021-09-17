@@ -16,7 +16,8 @@ lazy val global = project
       documentation,
       generator,
       monitoring,
-      equipmentApi
+      equipmentApi,
+      sessionApi
     )
 
 lazy val common = project
@@ -44,7 +45,7 @@ lazy val session = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(common)
+    .dependsOn(common, sessionApi)
 
 lazy val reporting = project
     .in(file("reporting-service"))
@@ -101,6 +102,16 @@ lazy val equipmentApi = project
     .dependsOn(common)
     .disablePlugins(AssemblyPlugin)
 
+lazy val sessionApi = project
+    .in(file("session-service-api"))
+    .settings(
+      name := "session-service-api",
+      settings,
+      libraryDependencies ++= commonDependencies
+    )
+    .dependsOn(common)
+    .disablePlugins(AssemblyPlugin)
+
 lazy val commonDependencies = Seq(
   "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2",
   "com.typesafe.slick" %% "slick" % "3.3.3",
@@ -110,13 +121,14 @@ lazy val commonDependencies = Seq(
   "com.lambdista" %% "config" % "0.7.1",
   "com.github.finagle" %% "finchx-core" % "0.32.1",
   "com.github.finagle" %% "finchx-circe" % "0.32.1",
+  "com.github.finagle" % "finagle-http-auth_2.12" % "0.1.0",
   "io.circe" %% "circe-generic" % "0.14.1",
+  "io.circe" %% "circe-json-schema" % "0.2.0",
+  "io.circe" % "circe-literal_2.12" % "0.15.0-M1",
   "com.twitter" %% "twitter-server" % "21.8.0",
   "com.rms.miu" %% "slick-cats" % "0.10.4",
   "com.beachape" %% "enumeratum-circe" % "1.7.0",
-  "com.beachape" %% "enumeratum-slick" % "1.7.0",
-  "io.circe" %% "circe-json-schema" % "0.2.0",
-  "io.circe" % "circe-literal_2.12" % "0.15.0-M1"
+  "com.beachape" %% "enumeratum-slick" % "1.7.0"
 )
 
 lazy val settings = Seq(

@@ -37,40 +37,40 @@ class DataContext(implicit jdbcProfile: JdbcProfile) extends SlickEnumSupport {
           password,
           role
         ).<>(User.tupled, User.unapply)
-
-        val users = TableQuery[UserTable]
-        val setup = DBIO.seq(
-          // Create db schema
-          users.schema.createIfNotExists,
-          // Add default users
-          users.exists.result flatMap { exisits =>
-              if (!exisits) users ++= initialUsers
-              else DBIO.successful(None)
-          }
-        )
-
-        val initialUsers = Seq(
-          User(
-            Some(1),
-            randomUid,
-            "user_1",
-            MessageDigest.getInstance("MD5").digest("password_1".getBytes),
-            UserRole.SystemAdmin
-          ),
-          User(
-            Some(2),
-            randomUid,
-            "user_2",
-            MessageDigest.getInstance("MD5").digest("password_2".getBytes),
-            UserRole.EquipmentAdmin
-          ),
-          User(
-            Some(3),
-            randomUid,
-            "user_3",
-            MessageDigest.getInstance("MD5").digest("password_3".getBytes),
-            UserRole.EquipmentUser
-          )
-        )
     }
+
+    val users = TableQuery[UserTable]
+    val setup = DBIO.seq(
+      // Create db schema
+      users.schema.createIfNotExists,
+      // Add default users
+      users.exists.result flatMap { exisits =>
+          if (!exisits) users ++= initialUsers
+          else DBIO.successful(None)
+      }
+    )
+
+    val initialUsers = Seq(
+      User(
+        Some(1),
+        randomUid,
+        "user_1",
+        MessageDigest.getInstance("MD5").digest("password_1".getBytes),
+        UserRole.SystemAdmin
+      ),
+      User(
+        Some(2),
+        randomUid,
+        "user_2",
+        MessageDigest.getInstance("MD5").digest("password_2".getBytes),
+        UserRole.EquipmentAdmin
+      ),
+      User(
+        Some(3),
+        randomUid,
+        "user_3",
+        MessageDigest.getInstance("MD5").digest("password_3".getBytes),
+        UserRole.EquipmentUser
+      )
+    )
 }

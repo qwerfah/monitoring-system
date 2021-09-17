@@ -1,4 +1,4 @@
-package com.qwerfah.equipment.services
+package com.qwerfah.common.services
 
 /** Represent result of any service implementation method. */
 sealed trait ServiceResponse[+T]

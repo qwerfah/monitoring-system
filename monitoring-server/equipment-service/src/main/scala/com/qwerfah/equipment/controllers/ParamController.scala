@@ -18,8 +18,10 @@ import com.qwerfah.equipment.repos.slick._
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Startup
-import com.qwerfah.common.Uid
 import com.qwerfah.equipment.json.Decoders
+import com.qwerfah.common.Uid
+import com.qwerfah.common.services._
+import com.qwerfah.common.Exceptions._
 
 object ParamController {
     import Startup._
@@ -55,8 +57,10 @@ object ParamController {
                     case ServiceEmpty =>
                         NotFound(new Exception("Model not found"))
                 }
-        } handle { case e: Exception =>
-            InternalServerError(e)
+        } handle {
+            case e: InvalidJsonBodyException => BadRequest(e)
+            case e: Exception =>
+                InternalServerError(e)
         }
 
     private val updateParam =
@@ -69,8 +73,10 @@ object ParamController {
                     case ServiceEmpty =>
                         NotFound(new Exception("Param not found"))
                 }
-        } handle { case e: Exception =>
-            BadRequest(e)
+        } handle {
+            case e: InvalidJsonBodyException => BadRequest(e)
+            case e: Exception =>
+                InternalServerError(e)
         }
 
     private val deleteParam = delete("params" :: path[Uid]) { uid: Uid =>

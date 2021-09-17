@@ -17,10 +17,11 @@ import com.qwerfah.equipment.services._
 import com.qwerfah.equipment.repos.slick._
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
-import com.qwerfah.common.Exceptions._
-import com.qwerfah.common.Uid
 import com.qwerfah.equipment.Startup
 import com.qwerfah.equipment.json.Decoders
+import com.qwerfah.common.Exceptions._
+import com.qwerfah.common.Uid
+import com.qwerfah.common.services._
 
 object EquipmentInstanceController {
     import Startup._

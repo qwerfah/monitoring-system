@@ -17,10 +17,11 @@ import com.qwerfah.equipment.services._
 import com.qwerfah.equipment.repos.slick._
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
-import com.qwerfah.common.Exceptions._
-import com.qwerfah.common.Uid
 import com.qwerfah.equipment.Startup
 import com.qwerfah.equipment.json.Decoders
+import com.qwerfah.common.Exceptions._
+import com.qwerfah.common.Uid
+import com.qwerfah.common.services._
 
 object EquipmentModelController {
     import Startup._
@@ -35,10 +36,8 @@ object EquipmentModelController {
             case ServiceResult(models) => Ok(models)
             case ServiceEmpty => NotFound(new Exception("Model not found"))
         }
-    } handle {
-        case e: InvalidJsonBodyException => BadRequest(e)
-        case e: Exception =>
-            InternalServerError(e)
+    } handle { case e: Exception =>
+        InternalServerError(e)
     }
 
     private val getModel = get("models" :: path[Uid]) { uid: Uid =>

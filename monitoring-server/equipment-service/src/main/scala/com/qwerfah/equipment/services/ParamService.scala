@@ -2,6 +2,7 @@ package com.qwerfah.equipment.services
 
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
+import com.qwerfah.common.services.ServiceResponse
 import com.qwerfah.common.Uid
 
 trait ParamService[F[_]] {

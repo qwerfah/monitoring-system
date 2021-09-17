@@ -11,6 +11,7 @@ import slick.dbio._
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.repos.slick._
 import com.qwerfah.equipment.repos._
+import com.qwerfah.common.db.slick.SlickDbManager
 import com.qwerfah.equipment.services._
 import com.qwerfah.equipment.services.default._
 

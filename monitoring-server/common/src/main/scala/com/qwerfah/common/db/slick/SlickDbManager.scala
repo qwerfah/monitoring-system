@@ -1,11 +1,11 @@
-package com.qwerfah.equipment.repos.slick
+package com.qwerfah.common.db.slick
 
 import slick.dbio.DBIO
 import slick.jdbc.JdbcProfile
 import slick.jdbc.JdbcBackend.Database
 import scala.concurrent.Future
 
-import com.qwerfah.equipment.repos.DbManager
+import com.qwerfah.common.db.DbManager
 
 /** Slick implementation of db manager trait.
   * @param db

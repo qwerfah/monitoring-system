@@ -9,6 +9,7 @@ import com.qwerfah.equipment.services._
 import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Mappings
 import com.qwerfah.common.Uid
+import com.qwerfah.common.db.DbManager
 
 class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
   modelRepo: EquipmentModelRepo[DB],

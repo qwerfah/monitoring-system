@@ -6,7 +6,7 @@ import com.qwerfah.session.models.User
 import java.security.MessageDigest
 
 object Mappings {
-    implicit def requestToUser(request: UserRequest) =
+    implicit def registerRequestToUser(request: UserRequest) =
         User(
           None,
           randomUid,

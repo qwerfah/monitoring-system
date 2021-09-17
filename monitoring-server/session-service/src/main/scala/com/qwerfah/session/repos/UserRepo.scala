@@ -28,6 +28,14 @@ trait UserRepo[DB[_]] {
       */
     def getByUid(uid: Uid): DB[Option[User]]
 
+    /** Get user by its unique login.
+      * @param id
+      *   Unique user login.
+      * @return
+      *   User with specified login or None if not found.
+      */
+    def getByLogin(login: String): DB[Option[User]]
+
     /** Add new user to storage.
       * @param user
       *   New user.

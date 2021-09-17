@@ -19,6 +19,9 @@ class SlickUserRepo(implicit val context: DataContext) extends UserRepo[DBIO] {
     override def getByUid(uid: Uid): DBIO[Option[User]] =
         context.users.filter(_.uid === uid).result.headOption
 
+    override def getByLogin(login: String): DBIO[Option[User]] =
+        context.users.filter(_.login === login).result.headOption
+
     override def add(user: User): DBIO[User] =
         (context.users returning context.users.map(_.id) into ((user, id) =>
             user.copy(id = Some(id))

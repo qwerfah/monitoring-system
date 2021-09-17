@@ -33,8 +33,8 @@ object EquipmentModelController {
 
     private val getModels = get("models") {
         for { result <- modelService.get } yield result match {
-            case ServiceResult(models) => Ok(models)
-            case ServiceEmpty => NotFound(new Exception("Model not found"))
+            case ObjectResponse(models) => Ok(models)
+            case EmptyResponse => NotFound(new Exception("Model not found"))
         }
     } handle { case e: Exception =>
         InternalServerError(e)
@@ -42,8 +42,8 @@ object EquipmentModelController {
 
     private val getModel = get("models" :: path[Uid]) { uid: Uid =>
         for { result <- modelService.getByUid(uid) } yield result match {
-            case ServiceResult(model) => Ok(model)
-            case ServiceEmpty => NotFound(new Exception("Model not found"))
+            case ObjectResponse(model) => Ok(model)
+            case EmptyResponse => NotFound(new Exception("Model not found"))
         }
     } handle { case e: Exception =>
         InternalServerError(e)
@@ -54,8 +54,8 @@ object EquipmentModelController {
             for {
                 result <- instanceService.getByModelUid(uid)
             } yield result match {
-                case ServiceResult(instances) => Ok(instances)
-                case ServiceEmpty => NotFound(new Exception("Model not found"))
+                case ObjectResponse(instances) => Ok(instances)
+                case EmptyResponse => NotFound(new Exception("Model not found"))
             }
     } handle { case e: Exception =>
         InternalServerError(e)
@@ -66,8 +66,8 @@ object EquipmentModelController {
             for {
                 result <- paramService.getByModelUid(uid)
             } yield result match {
-                case ServiceResult(params) => Ok(params)
-                case ServiceEmpty => NotFound(new Exception("Model not found"))
+                case ObjectResponse(params) => Ok(params)
+                case EmptyResponse => NotFound(new Exception("Model not found"))
             }
     } handle { case e: Exception =>
         InternalServerError(e)
@@ -76,8 +76,8 @@ object EquipmentModelController {
     private val addModel =
         post("models" :: jsonBody[ModelRequest]) { request: ModelRequest =>
             for { result <- modelService.add(request) } yield result match {
-                case ServiceResult(model) => Ok(model)
-                case ServiceEmpty =>
+                case ObjectResponse(model) => Ok(model)
+                case EmptyResponse =>
                     NotFound(new Exception("Model not found"))
             }
         } handle {
@@ -92,8 +92,8 @@ object EquipmentModelController {
                 for {
                     result <- modelService.update(uid, request)
                 } yield result match {
-                    case ServiceResult(message) => Ok(message)
-                    case ServiceEmpty =>
+                    case response: StringResponse => Ok(response)
+                    case EmptyResponse =>
                         NotFound(new Exception("Model not found"))
                 }
         } handle {
@@ -106,8 +106,8 @@ object EquipmentModelController {
         for {
             result <- modelService.removeByUid(guid)
         } yield result match {
-            case ServiceResult(message) => Ok(message)
-            case ServiceEmpty =>
+            case response: StringResponse => Ok(response)
+            case EmptyResponse =>
                 NotFound(new Exception("Model not found"))
         }
     } handle { case e: Exception =>

@@ -21,14 +21,14 @@ class DefaultParamService[F[_]: Monad, DB[_]: Monad](implicit
 
     override def get: F[ServiceResponse[Seq[ParamResponse]]] = for {
         params <- dbManager.execute(paramRepo.get)
-    } yield ServiceResult(params)
+    } yield ObjectResponse(params)
 
     override def getById(id: Int): F[ServiceResponse[ParamResponse]] = for {
         result <- dbManager.execute(paramRepo.getById(id))
     } yield result match {
         case Some(param) =>
-            ServiceResult(param)
-        case None => ServiceEmpty
+            ObjectResponse(param)
+        case None => EmptyResponse
     }
 
     override def getByUid(uid: Uid): F[ServiceResponse[ParamResponse]] =
@@ -36,15 +36,15 @@ class DefaultParamService[F[_]: Monad, DB[_]: Monad](implicit
             result <- dbManager.execute(paramRepo.getByUid(uid))
         } yield result match {
             case Some(param) =>
-                ServiceResult(param)
-            case None => ServiceEmpty
+                ObjectResponse(param)
+            case None => EmptyResponse
         }
 
     override def getByModelUid(
       modelUid: Uid
     ): F[ServiceResponse[Seq[ParamResponse]]] = for {
         params <- dbManager.execute(paramRepo.getByModelUid(modelUid))
-    } yield ServiceResult(params)
+    } yield ObjectResponse(params)
 
     override def add(
       request: AddParamRequest
@@ -52,9 +52,9 @@ class DefaultParamService[F[_]: Monad, DB[_]: Monad](implicit
         dbManager.execute(modelRepo.getByUid(request.modelUid)) flatMap {
             case Some(model) =>
                 dbManager.execute(paramRepo.add(request)) map { param =>
-                    ServiceResult(param)
+                    ObjectResponse(param)
                 }
-            case None => Monad[F].pure(ServiceEmpty)
+            case None => Monad[F].pure(EmptyResponse)
         }
     }
 
@@ -68,22 +68,22 @@ class DefaultParamService[F[_]: Monad, DB[_]: Monad](implicit
               paramRepo.update(param.copy(uid = uuid))
             )
         } yield result match {
-            case 1 => ServiceResult("Param updated")
-            case _ => ServiceEmpty
+            case 1 => StringResponse("Param updated")
+            case _ => EmptyResponse
         }
     }
 
     override def removeById(id: Int): F[ServiceResponse[String]] = for {
         result <- dbManager.execute(paramRepo.removeById(id))
     } yield result match {
-        case 1 => ServiceResult("Param removed")
-        case _ => ServiceEmpty
+        case 1 => StringResponse("Param removed")
+        case _ => EmptyResponse
     }
 
     override def removeByUid(uid: Uid): F[ServiceResponse[String]] = for {
         result <- dbManager.execute(paramRepo.removeByUid(uid))
     } yield result match {
-        case 1 => ServiceResult("Param removed")
-        case _ => ServiceEmpty
+        case 1 => StringResponse("Param removed")
+        case _ => EmptyResponse
     }
 }

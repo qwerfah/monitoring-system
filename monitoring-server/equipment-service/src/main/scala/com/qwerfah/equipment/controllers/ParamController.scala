@@ -31,8 +31,8 @@ object ParamController {
 
     private val getParams = get("params") {
         for { result <- paramService.get } yield result match {
-            case ServiceResult(params) => Ok(params)
-            case ServiceEmpty => NotFound(new Exception("Params not found"))
+            case ObjectResponse(params) => Ok(params)
+            case EmptyResponse => NotFound(new Exception("Params not found"))
         }
     } handle { case e: Exception =>
         InternalServerError(e)
@@ -40,8 +40,8 @@ object ParamController {
 
     private val getParam = get("params" :: path[Uid]) { uid: Uid =>
         for { result <- paramService.getByUid(uid) } yield result match {
-            case ServiceResult(param) => Ok(param)
-            case ServiceEmpty => NotFound(new Exception("Param not found"))
+            case ObjectResponse(param) => Ok(param)
+            case EmptyResponse => NotFound(new Exception("Param not found"))
         }
     } handle { case e: Exception =>
         InternalServerError(e)
@@ -53,8 +53,8 @@ object ParamController {
                 for {
                     result <- paramService.add(request)
                 } yield result match {
-                    case ServiceResult(param) => Ok(param)
-                    case ServiceEmpty =>
+                    case ObjectResponse(param) => Ok(param)
+                    case EmptyResponse =>
                         NotFound(new Exception("Model not found"))
                 }
         } handle {
@@ -69,8 +69,8 @@ object ParamController {
                 for {
                     result <- paramService.update(uid, request)
                 } yield result match {
-                    case ServiceResult(message) => Ok(message)
-                    case ServiceEmpty =>
+                    case response: StringResponse => Ok(response)
+                    case EmptyResponse =>
                         NotFound(new Exception("Param not found"))
                 }
         } handle {
@@ -83,8 +83,8 @@ object ParamController {
         for {
             result <- paramService.removeByUid(uid)
         } yield result match {
-            case ServiceResult(message) => Ok(message)
-            case ServiceEmpty =>
+            case response: StringResponse => Ok(response)
+            case EmptyResponse =>
                 NotFound(new Exception("Param not found"))
         }
     } handle { case e: Exception =>

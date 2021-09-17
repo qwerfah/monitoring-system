@@ -31,8 +31,8 @@ object EquipmentInstanceController {
 
     private val getInstances = get("instances") {
         for { result <- instanceService.get } yield result match {
-            case ServiceResult(instances) => Ok(instances)
-            case ServiceEmpty => NotFound(new Exception("Instance not found"))
+            case ObjectResponse(instances) => Ok(instances)
+            case EmptyResponse => NotFound(new Exception("Instance not found"))
         }
     } handle { case e: Exception =>
         InternalServerError(e)
@@ -40,8 +40,8 @@ object EquipmentInstanceController {
 
     private val getInstance = get("instances" :: path[Uid]) { uid: Uid =>
         for { result <- instanceService.getByUid(uid) } yield result match {
-            case ServiceResult(instance) => Ok(instance)
-            case ServiceEmpty => NotFound(new Exception("Instance not found"))
+            case ObjectResponse(instance) => Ok(instance)
+            case EmptyResponse => NotFound(new Exception("Instance not found"))
         }
     } handle { case e: Exception =>
         InternalServerError(e)
@@ -53,8 +53,8 @@ object EquipmentInstanceController {
                 for {
                     result <- instanceService.add(request)
                 } yield result match {
-                    case ServiceResult(instance) => Ok(instance)
-                    case ServiceEmpty =>
+                    case ObjectResponse(instance) => Ok(instance)
+                    case EmptyResponse =>
                         NotFound(new Exception("Model not found"))
                 }
         } handle {
@@ -69,8 +69,8 @@ object EquipmentInstanceController {
                 for {
                     result <- instanceService.update(uid, request)
                 } yield result match {
-                    case ServiceResult(message) => Ok(message)
-                    case ServiceEmpty =>
+                    case response: StringResponse => Ok(response)
+                    case EmptyResponse =>
                         NotFound(new Exception("Instance not found"))
                 }
         } handle {
@@ -83,8 +83,8 @@ object EquipmentInstanceController {
         for {
             result <- instanceService.removeByUid(uid)
         } yield result match {
-            case ServiceResult(message) => Ok(message)
-            case ServiceEmpty =>
+            case response: StringResponse => Ok(response)
+            case EmptyResponse =>
                 NotFound(new Exception("Instance not found"))
         }
     } handle { case e: Exception =>

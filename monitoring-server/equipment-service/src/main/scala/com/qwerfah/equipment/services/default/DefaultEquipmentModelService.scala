@@ -28,14 +28,14 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
 
     override def get: F[ServiceResponse[Seq[ModelResponse]]] = for {
         models <- dbManager.execute(repo.get)
-    } yield ServiceResult(models)
+    } yield ObjectResponse(models)
 
     override def getById(id: Int): F[ServiceResponse[ModelResponse]] = for {
         model <- dbManager.execute(repo.getById(id))
     } yield model match {
         case Some(model) =>
-            ServiceResult(model)
-        case None => ServiceEmpty
+            ObjectResponse(model)
+        case None => EmptyResponse
     }
 
     override def getByUid(uid: Uid): F[ServiceResponse[ModelResponse]] =
@@ -43,8 +43,8 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
             model <- dbManager.execute(repo.getByUid(uid))
         } yield model match {
             case Some(model) =>
-                ServiceResult(model)
-            case None => ServiceEmpty
+                ObjectResponse(model)
+            case None => EmptyResponse
         }
 
     override def add(
@@ -52,7 +52,7 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
     ): F[ServiceResponse[ModelResponse]] = {
         for {
             result <- dbManager.execute(repo.add(request))
-        } yield ServiceResult(result)
+        } yield ObjectResponse(result)
     }
 
     override def update(
@@ -63,22 +63,22 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
         for {
             result <- dbManager.execute(repo.update(model.copy(uid = uuid)))
         } yield result match {
-            case 1 => ServiceResult("Model updated")
-            case _ => ServiceEmpty
+            case 1 => StringResponse("Model updated")
+            case _ => EmptyResponse
         }
     }
 
     override def removeById(id: Int): F[ServiceResponse[String]] = for {
         result <- dbManager.execute(repo.removeById(id))
     } yield result match {
-        case 1 => ServiceResult("Model removed")
-        case _ => ServiceEmpty
+        case 1 => StringResponse("Model removed")
+        case _ => EmptyResponse
     }
 
     override def removeByUid(uid: Uid): F[ServiceResponse[String]] = for {
         result <- dbManager.execute(repo.removeByUid(uid))
     } yield result match {
-        case 1 => ServiceResult("Model removed")
-        case _ => ServiceEmpty
+        case 1 => StringResponse("Model removed")
+        case _ => EmptyResponse
     }
 }

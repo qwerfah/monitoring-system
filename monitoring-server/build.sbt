@@ -43,7 +43,9 @@ lazy val session = project
     .settings(
       name := "session-service",
       settings,
-      libraryDependencies ++= commonDependencies
+      libraryDependencies ++= commonDependencies ++ Seq(
+        "com.github.jwt-scala" %% "jwt-circe" % "9.0.1"
+      )
     )
     .dependsOn(common, sessionApi)
 

@@ -21,7 +21,7 @@ import com.qwerfah.equipment.Startup
 import com.qwerfah.equipment.json.Decoders
 import com.qwerfah.common.Uid
 import com.qwerfah.common.services._
-import com.qwerfah.common.Exceptions._
+import com.qwerfah.common.exceptions._
 
 object ParamController {
     import Startup._
@@ -32,7 +32,6 @@ object ParamController {
     private val getParams = get("params") {
         for { result <- paramService.get } yield result match {
             case ObjectResponse(params) => Ok(params)
-            case EmptyResponse => NotFound(new Exception("Params not found"))
         }
     } handle { case e: Exception =>
         InternalServerError(e)
@@ -41,7 +40,7 @@ object ParamController {
     private val getParam = get("params" :: path[Uid]) { uid: Uid =>
         for { result <- paramService.getByUid(uid) } yield result match {
             case ObjectResponse(param) => Ok(param)
-            case EmptyResponse => NotFound(new Exception("Param not found"))
+            case EmptyResponse         => NotFound(NoParamException(uid))
         }
     } handle { case e: Exception =>
         InternalServerError(e)
@@ -55,7 +54,7 @@ object ParamController {
                 } yield result match {
                     case ObjectResponse(param) => Ok(param)
                     case EmptyResponse =>
-                        NotFound(new Exception("Model not found"))
+                        NotFound(NoModelException(request.modelUid))
                 }
         } handle {
             case e: InvalidJsonBodyException => BadRequest(e)
@@ -71,7 +70,7 @@ object ParamController {
                 } yield result match {
                     case response: StringResponse => Ok(response)
                     case EmptyResponse =>
-                        NotFound(new Exception("Param not found"))
+                        NotFound(NoParamException(uid))
                 }
         } handle {
             case e: InvalidJsonBodyException => BadRequest(e)
@@ -85,7 +84,7 @@ object ParamController {
         } yield result match {
             case response: StringResponse => Ok(response)
             case EmptyResponse =>
-                NotFound(new Exception("Param not found"))
+                NotFound(NoParamException(uid))
         }
     } handle { case e: Exception =>
         InternalServerError(e)

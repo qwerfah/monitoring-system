@@ -6,12 +6,12 @@ import com.qwerfah.session.models.User
 import java.security.MessageDigest
 
 object Mappings {
-    implicit def registerRequestToUser(request: UserRequest) =
+    implicit def userRequestToUser(request: UserRequest) =
         User(
           None,
           randomUid,
           request.login,
-          MessageDigest.getInstance("MD5").digest(request.password.getBytes),
+          MessageDigest.getInstance("MD5").digest(request.password.getBytes("UTF-8")),
           request.role
         )
 

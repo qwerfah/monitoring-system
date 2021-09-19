@@ -25,4 +25,4 @@ case object EmptyResponse extends ServiceResponse[Nothing]
   * @param error
   *   Error instance.
   */
-final case class ErrorResponse[T](error: Exception) extends ServiceResponse[T]
+final case class ErrorResponse[T](error: Throwable) extends ServiceResponse[T]

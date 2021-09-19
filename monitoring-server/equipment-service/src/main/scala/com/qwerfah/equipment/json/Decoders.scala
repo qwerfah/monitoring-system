@@ -6,9 +6,8 @@ import cats.data.Validated._
 import cats.data.{NonEmptyList, Validated, ValidatedNel}
 import cats.implicits._
 
-import com.qwerfah.common.Exceptions._
+import com.qwerfah.common.exceptions._
 import com.qwerfah.common.Uid
-import com.qwerfah.common.ErrorMessages._
 import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.json.JsonSchemas._
 
@@ -23,7 +22,7 @@ object Decoders {
                     description <- c.downField("description").as[Option[String]]
                 } yield ModelRequest(name, description)
             case Invalid(errors) =>
-                throw InvalidJsonBodyException(ValidationError, errors)
+                throw InvalidJsonBodyException(errors)
         }
     }
 
@@ -45,7 +44,7 @@ object Decoders {
                       status
                     )
                 case Invalid(errors) =>
-                    throw InvalidJsonBodyException(ValidationError, errors)
+                    throw InvalidJsonBodyException(errors)
             }
         }
 
@@ -61,7 +60,7 @@ object Decoders {
                         status <- c.downField("status").as[EquipmentStatus]
                     } yield UpdateInstanceRequest(name, description, status)
                 case Invalid(errors) =>
-                    throw InvalidJsonBodyException(ValidationError, errors)
+                    throw InvalidJsonBodyException(errors)
             }
         }
 
@@ -81,7 +80,7 @@ object Decoders {
                       measurmentUnits
                     )
                 case Invalid(errors) =>
-                    throw InvalidJsonBodyException(ValidationError, errors)
+                    throw InvalidJsonBodyException(errors)
             }
         }
 
@@ -99,7 +98,7 @@ object Decoders {
                       measurmentUnits
                     )
                 case Invalid(errors) =>
-                    throw InvalidJsonBodyException(ValidationError, errors)
+                    throw InvalidJsonBodyException(errors)
             }
         }
 }

@@ -1,4 +1,4 @@
-scalaVersion := "2.12.14"
+scalaVersion := "2.13.6"
 name := "monitoring-server"
 organization := "com.qwerfah"
 version := "1.0"
@@ -25,7 +25,9 @@ lazy val common = project
     .settings(
       name := "common",
       settings,
-      libraryDependencies ++= commonDependencies
+      libraryDependencies ++= commonDependencies ++ Seq(
+        "com.github.jwt-scala" %% "jwt-circe" % "9.0.1"
+      )
     )
     .disablePlugins(AssemblyPlugin)
 
@@ -43,9 +45,7 @@ lazy val session = project
     .settings(
       name := "session-service",
       settings,
-      libraryDependencies ++= commonDependencies ++ Seq(
-        "com.github.jwt-scala" %% "jwt-circe" % "9.0.1"
-      )
+      libraryDependencies ++= commonDependencies
     )
     .dependsOn(common, sessionApi)
 

@@ -19,7 +19,7 @@ import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Startup
 import com.qwerfah.equipment.json.Decoders
-import com.qwerfah.common.Exceptions._
+import com.qwerfah.common.exceptions._
 import com.qwerfah.common.Uid
 import com.qwerfah.common.services._
 
@@ -32,7 +32,6 @@ object EquipmentInstanceController {
     private val getInstances = get("instances") {
         for { result <- instanceService.get } yield result match {
             case ObjectResponse(instances) => Ok(instances)
-            case EmptyResponse => NotFound(new Exception("Instance not found"))
         }
     } handle { case e: Exception =>
         InternalServerError(e)
@@ -41,7 +40,7 @@ object EquipmentInstanceController {
     private val getInstance = get("instances" :: path[Uid]) { uid: Uid =>
         for { result <- instanceService.getByUid(uid) } yield result match {
             case ObjectResponse(instance) => Ok(instance)
-            case EmptyResponse => NotFound(new Exception("Instance not found"))
+            case EmptyResponse            => NotFound(NoInstanceException(uid))
         }
     } handle { case e: Exception =>
         InternalServerError(e)
@@ -55,7 +54,7 @@ object EquipmentInstanceController {
                 } yield result match {
                     case ObjectResponse(instance) => Ok(instance)
                     case EmptyResponse =>
-                        NotFound(new Exception("Model not found"))
+                        NotFound(NoModelException(request.modelUid))
                 }
         } handle {
             case e: InvalidJsonBodyException => BadRequest(e)
@@ -71,7 +70,7 @@ object EquipmentInstanceController {
                 } yield result match {
                     case response: StringResponse => Ok(response)
                     case EmptyResponse =>
-                        NotFound(new Exception("Instance not found"))
+                        NotFound(NoInstanceException(uid))
                 }
         } handle {
             case e: InvalidJsonBodyException => BadRequest(e)
@@ -85,7 +84,7 @@ object EquipmentInstanceController {
         } yield result match {
             case response: StringResponse => Ok(response)
             case EmptyResponse =>
-                NotFound(new Exception("Instance not found"))
+                NotFound(NoInstanceException(uid))
         }
     } handle { case e: Exception =>
         InternalServerError(e)

@@ -37,11 +37,3 @@ final case class UserResponse(
   login: String,
   role: UserRole
 )
-
-/** User jwt tokens.
-  * @param access
-  *   Access token.
-  * @param refresh
-  *   Refresh token.
-  */
-final case class Token(access: String, refresh: String)

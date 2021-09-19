@@ -4,6 +4,7 @@ import com.qwerfah.session.models._
 import com.qwerfah.session.resources._
 import com.qwerfah.common.services.ServiceResponse
 import com.qwerfah.common.Uid
+import com.qwerfah.common.models.Token
 
 /** Describe user service funcionality. */
 trait UserService[F[_]] {
@@ -47,8 +48,10 @@ trait UserService[F[_]] {
     def get(uid: Uid): F[ServiceResponse[UserResponse]]
 
     /** Update registered user by its uid.
-     @param uid User uid.
-      *   @param request New user data.
+      * @param uid
+      *   User uid.
+      * @param request
+      *   New user data.
       * @return
       */
     def update(uid: Uid, request: UserRequest): F[ServiceResponse[String]]

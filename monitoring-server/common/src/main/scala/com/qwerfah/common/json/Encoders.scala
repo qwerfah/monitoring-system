@@ -4,8 +4,7 @@ import io.circe.{Encoder, Json}
 
 import scala.language.reflectiveCalls
 
-import com.qwerfah.common.Exceptions._
-import com.qwerfah.common.ErrorMessages._
+import com.qwerfah.common.exceptions._
 
 /** Provide json encoders for different respose types. */
 object Encoders {
@@ -31,7 +30,7 @@ object Encoders {
             }
         case e: InvalidJsonBodyException =>
             Json.obj(
-              "message" -> Json.fromString(e.getMessage),
+              "message" -> Json.fromString(e.cause.getMessage),
               "errors" -> Json.arr(
                 e.errors.toList.map(x => Json.fromString(x.getMessage)): _*
               )

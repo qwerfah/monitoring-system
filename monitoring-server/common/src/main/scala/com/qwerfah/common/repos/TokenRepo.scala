@@ -33,7 +33,9 @@ trait TokenRepo[DB[_]] {
       * @return
       *   Success if removed, otherwise Failure.
       */
-    def remove(pair: (String, String)): DB[Try[Unit]]
+    def removeByValue(pair: (String, String)): DB[Try[Unit]]
+
+    def removeByToken(token: String): DB[Try[Unit]]
 
     /** Check if token is presented in repository.
       * @param token

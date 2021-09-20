@@ -20,10 +20,10 @@ object JwtOptions {
     val key = "secretKey"
     val algorithm = JwtAlgorithm.HS256
     val accessExpiration = Some(
-      Instant.now.plusSeconds(157784760).getEpochSecond
+      Instant.now.plusSeconds(100).getEpochSecond
     )
     val refreshExpiration = Some(
-      Instant.now.plusSeconds(157784760).getEpochSecond
+      Instant.now.plusSeconds(200).getEpochSecond
     )
     val issuedAt = Some(Instant.now.getEpochSecond)
 }
@@ -77,28 +77,18 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
       Seq(JwtOptions.algorithm)
     )
 
-    /** Check if token is expired or has no expiation claim.
-      * @param token
-      *   String token representation.
-      * @return
-      *   True if token is expired or has no expiration claim, otherwise false.
-      */
-    private def isExpired(token: String): Boolean = decodeToken(token) match {
-        case Success(value) =>
-            value.expiration.get > (System.currentTimeMillis / 1000)
-        case _ => true
-    }
-
     def validate(token: String): F[ServiceResponse[String]] = {
-        for {
-            result <- dbManager.execute(tokenRepo.contains(token))
-        } yield result match {
-            case true =>
+        dbManager.execute(tokenRepo.contains(token)) map {
+            case true => {
+                println("contains")
                 decodeToken(token) match {
                     case Success(value) => ObjectResponse(value.subject.get)
-                    case Failure(exception) =>
+                    case Failure(_) => {
+                        dbManager.execute(tokenRepo.removeByToken(token))
                         ErrorResponse(InvalidTokenException)
+                    }
                 }
+            }
             case false => ErrorResponse(InvalidTokenException)
         }
     }
@@ -115,9 +105,10 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
     def removeExpired(): F[ServiceResponse[Unit]] = {
         dbManager.execute(tokenRepo.get) flatMap { tokens =>
             {
-                val expired = tokens.filter(token => isExpired(token._2))
-                val seq = dbManager.sequence(expired map { token =>
-                    tokenRepo.remove(token)
+                val expired =
+                    tokens.filter(token => decodeToken(token._2).isSuccess)
+                val seq = dbManager.sequence(expired map { pair =>
+                    tokenRepo.removeByValue(pair)
                 })
                 dbManager.execute(seq) map { result =>
                     result.toList.sequence_ match {

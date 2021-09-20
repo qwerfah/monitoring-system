@@ -27,11 +27,21 @@ class LocalTokenRepo extends TokenRepo[DBIO] {
         DBIO.successful(Success(()))
     }
 
-    def remove(pair: (String, String)): DBIO[Try[Unit]] =
+    def removeByValue(pair: (String, String)): DBIO[Try[Unit]] =
         tokens.remove(pair) match {
             case true  => DBIO.successful(Success(()))
             case false => DBIO.successful(Failure(NoTokenException))
         }
+
+    def removeByToken(token: String): DBIO[Try[Unit]] = {
+        tokens.find(pair => pair._2 == token) match {
+            case Some(value) => {
+                tokens.remove(value)
+                DBIO.successful(Success(()))
+            }
+            case None => DBIO.successful(Failure(NoTokenException))
+        }
+    }
 
     def contains(token: String): DBIO[Boolean] =
         DBIO.successful(tokens.count(pair => pair._2 == token) > 0)

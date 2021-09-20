@@ -19,10 +19,10 @@ import com.qwerfah.common.exceptions._
 object JwtOptions {
     val key = "secretKey"
     val algorithm = JwtAlgorithm.HS256
-    val accessExpiration = Some(
+    def accessExpiration = Some(
       Instant.now.plusSeconds(100).getEpochSecond
     )
-    val refreshExpiration = Some(
+    def refreshExpiration = Some(
       Instant.now.plusSeconds(200).getEpochSecond
     )
     val issuedAt = Some(Instant.now.getEpochSecond)
@@ -80,7 +80,6 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
     def validate(token: String): F[ServiceResponse[String]] = {
         dbManager.execute(tokenRepo.contains(token)) map {
             case true => {
-                println("contains")
                 decodeToken(token) match {
                     case Success(value) => ObjectResponse(value.subject.get)
                     case Failure(_) => {

@@ -18,6 +18,10 @@ final case object NoTokenException extends Exception {
     override def getMessage = "Token is not presented in repository."
 }
 
+final case object NoTokenHeaderException extends Exception {
+    override def getMessage = "No authorization header provided."
+}
+
 final case class NoInstanceException(uid: Uid) extends Exception {
     override def getMessage = s"Equipment instance with uid $uid not found."
 }

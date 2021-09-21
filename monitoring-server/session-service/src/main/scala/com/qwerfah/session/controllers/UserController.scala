@@ -38,32 +38,30 @@ object UserController extends Controller {
         case Some(value) =>
             tokenService.validate(value) flatMap {
                 case ObjectResponse(result) => action(result)
-                case e: NotFoundResponse =>
-                    Future.successful(
-                      Unauthorized(e)
-                    )
+                case e: ErrorResponse => Future.successful(Unauthorized(e))
             }
         case None => Future.successful(Unauthorized(NoTokenHeader))
     }
 
     private val getUsers = get("users" :: headerOption("Authorization")) {
-        token: Option[String] =>
-            authorize(
-              token,
-              _ => for { result <- userService.getAll } yield result.asOutput
-            )
+        header: Option[String] =>
+            {
+                val f = for {
+                    result <- userService.getAll
+                } yield result.asOutput
+                authorize(header, _ => f)
+            }
     }
 
     private val getUser =
         get("users" :: path[Uid] :: headerOption("Authorization")) {
-            (uid: Uid, token: Option[String]) =>
-                authorize(
-                  token,
-                  _ =>
-                      for {
-                          result <- userService.get(uid)
-                      } yield result.asOutput
-                )
+            (uid: Uid, header: Option[String]) =>
+                {
+                    val f = for {
+                        result <- userService.get(uid)
+                    } yield result.asOutput
+                    authorize(header, _ => f)
+                }
         }
 
     private val register =
@@ -87,26 +85,24 @@ object UserController extends Controller {
           "users" :: path[Uid] :: jsonBody[UserRequest] :: headerOption(
             "Authorization"
           )
-        ) { (uid: Uid, request: UserRequest, token: Option[String]) =>
-            authorize(
-              token,
-              _ =>
-                  for {
-                      result <- userService.update(uid, request)
-                  } yield result.asOutput
-            )
+        ) { (uid: Uid, request: UserRequest, header: Option[String]) =>
+            {
+                val f = for {
+                    result <- userService.update(uid, request)
+                } yield result.asOutput
+                authorize(header, _ => f)
+            }
         }
 
     private val deleteUser =
         delete("users" :: path[Uid] :: headerOption("Authorization")) {
-            (uid: Uid, token: Option[String]) =>
-                authorize(
-                  token,
-                  _ =>
-                      for {
-                          result <- userService.remove(uid)
-                      } yield result.asOutput
-                )
+            (uid: Uid, header: Option[String]) =>
+                {
+                    val f = for {
+                        result <- userService.remove(uid)
+                    } yield result.asOutput
+                    authorize(header, _ => f)
+                }
         }
 
     val api =

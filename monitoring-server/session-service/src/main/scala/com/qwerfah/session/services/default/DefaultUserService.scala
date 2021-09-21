@@ -42,7 +42,7 @@ class DefaultUserService[F[_]: Monad, DB[_]: Monad](implicit
             .digest(credentials.password.getBytes("UTF-8"))
 
         dbManager.execute(userRepo.getByLogin(credentials.login)) flatMap {
-            case Some(user) if user.password.deep == passwordHash.deep =>
+            case Some(user) if user.password sameElements passwordHash =>
                 tokenService.generate(user.uid.toString)
             case _ => Monad[F].pure(NotFoundResponse(InvalidCredentials))
         }

@@ -11,13 +11,10 @@ import cats.Monad
 import cats.implicits._
 
 import com.qwerfah.gateway.services.EquipmentService
-import com.qwerfah.common.services.ServiceResponse
-import com.qwerfah.equipment.resources.ModelResponse
+import com.qwerfah.common.services.response._
+import com.qwerfah.common.exceptions._
+import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.json.Decoders
-import com.qwerfah.equipment.resources.ModelRequest
-import com.qwerfah.common.services.ObjectResponse
-import com.qwerfah.common.services.ErrorResponse
-import com.twitter.util.Duration
 
 class DefaultEquipmentService extends EquipmentService[Future] {
     import Decoders._
@@ -25,7 +22,7 @@ class DefaultEquipmentService extends EquipmentService[Future] {
     private def decodeJson[A: Decoder](body: String) = {
         decode[A](body) match {
             case Right(value) => ObjectResponse(value)
-            case Left(error)  => ErrorResponse(error.getCause())
+            case Left(error) => UnprocessableResponse(BadEquipmentServiceResult)
         }
     }
 
@@ -37,9 +34,13 @@ class DefaultEquipmentService extends EquipmentService[Future] {
 
         equipmentService(request) map { response =>
             response.status match {
-                case Status.InternalServerError => ErrorResponse()
                 case Status.Ok =>
                     decodeJson[Seq[ModelResponse]](response.contentString)
+                case Status.InternalServerError =>
+                    InternalErrorResponse(EquipmentServiceInternalError)
+                case Status.ServiceUnavailable =>
+                    BadGatewayResponse(EquipmentServiceUnavailable)
+                case _ => UnknownErrorResponse(UnknownEquipmentServiceResponse)
             }
 
         }

@@ -82,16 +82,6 @@ object UserController extends Controller {
                 } yield result.asOutput
         }
 
-    private val refresh =
-        post("users" :: "refresh" :: headerOption("Authorization")) {
-            token: Option[String] =>
-                authorize(
-                  token,
-                  uid =>
-                      userService.refresh(uid) map { result => result.asOutput }
-                )
-        }
-
     private val updateUser =
         patch(
           "users" :: path[Uid] :: jsonBody[UserRequest] :: headerOption(
@@ -120,6 +110,6 @@ object UserController extends Controller {
         }
 
     val api =
-        (getUsers :+: getUser :+: register :+: login :+: refresh :+: updateUser :+: deleteUser)
+        (getUsers :+: getUser :+: register :+: login :+: updateUser :+: deleteUser)
             .handle(errorHandler)
 }

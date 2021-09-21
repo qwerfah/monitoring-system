@@ -21,9 +21,9 @@ import com.qwerfah.equipment.Startup
 import com.qwerfah.equipment.json.Decoders
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.Uid
-import com.qwerfah.common.services._
+import com.qwerfah.common.controllers.Controller
 
-object EquipmentModelController {
+object EquipmentModelController extends Controller {
     import Startup._
     import Decoders._
 
@@ -32,85 +32,47 @@ object EquipmentModelController {
     private val paramService = implicitly[ParamService[Future]]
 
     private val getModels = get("models") {
-        for { result <- modelService.get } yield result match {
-            case ObjectResponse(models) => Ok(models)
-        }
-    } handle { case e: Exception =>
-        InternalServerError(e)
+        for { result <- modelService.getAll } yield result.asOutput
     }
 
     private val getModel = get("models" :: path[Uid]) { uid: Uid =>
-        for { result <- modelService.getByUid(uid) } yield result match {
-            case ObjectResponse(model) => Ok(model)
-            case EmptyResponse         => NotFound(NoModelException(uid))
-        }
-    } handle { case e: Exception =>
-        InternalServerError(e)
+        for { result <- modelService.get(uid) } yield result.asOutput
     }
 
     private val getModelInstances = get("models" :: path[Uid] :: "instances") {
         uid: Uid =>
             for {
                 result <- instanceService.getByModelUid(uid)
-            } yield result match {
-                case ObjectResponse(instances) => Ok(instances)
-                case EmptyResponse => NotFound(NoModelException(uid))
-            }
-    } handle { case e: Exception =>
-        InternalServerError(e)
+            } yield result.asOutput
     }
 
     private val getModelParams = get("models" :: path[Uid] :: "params") {
         uid: Uid =>
             for {
                 result <- paramService.getByModelUid(uid)
-            } yield result match {
-                case ObjectResponse(params) => Ok(params)
-                case EmptyResponse          => NotFound(NoModelException(uid))
-            }
-    } handle { case e: Exception =>
-        InternalServerError(e)
+            } yield result.asOutput
     }
 
-    private val addModel =
-        post("models" :: jsonBody[ModelRequest]) { request: ModelRequest =>
-            for { result <- modelService.add(request) } yield result match {
-                case ObjectResponse(model) => Ok(model)
-            }
-        } handle {
-            case e: InvalidJsonBodyException => BadRequest(e)
-            case e: Exception =>
-                InternalServerError(e)
-        }
+    private val addModel = post("models" :: jsonBody[ModelRequest]) {
+        request: ModelRequest =>
+            for { result <- modelService.add(request) } yield result.asOutput
+    }
 
-    private val updateModel =
-        patch("models" :: path[Uid] :: jsonBody[ModelRequest]) {
-            (uid: Uid, request: ModelRequest) =>
-                for {
-                    result <- modelService.update(uid, request)
-                } yield result match {
-                    case response: StringResponse => Ok(response)
-                    case EmptyResponse =>
-                        NotFound(NoModelException(uid))
-                }
-        } handle {
-            case e: InvalidJsonBodyException => BadRequest(e)
-            case e: Exception =>
-                InternalServerError(e)
-        }
+    private val updateModel = patch(
+      "models" :: path[Uid] :: jsonBody[ModelRequest]
+    ) { (uid: Uid, request: ModelRequest) =>
+        for {
+            result <- modelService.update(uid, request)
+        } yield result.asOutput
+    }
 
     private val deleteModel = delete("models" :: path[Uid]) { uid: Uid =>
         for {
-            result <- modelService.removeByUid(uid)
-        } yield result match {
-            case response: StringResponse => Ok(response)
-            case EmptyResponse =>
-                NotFound(NoModelException(uid))
-        }
-    } handle { case e: Exception =>
-        InternalServerError(e)
+            result <- modelService.remove(uid)
+        } yield result.asOutput
     }
 
     val api =
-        getModels :+: getModel :+: getModelInstances :+: getModelParams :+: addModel :+: updateModel :+: deleteModel
+        (getModels :+: getModel :+: getModelInstances :+: getModelParams :+: addModel :+: updateModel :+: deleteModel)
+            .handle(errorHandler)
 }

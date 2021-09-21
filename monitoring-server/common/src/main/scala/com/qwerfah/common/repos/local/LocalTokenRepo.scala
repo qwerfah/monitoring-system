@@ -16,30 +16,24 @@ class LocalTokenRepo extends TokenRepo[DBIO] {
 
     def get: DBIO[Seq[(String, String)]] = DBIO.successful(tokens.toSeq)
 
-    def add(pair: (String, String)): DBIO[Unit] = tokens.add(pair) match {
-
-        case true  => DBIO.successful(Success(()))
-        case false => DBIO.successful(Failure(DuplicateTokenException))
-    }
+    def add(pair: (String, String)): DBIO[Boolean] =
+        DBIO.successful(tokens.add(pair))
 
     def removeById(id: String): DBIO[Unit] = {
         for (token <- tokens.filter(pair => pair._1 == id)) tokens.remove(token)
         DBIO.successful(Success(()))
     }
 
-    def removeByValue(pair: (String, String)): DBIO[Try[Unit]] =
-        tokens.remove(pair) match {
-            case true  => DBIO.successful(Success(()))
-            case false => DBIO.successful(Failure(NoTokenException))
-        }
+    def removeByValue(pair: (String, String)): DBIO[Boolean] =
+        DBIO.successful(tokens.remove(pair))
 
-    def removeByToken(token: String): DBIO[Try[Unit]] = {
+    def removeByToken(token: String): DBIO[Boolean] = {
         tokens.find(pair => pair._2 == token) match {
             case Some(value) => {
                 tokens.remove(value)
-                DBIO.successful(Success(()))
+                DBIO.successful(true)
             }
-            case None => DBIO.successful(Failure(NoTokenException))
+            case None => DBIO.successful(false)
         }
     }
 

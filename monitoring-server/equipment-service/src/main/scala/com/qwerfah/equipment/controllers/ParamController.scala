@@ -20,76 +20,45 @@ import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Startup
 import com.qwerfah.equipment.json.Decoders
 import com.qwerfah.common.Uid
-import com.qwerfah.common.services._
 import com.qwerfah.common.exceptions._
+import com.qwerfah.common.controllers.Controller
 
-object ParamController {
+object ParamController extends Controller {
     import Startup._
     import Decoders._
 
     private val paramService = implicitly[ParamService[Future]]
 
     private val getParams = get("params") {
-        for { result <- paramService.get } yield result match {
-            case ObjectResponse(params) => Ok(params)
-        }
-    } handle { case e: Exception =>
-        InternalServerError(e)
+        for { result <- paramService.getAll } yield result.asOutput
     }
 
     private val getParam = get("params" :: path[Uid]) { uid: Uid =>
-        for { result <- paramService.getByUid(uid) } yield result match {
-            case ObjectResponse(param) => Ok(param)
-            case EmptyResponse         => NotFound(NoParamException(uid))
-        }
-    } handle { case e: Exception =>
-        InternalServerError(e)
+        for { result <- paramService.get(uid) } yield result.asOutput
     }
 
-    private val addParam =
-        post("params" :: jsonBody[AddParamRequest]) {
-            request: AddParamRequest =>
-                for {
-                    result <- paramService.add(request)
-                } yield result match {
-                    case ObjectResponse(param) => Ok(param)
-                    case EmptyResponse =>
-                        NotFound(NoModelException(request.modelUid))
-                }
-        } handle {
-            case e: InvalidJsonBodyException => BadRequest(e)
-            case e: Exception =>
-                InternalServerError(e)
-        }
+    private val addParam = post("params" :: jsonBody[AddParamRequest]) {
+        request: AddParamRequest =>
+            for {
+                result <- paramService.add(request)
+            } yield result.asOutput
+    }
 
-    private val updateParam =
-        patch("params" :: path[Uid] :: jsonBody[UpdateParamRequest]) {
-            (uid: Uid, request: UpdateParamRequest) =>
-                for {
-                    result <- paramService.update(uid, request)
-                } yield result match {
-                    case response: StringResponse => Ok(response)
-                    case EmptyResponse =>
-                        NotFound(NoParamException(uid))
-                }
-        } handle {
-            case e: InvalidJsonBodyException => BadRequest(e)
-            case e: Exception =>
-                InternalServerError(e)
-        }
+    private val updateParam = patch(
+      "params" :: path[Uid] :: jsonBody[UpdateParamRequest]
+    ) { (uid: Uid, request: UpdateParamRequest) =>
+        for {
+            result <- paramService.update(uid, request)
+        } yield result.asOutput
+    }
 
     private val deleteParam = delete("params" :: path[Uid]) { uid: Uid =>
         for {
-            result <- paramService.removeByUid(uid)
-        } yield result match {
-            case response: StringResponse => Ok(response)
-            case EmptyResponse =>
-                NotFound(NoParamException(uid))
-        }
-    } handle { case e: Exception =>
-        InternalServerError(e)
+            result <- paramService.remove(uid)
+        } yield result.asOutput
     }
 
     val api =
-        getParams :+: getParam :+: addParam :+: updateParam :+: deleteParam
+        (getParams :+: getParam :+: addParam :+: updateParam :+: deleteParam)
+            .handle(errorHandler)
 }

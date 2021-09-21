@@ -17,7 +17,7 @@ trait TokenRepo[DB[_]] {
       * @return
       *   Action.
       */
-    def add(pair: (String, String)): DB[Unit]
+    def add(pair: (String, String)): DB[Boolean]
 
     /** Remove all tokens for specified subject.
       * @param id
@@ -33,9 +33,9 @@ trait TokenRepo[DB[_]] {
       * @return
       *   Success if removed, otherwise Failure.
       */
-    def removeByValue(pair: (String, String)): DB[Try[Unit]]
+    def removeByValue(pair: (String, String)): DB[Boolean]
 
-    def removeByToken(token: String): DB[Try[Unit]]
+    def removeByToken(token: String): DB[Boolean]
 
     /** Check if token is presented in repository.
       * @param token

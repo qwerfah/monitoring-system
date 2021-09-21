@@ -10,6 +10,7 @@ import cats.implicits._
 import pdi.jwt.{JwtCirce, JwtAlgorithm, JwtClaim}
 
 import com.qwerfah.common.services._
+import com.qwerfah.common.services.response._
 import com.qwerfah.common.repos.TokenRepo
 import com.qwerfah.common.models.Token
 import com.qwerfah.common.db.DbManager
@@ -78,17 +79,20 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
     )
 
     def validate(token: String): F[ServiceResponse[String]] = {
-        dbManager.execute(tokenRepo.contains(token)) map {
+        dbManager.execute(tokenRepo.contains(token)) flatMap {
             case true => {
                 decodeToken(token) match {
-                    case Success(value) => ObjectResponse(value.subject.get)
+                    case Success(value) =>
+                        Monad[F].pure(ObjectResponse(value.subject.get))
                     case Failure(_) => {
-                        dbManager.execute(tokenRepo.removeByToken(token))
-                        ErrorResponse(InvalidTokenException)
+                        dbManager.execute(tokenRepo.removeByToken(token)) map {
+                            case true  => BadAuthResponse(ExpiredToken)
+                            case false => BadAuthResponse(NoExpiredToken)
+                        }
                     }
                 }
             }
-            case false => ErrorResponse(InvalidTokenException)
+            case false => Monad[F].pure(BadAuthResponse(InvalidToken))
         }
     }
 
@@ -99,23 +103,5 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
             _ <- dbManager.execute(tokenRepo.add(id -> token.access))
             _ <- dbManager.execute(tokenRepo.add(id -> token.refresh))
         } yield ObjectResponse(token)
-    }
-
-    def removeExpired(): F[ServiceResponse[Unit]] = {
-        dbManager.execute(tokenRepo.get) flatMap { tokens =>
-            {
-                val expired =
-                    tokens.filter(token => decodeToken(token._2).isSuccess)
-                val seq = dbManager.sequence(expired map { pair =>
-                    tokenRepo.removeByValue(pair)
-                })
-                dbManager.execute(seq) map { result =>
-                    result.toList.sequence_ match {
-                        case Success(())    => ObjectResponse(())
-                        case Failure(error) => ErrorResponse(error)
-                    }
-                }
-            }
-        }
     }
 }

@@ -32,9 +32,11 @@ class SlickEquipmentInstanceRepo(implicit val context: DataContext)
         val targetRows =
             context.instances.filter(_.uid === instance.uid)
         for {
-            booleanOption <- targetRows.result.headOption
-            updateActionOption = booleanOption.map(b =>
-                targetRows.update(instance)
+            old <- targetRows.result.headOption
+            updateActionOption = old.map(b =>
+                targetRows.update(
+                  instance.copy(id = b.id, modelUid = b.modelUid)
+                )
             )
             affected <- updateActionOption.getOrElse(DBIO.successful(0))
         } yield affected

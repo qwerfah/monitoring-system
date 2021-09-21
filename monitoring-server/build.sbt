@@ -38,7 +38,7 @@ lazy val gateway = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(common)
+    .dependsOn(common, equipmentApi)
 
 lazy val session = project
     .in(file("session-service"))

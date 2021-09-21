@@ -10,7 +10,9 @@ import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Mappings
 import com.qwerfah.common.Uid
 import com.qwerfah.common.db.DbManager
-import com.qwerfah.common.services._
+import com.qwerfah.common.services.response._
+import com.qwerfah.common.exceptions.NoModel
+import com.qwerfah.common.exceptions.NoInstance
 
 class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
   modelRepo: EquipmentModelRepo[DB],
@@ -19,25 +21,17 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
 ) extends EquipmentInstanceService[F] {
     import Mappings._
 
-    override def get: F[ServiceResponse[Seq[InstanceResponse]]] = for {
+    override def getAll: F[ServiceResponse[Seq[InstanceResponse]]] = for {
         instances <- dbManager.execute(instanceRepo.get)
     } yield ObjectResponse(instances)
 
-    override def getById(id: Int): F[ServiceResponse[InstanceResponse]] = for {
-        instance <- dbManager.execute(instanceRepo.getById(id))
-    } yield instance match {
-        case Some(instance) =>
-            ObjectResponse(instance)
-        case None => EmptyResponse
-    }
-
-    override def getByUid(uid: Uid): F[ServiceResponse[InstanceResponse]] =
+    override def get(uid: Uid): F[ServiceResponse[InstanceResponse]] =
         for {
             instance <- dbManager.execute(instanceRepo.getByUid(uid))
         } yield instance match {
             case Some(instance) =>
                 ObjectResponse(instance)
-            case None => EmptyResponse
+            case None => NotFoundResponse(NoInstance(uid))
         }
 
     override def getByModelUid(
@@ -54,58 +48,32 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
                 dbManager.execute(instanceRepo.add(request)) map { instance =>
                     ObjectResponse(instance)
                 }
-            case None => Monad[F].pure(EmptyResponse)
+            case None =>
+                Monad[F].pure(NotFoundResponse(NoModel(request.modelUid)))
         }
-        /*
-        for {
-            model <- dbManager.execute(repo.getByGuid(request.modelUid))
-            result <- EitherT.cond[F](
-              model.isEmpty,
-              Monad[F].pure(EmptyResponse),
-              dbManager.execute(repo.add(request))
-            )
-        } yield result match {
-            case EmptyResponse => EmptyResponse
-
-        }
-         */
     }
 
     override def update(
-      uuid: Uid,
+      uid: Uid,
       request: UpdateInstanceRequest
-    ): F[ServiceResponse[String]] = {
+    ): F[ServiceResponse[ResponseMessage]] = {
         val updated: EquipmentInstance = request
 
-        dbManager.execute(instanceRepo.getByUid(uuid)) flatMap {
-            case Some(instance) =>
-                dbManager.execute(
-                  instanceRepo.update(
-                    updated.copy(
-                      id = instance.id,
-                      uid = uuid,
-                      modelUid = instance.modelUid
-                    )
-                  )
-                ) map {
-                    case 1 => StringResponse("Instance updated")
-                    case _ => EmptyResponse
-                }
-            case None => Monad[F].pure(EmptyResponse)
+        for {
+            result <- dbManager.execute(
+              instanceRepo.update(updated.copy(uid = uid))
+            )
+        } yield result match {
+            case 1 => ObjectResponse(InstanceUpdated(uid))
+            case _ => NotFoundResponse(NoInstance(uid))
         }
     }
 
-    override def removeById(id: Int): F[ServiceResponse[String]] = for {
-        result <- dbManager.execute(instanceRepo.removeById(id))
-    } yield result match {
-        case 1 => StringResponse("Instance removed")
-        case _ => EmptyResponse
-    }
-
-    override def removeByUid(uid: Uid): F[ServiceResponse[String]] = for {
-        result <- dbManager.execute(instanceRepo.removeByUid(uid))
-    } yield result match {
-        case 1 => StringResponse("Instance removed")
-        case _ => EmptyResponse
-    }
+    override def remove(uid: Uid): F[ServiceResponse[ResponseMessage]] =
+        for {
+            result <- dbManager.execute(instanceRepo.removeByUid(uid))
+        } yield result match {
+            case 1 => ObjectResponse(InstanceRemoved(uid))
+            case _ => NotFoundResponse(NoInstance(uid))
+        }
 }

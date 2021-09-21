@@ -21,17 +21,10 @@ import com.qwerfah.session.json.Decoders
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.Uid
 import com.qwerfah.common.services._
-import cats.effect.IO
-import com.twitter.finagle.http.Status
-import com.twitter.finagle.SimpleFilter
-import com.twitter.finagle.Service
+import com.qwerfah.common.services.response._
+import com.qwerfah.common.controllers.Controller
 
-import com.qwerfah.common.repos.TokenRepo
-import scala.util.Try
-import io.finch.internal.Mapper
-import cats.effect.IOApp
-
-object UserController {
+object UserController extends Controller {
     import Startup._
     import Decoders._
 
@@ -41,28 +34,25 @@ object UserController {
     private def authorize[A](
       token: Option[String],
       action: String => Future[Output[A]]
-    ) = token match {
+    ): Future[Output[A]] = token match {
         case Some(value) =>
             tokenService.validate(value) flatMap {
                 case ObjectResponse(result) => action(result)
-                case ErrorResponse(error) =>
+                case e: NotFoundResponse =>
                     Future.successful(
-                      Unauthorized(new Exception(error.getMessage))
+                      Unauthorized(e)
                     )
             }
-        case None => Future.successful(Unauthorized(NoTokenHeaderException))
+        case None => Future.successful(Unauthorized(NoTokenHeader))
     }
 
     private val getUsers = get("users" :: headerOption("Authorization")) {
         token: Option[String] =>
             authorize(
               token,
-              _ =>
-                  for { result <- userService.getAll } yield result match {
-                      case ObjectResponse(users) => Ok(users)
-                  }
+              _ => for { result <- userService.getAll } yield result.asOutput
             )
-    } handle { case e: Exception => InternalServerError(e) }
+    }
 
     private val getUser =
         get("users" :: path[Uid] :: headerOption("Authorization")) {
@@ -72,24 +62,16 @@ object UserController {
                   _ =>
                       for {
                           result <- userService.get(uid)
-                      } yield result match {
-                          case ObjectResponse(user) => Ok(user)
-                          case EmptyResponse => NotFound(NoUserException(uid))
-                      }
+                      } yield result.asOutput
                 )
-        } handle { case e: Exception => InternalServerError(e) }
+        }
 
     private val register =
         post("users" :: "register" :: jsonBody[UserRequest]) {
             request: UserRequest =>
                 for {
                     result <- userService.register(request)
-                } yield result match {
-                    case ObjectResponse(user) => Ok(user)
-                }
-        } handle {
-            case e: InvalidJsonBodyException => BadRequest(e)
-            case e: Exception                => InternalServerError(e)
+                } yield result.asOutput
         }
 
     private val login =
@@ -97,14 +79,7 @@ object UserController {
             credentials: Credentials =>
                 for {
                     result <- userService.login(credentials)
-                } yield result match {
-                    case ObjectResponse(token) => Ok(token)
-                    case EmptyResponse =>
-                        NotFound(InvalidCredentialsException)
-                }
-        } handle {
-            case e: InvalidJsonBodyException => BadRequest(e)
-            case e: Exception                => InternalServerError(e)
+                } yield result.asOutput
         }
 
     private val refresh =
@@ -113,14 +88,9 @@ object UserController {
                 authorize(
                   token,
                   uid =>
-                      userService.refresh(uid) map {
-                          case ObjectResponse(token) => Ok(token)
-                          case EmptyResponse => NotFound(NoTokenUserException)
-                          case ErrorResponse(error) =>
-                              Unauthorized(new Exception(error.getMessage))
-                      }
+                      userService.refresh(uid) map { result => result.asOutput }
                 )
-        } handle { case e: Exception => InternalServerError(e) }
+        }
 
     private val updateUser =
         patch(
@@ -133,14 +103,8 @@ object UserController {
               _ =>
                   for {
                       result <- userService.update(uid, request)
-                  } yield result match {
-                      case response: StringResponse => Ok(response)
-                      case EmptyResponse => NotFound(NoUserException(uid))
-                  }
+                  } yield result.asOutput
             )
-        } handle {
-            case e: InvalidJsonBodyException => BadRequest(e)
-            case e: Exception                => InternalServerError(e)
         }
 
     private val deleteUser =
@@ -151,13 +115,11 @@ object UserController {
                   _ =>
                       for {
                           result <- userService.remove(uid)
-                      } yield result match {
-                          case response: StringResponse => Ok(response)
-                          case EmptyResponse => NotFound(NoUserException(uid))
-                      }
+                      } yield result.asOutput
                 )
-        } handle { case e: Exception => InternalServerError(e) }
+        }
 
     val api =
-        getUsers :+: getUser :+: register :+: login :+: refresh :+: updateUser :+: deleteUser
+        (getUsers :+: getUser :+: register :+: login :+: refresh :+: updateUser :+: deleteUser)
+            .handle(errorHandler)
 }

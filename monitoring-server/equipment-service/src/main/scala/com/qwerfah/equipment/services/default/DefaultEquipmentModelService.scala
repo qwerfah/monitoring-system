@@ -10,7 +10,8 @@ import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Mappings
 import com.qwerfah.common.Uid
 import com.qwerfah.common.db.DbManager
-import com.qwerfah.common.services._
+import com.qwerfah.common.services.response._
+import com.qwerfah.common.exceptions._
 
 class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
   repo: EquipmentModelRepo[DB],
@@ -26,25 +27,16 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
             case _: IllegalArgumentException => false
         }
 
-    override def get: F[ServiceResponse[Seq[ModelResponse]]] = for {
+    override def getAll: F[ServiceResponse[Seq[ModelResponse]]] = for {
         models <- dbManager.execute(repo.get)
     } yield ObjectResponse(models)
 
-    override def getById(id: Int): F[ServiceResponse[ModelResponse]] = for {
-        model <- dbManager.execute(repo.getById(id))
-    } yield model match {
-        case Some(model) =>
-            ObjectResponse(model)
-        case None => EmptyResponse
-    }
-
-    override def getByUid(uid: Uid): F[ServiceResponse[ModelResponse]] =
+    override def get(uid: Uid): F[ServiceResponse[ModelResponse]] =
         for {
             model <- dbManager.execute(repo.getByUid(uid))
         } yield model match {
-            case Some(model) =>
-                ObjectResponse(model)
-            case None => EmptyResponse
+            case Some(model) => ObjectResponse(model)
+            case None        => NotFoundResponse(NoModel(uid))
         }
 
     override def add(
@@ -56,29 +48,22 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
     }
 
     override def update(
-      uuid: Uid,
+      uid: Uid,
       request: ModelRequest
-    ): F[ServiceResponse[String]] = {
+    ): F[ServiceResponse[ResponseMessage]] = {
         val model: EquipmentModel = request
         for {
-            result <- dbManager.execute(repo.update(model.copy(uid = uuid)))
+            result <- dbManager.execute(repo.update(model.copy(uid = uid)))
         } yield result match {
-            case 1 => StringResponse("Model updated")
-            case _ => EmptyResponse
+            case 1 => ObjectResponse(ModelUpdated(uid))
+            case _ => NotFoundResponse(NoModel(uid))
         }
     }
 
-    override def removeById(id: Int): F[ServiceResponse[String]] = for {
-        result <- dbManager.execute(repo.removeById(id))
-    } yield result match {
-        case 1 => StringResponse("Model removed")
-        case _ => EmptyResponse
-    }
-
-    override def removeByUid(uid: Uid): F[ServiceResponse[String]] = for {
+    override def remove(uid: Uid): F[ServiceResponse[ResponseMessage]] = for {
         result <- dbManager.execute(repo.removeByUid(uid))
     } yield result match {
-        case 1 => StringResponse("Model removed")
-        case _ => EmptyResponse
+        case 1 => ObjectResponse(ModelRemoved(uid))
+        case _ => NotFoundResponse(NoModel(uid))
     }
 }

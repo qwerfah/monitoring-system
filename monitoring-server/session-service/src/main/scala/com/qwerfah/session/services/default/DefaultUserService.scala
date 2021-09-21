@@ -10,7 +10,7 @@ import java.security.MessageDigest
 
 import com.qwerfah.session.repos.UserRepo
 import com.qwerfah.session.services.UserService
-import com.qwerfah.common.services.ServiceResponse
+import com.qwerfah.common.services.response._
 import com.qwerfah.common.Uid
 import com.qwerfah.session.resources._
 import com.qwerfah.common.db.DbManager
@@ -19,7 +19,7 @@ import com.qwerfah.session.Mappings
 import com.qwerfah.session.models.User
 import com.qwerfah.common.randomUid
 import com.qwerfah.common.models.Token
-import com.qwerfah.common.exceptions.NoUserException
+import com.qwerfah.common.exceptions._
 
 class DefaultUserService[F[_]: Monad, DB[_]: Monad](implicit
   userRepo: UserRepo[DB],
@@ -44,7 +44,7 @@ class DefaultUserService[F[_]: Monad, DB[_]: Monad](implicit
         dbManager.execute(userRepo.getByLogin(credentials.login)) flatMap {
             case Some(user) if user.password.deep == passwordHash.deep =>
                 tokenService.generate(user.uid.toString)
-            case _ => Monad[F].pure(EmptyResponse)
+            case _ => Monad[F].pure(NotFoundResponse(InvalidCredentials))
         }
     }
 
@@ -53,7 +53,7 @@ class DefaultUserService[F[_]: Monad, DB[_]: Monad](implicit
           userRepo.getByUid(java.util.UUID.fromString(uid))
         ) flatMap {
             case Some(user) => tokenService.generate(uid)
-            case None       => Monad[F].pure(EmptyResponse)
+            case None       => Monad[F].pure(NotFoundResponse(NoTokenUser))
         }
 
     override def getAll: F[ServiceResponse[Seq[UserResponse]]] =
@@ -65,28 +65,28 @@ class DefaultUserService[F[_]: Monad, DB[_]: Monad](implicit
         user <- dbManager.execute(userRepo.getByUid(uid))
     } yield user match {
         case Some(user) => ObjectResponse(user)
-        case None       => EmptyResponse
+        case None       => NotFoundResponse(NoUser(uid))
     }
 
     override def update(
       uid: Uid,
       request: UserRequest
-    ): F[ServiceResponse[String]] = {
+    ): F[ServiceResponse[ResponseMessage]] = {
         val user: User = request
         for {
             result <- dbManager.execute(userRepo.update(user.copy(uid = uid)))
         } yield result match {
-            case 1 => StringResponse("User updated")
-            case _ => EmptyResponse
+            case 1 => ObjectResponse(UserUpdated(uid))
+            case _ => NotFoundResponse(NoUser(uid))
         }
     }
 
-    override def remove(uid: Uid): F[ServiceResponse[String]] = {
+    override def remove(uid: Uid): F[ServiceResponse[ResponseMessage]] = {
         for {
             result <- dbManager.execute(userRepo.removeByUid(uid))
         } yield result match {
-            case 1 => StringResponse("User removed")
-            case _ => EmptyResponse
+            case 1 => ObjectResponse(UserRemoved(uid))
+            case _ => NotFoundResponse(NoUser(uid))
         }
     }
 }

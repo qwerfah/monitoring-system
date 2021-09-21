@@ -2,7 +2,7 @@ package com.qwerfah.session.services
 
 import com.qwerfah.session.models._
 import com.qwerfah.session.resources._
-import com.qwerfah.common.services.ServiceResponse
+import com.qwerfah.common.services.response._
 import com.qwerfah.common.Uid
 import com.qwerfah.common.models.Token
 
@@ -54,6 +54,10 @@ trait UserService[F[_]] {
       *   New user data.
       * @return
       */
-    def update(uid: Uid, request: UserRequest): F[ServiceResponse[String]]
-    def remove(uid: Uid): F[ServiceResponse[String]]
+    def update(
+      uid: Uid,
+      request: UserRequest
+    ): F[ServiceResponse[ResponseMessage]]
+    
+    def remove(uid: Uid): F[ServiceResponse[ResponseMessage]]
 }

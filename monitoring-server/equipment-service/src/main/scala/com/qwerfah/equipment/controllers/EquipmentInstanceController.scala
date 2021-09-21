@@ -22,74 +22,45 @@ import com.qwerfah.equipment.json.Decoders
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.Uid
 import com.qwerfah.common.services._
+import com.qwerfah.common.controllers.Controller
 
-object EquipmentInstanceController {
+object EquipmentInstanceController extends Controller {
     import Startup._
     import Decoders._
 
     private val instanceService = implicitly[EquipmentInstanceService[Future]]
 
     private val getInstances = get("instances") {
-        for { result <- instanceService.get } yield result match {
-            case ObjectResponse(instances) => Ok(instances)
-        }
-    } handle { case e: Exception =>
-        InternalServerError(e)
+        for { result <- instanceService.getAll } yield result.asOutput
     }
 
     private val getInstance = get("instances" :: path[Uid]) { uid: Uid =>
-        for { result <- instanceService.getByUid(uid) } yield result match {
-            case ObjectResponse(instance) => Ok(instance)
-            case EmptyResponse            => NotFound(NoInstanceException(uid))
-        }
-    } handle { case e: Exception =>
-        InternalServerError(e)
+        for { result <- instanceService.get(uid) } yield result.asOutput
     }
 
-    private val addInstance =
-        post("instances" :: jsonBody[AddInstanceRequest]) {
-            request: AddInstanceRequest =>
-                for {
-                    result <- instanceService.add(request)
-                } yield result match {
-                    case ObjectResponse(instance) => Ok(instance)
-                    case EmptyResponse =>
-                        NotFound(NoModelException(request.modelUid))
-                }
-        } handle {
-            case e: InvalidJsonBodyException => BadRequest(e)
-            case e: Exception =>
-                InternalServerError(e)
-        }
+    private val addInstance = post(
+      "instances" :: jsonBody[AddInstanceRequest]
+    ) { request: AddInstanceRequest =>
+        for {
+            result <- instanceService.add(request)
+        } yield result.asOutput
+    }
 
     private val updateInstance =
         patch("instances" :: path[Uid] :: jsonBody[UpdateInstanceRequest]) {
             (uid: Uid, request: UpdateInstanceRequest) =>
                 for {
                     result <- instanceService.update(uid, request)
-                } yield result match {
-                    case response: StringResponse => Ok(response)
-                    case EmptyResponse =>
-                        NotFound(NoInstanceException(uid))
-                }
-        } handle {
-            case e: InvalidJsonBodyException => BadRequest(e)
-            case e: Exception =>
-                InternalServerError(e)
+                } yield result.asOutput
         }
 
     private val deleteInstance = delete("instances" :: path[Uid]) { uid: Uid =>
         for {
-            result <- instanceService.removeByUid(uid)
-        } yield result match {
-            case response: StringResponse => Ok(response)
-            case EmptyResponse =>
-                NotFound(NoInstanceException(uid))
-        }
-    } handle { case e: Exception =>
-        InternalServerError(e)
+            result <- instanceService.remove(uid)
+        } yield result.asOutput
     }
 
     val api =
-        getInstances :+: getInstance :+: addInstance :+: updateInstance :+: deleteInstance
+        (getInstances :+: getInstance :+: addInstance :+: updateInstance :+: deleteInstance)
+            .handle(errorHandler)
 }

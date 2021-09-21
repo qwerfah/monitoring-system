@@ -120,17 +120,17 @@ lazy val commonDependencies = Seq(
   "com.typesafe.slick" %% "slick-hikaricp" % "3.3.3",
   "org.postgresql" % "postgresql" % "42.2.23.jre7",
   "org.slf4j" % "slf4j-nop" % "1.6.4",
-  "com.lambdista" %% "config" % "0.7.1",
+  "com.lambdista" %% "config" % "0.8.1",
   "com.github.finagle" %% "finchx-core" % "0.32.1",
   "com.github.finagle" %% "finchx-circe" % "0.32.1",
-  "com.github.finagle" % "finagle-http-auth_2.12" % "0.1.0",
-  "io.circe" %% "circe-generic" % "0.14.1",
+  "io.circe" %% "circe-generic" % "0.15.0-M1",
   "io.circe" %% "circe-json-schema" % "0.2.0",
-  "io.circe" % "circe-literal_2.12" % "0.15.0-M1",
+  "io.circe" % "circe-literal_2.13" % "0.15.0-M1",
   "com.twitter" %% "twitter-server" % "21.8.0",
   "com.rms.miu" %% "slick-cats" % "0.10.4",
   "com.beachape" %% "enumeratum-circe" % "1.7.0",
-  "com.beachape" %% "enumeratum-slick" % "1.7.0"
+  "com.beachape" %% "enumeratum-slick" % "1.7.0",
+  "io.catbird" % "catbird-util_2.13" % "21.5.0"
 )
 
 lazy val settings = Seq(

@@ -25,14 +25,6 @@ trait UserService[F[_]] {
       */
     def login(credentials: Credentials): F[ServiceResponse[Token]]
 
-    /** Refresh user tokens using refresh token.
-      * @param token
-      *   Refresh token (not expired).
-      * @return
-      *   New access and refresh tokens.
-      */
-    def refresh(token: String): F[ServiceResponse[Token]]
-
     /** Get all registered users.
       * @return
       *   All registered users.

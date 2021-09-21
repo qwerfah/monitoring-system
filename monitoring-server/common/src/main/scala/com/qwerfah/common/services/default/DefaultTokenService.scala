@@ -78,7 +78,7 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
       Seq(JwtOptions.algorithm)
     )
 
-    def validate(token: String): F[ServiceResponse[String]] = {
+    override def validate(token: String): F[ServiceResponse[String]] = {
         dbManager.execute(tokenRepo.contains(token)) flatMap {
             case true => {
                 decodeToken(token) match {
@@ -96,12 +96,19 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
         }
     }
 
-    def generate(id: String): F[ServiceResponse[Token]] = {
+    override def generate(id: String): F[ServiceResponse[Token]] = {
         val token = generateToken(id)
         for {
             _ <- dbManager.execute(tokenRepo.removeById(id))
             _ <- dbManager.execute(tokenRepo.add(id -> token.access))
             _ <- dbManager.execute(tokenRepo.add(id -> token.refresh))
         } yield ObjectResponse(token)
+    }
+
+    override def refresh(token: String): F[ServiceResponse[Token]] = {
+        validate(token) flatMap {
+            case ObjectResponse(result) => generate(result)
+            case e: ErrorResponse => Monad[F].pure(e)
+        }
     }
 }

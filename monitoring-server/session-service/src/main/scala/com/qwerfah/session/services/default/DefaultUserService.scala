@@ -48,14 +48,6 @@ class DefaultUserService[F[_]: Monad, DB[_]: Monad](implicit
         }
     }
 
-    override def refresh(uid: String): F[ServiceResponse[Token]] =
-        dbManager.execute(
-          userRepo.getByUid(java.util.UUID.fromString(uid))
-        ) flatMap {
-            case Some(user) => tokenService.generate(uid)
-            case None       => Monad[F].pure(NotFoundResponse(NoTokenUser))
-        }
-
     override def getAll: F[ServiceResponse[Seq[UserResponse]]] =
         for { users <- dbManager.execute(userRepo.get) } yield ObjectResponse(
           users

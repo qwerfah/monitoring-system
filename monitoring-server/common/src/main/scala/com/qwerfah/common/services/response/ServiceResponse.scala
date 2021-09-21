@@ -15,25 +15,27 @@ final case class ObjectResponse[T](result: T) extends ServiceResponse[T]
   * @param error
   *   Error instance.
   */
-sealed trait ErrorResponse extends Exception with ServiceResponse[Nothing]
+sealed abstract class ErrorResponse(message: ErrorMessage)
+  extends Exception
+  with ServiceResponse[Nothing] {
+    override def getMessage = message.getMessage
+}
 
 /** Returns when service operation can't can't get the required resource.
   * Corresponds to 404 status code.
   * @param message
   *   Error description.
   */
-final case class NotFoundResponse(message: ErrorMessage) extends ErrorResponse {
-    override def getMessage = message.getMessage
-}
+final case class NotFoundResponse(message: ErrorMessage)
+  extends ErrorResponse(message)
 
 /** Returns when authorization operation results in error. Corresponds to 400
   * status code.
   * @param message
   *   Error description.
   */
-final case class BadAuthResponse(message: ErrorMessage) extends ErrorResponse {
-    override def getMessage = message.getMessage
-}
+final case class BadAuthResponse(message: ErrorMessage)
+  extends ErrorResponse(message)
 
 /** Returns when the request to the remote server inside of service method
   * invocation ends with 503 status code. Corresponds to 502 status code.
@@ -41,9 +43,7 @@ final case class BadAuthResponse(message: ErrorMessage) extends ErrorResponse {
   *   Error description.
   */
 final case class BadGatewayResponse(message: ErrorMessage)
-  extends ErrorResponse {
-    override def getMessage = message.getMessage
-}
+  extends ErrorResponse(message)
 
 /** Returns when service operation ends with unprocessed error. Corresponds to
   * 500 status code.
@@ -51,9 +51,7 @@ final case class BadGatewayResponse(message: ErrorMessage)
   *   Error description.
   */
 final case class InternalErrorResponse(message: ErrorMessage)
-  extends ErrorResponse {
-    override def getMessage = message.getMessage
-}
+  extends ErrorResponse(message)
 
 /** Returns when the successful request to the remote server inside of service
   * method invocation returns result that does not corresponds to expected.
@@ -62,9 +60,7 @@ final case class InternalErrorResponse(message: ErrorMessage)
   *   Error description.
   */
 final case class UnprocessableResponse(message: ErrorMessage)
-  extends ErrorResponse {
-    override def getMessage = message.getMessage
-}
+  extends ErrorResponse(message)
 
 /** Returns when the request to the remote server inside of service method
   * invocation returns unexpected status code. Corresponds to 520 status code.
@@ -72,6 +68,4 @@ final case class UnprocessableResponse(message: ErrorMessage)
   *   Error description.
   */
 final case class UnknownErrorResponse(message: ErrorMessage)
-  extends ErrorResponse {
-    override def getMessage = message.getMessage
-}
+  extends ErrorResponse(message)

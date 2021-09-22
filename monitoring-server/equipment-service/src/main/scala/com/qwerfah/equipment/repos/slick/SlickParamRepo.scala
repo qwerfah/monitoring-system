@@ -8,9 +8,9 @@ import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
 import com.qwerfah.common.Uid
 
-class SlickParamRepo(implicit val context: DataContext)
+class SlickParamRepo(implicit val context: EquipmentContext)
   extends ParamRepo[DBIO] {
-          import context.profile.api._
+    import context.profile.api._
 
     override def get: DBIO[Seq[Param]] = context.params.result
 

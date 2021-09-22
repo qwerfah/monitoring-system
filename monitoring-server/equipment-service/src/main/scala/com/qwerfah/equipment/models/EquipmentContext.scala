@@ -1,5 +1,7 @@
 package com.qwerfah.equipment.models
 
+import java.security.MessageDigest
+
 import slick.jdbc.JdbcProfile
 import slick.jdbc.meta.MTable
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -8,15 +10,15 @@ import enumeratum._
 
 import com.qwerfah.equipment.resources._
 import com.qwerfah.common.{Uid, randomUid}
+import com.qwerfah.common.models._
+import com.qwerfah.common.resources.UserRole
 
 /** Database scheme context base on jdbc profile provided.
   * @param jdbcProfile
   *   Current jdbc profile for interaction with db provider.
   */
-class DataContext(implicit jdbcProfile: JdbcProfile) extends SlickEnumSupport {
-
-    override val profile = jdbcProfile
-
+class EquipmentContext(implicit jdbcProfile: JdbcProfile)
+  extends DataContext(jdbcProfile) {
     import profile.api._
 
     implicit lazy val statusMapper = mappedColumnTypeForEnum(EquipmentStatus)
@@ -142,7 +144,11 @@ class DataContext(implicit jdbcProfile: JdbcProfile) extends SlickEnumSupport {
     /** Db schema initialization.2 */
     val setup = DBIO.seq(
       // Create db schema
-      (models.schema ++ params.schema ++ instances.schema).createIfNotExists,
+      models.schema
+          .++(params.schema)
+          .++(instances.schema)
+          .++(users.schema)
+          .createIfNotExists,
       // Insert equipment models
       models.exists.result flatMap { exisits =>
           if (!exisits) models ++= initialModels
@@ -156,6 +162,11 @@ class DataContext(implicit jdbcProfile: JdbcProfile) extends SlickEnumSupport {
       // Insert equipment instances
       instances.exists.result flatMap { exists =>
           if (!exists) instances ++= initialInstances
+          else DBIO.successful(None)
+      },
+      // Insert equipment instances
+      users.exists.result flatMap { exists =>
+          if (!exists) users ++= initialUsers
           else DBIO.successful(None)
       }
     )
@@ -200,7 +211,7 @@ class DataContext(implicit jdbcProfile: JdbcProfile) extends SlickEnumSupport {
       ),
       EquipmentInstance(
         Some(2),
-        java.util.UUID.randomUUID,
+        randomUid,
         modelUids(1),
         "Instance_2",
         Some("Description of Instance_2"),
@@ -208,11 +219,21 @@ class DataContext(implicit jdbcProfile: JdbcProfile) extends SlickEnumSupport {
       ),
       EquipmentInstance(
         Some(3),
-        java.util.UUID.randomUUID,
+        randomUid,
         modelUids(2),
         "Instance_3",
         Some("Description of Instance_3"),
         EquipmentStatus.Active
+      )
+    )
+
+    private val initialUsers = Seq(
+      User(
+        Some(1),
+        randomUid,
+        "gateway",
+        MessageDigest.getInstance("MD5").digest("gateway".getBytes),
+        UserRole.SystemAdmin
       )
     )
 }

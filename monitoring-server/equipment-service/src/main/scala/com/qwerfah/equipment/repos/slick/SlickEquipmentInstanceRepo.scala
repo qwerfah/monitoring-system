@@ -9,7 +9,7 @@ import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
 import com.qwerfah.common.Uid
 
-class SlickEquipmentInstanceRepo(implicit val context: DataContext)
+class SlickEquipmentInstanceRepo(implicit val context: EquipmentContext)
   extends EquipmentInstanceRepo[DBIO] {
     import context.profile.api._
 

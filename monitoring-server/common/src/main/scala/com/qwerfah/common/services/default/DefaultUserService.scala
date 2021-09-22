@@ -1,4 +1,4 @@
-package com.qwerfah.session.services.default
+package com.qwerfah.common.services.default
 
 import cats.Monad
 import cats.implicits._
@@ -8,15 +8,15 @@ import scala.util.Failure
 
 import java.security.MessageDigest
 
-import com.qwerfah.session.repos.UserRepo
-import com.qwerfah.session.services.UserService
+import com.qwerfah.common.repos.UserRepo
+import com.qwerfah.common.services.UserService
 import com.qwerfah.common.services.response._
 import com.qwerfah.common.Uid
-import com.qwerfah.session.resources._
+import com.qwerfah.common.resources._
 import com.qwerfah.common.db.DbManager
 import com.qwerfah.common.services._
-import com.qwerfah.session.Mappings
-import com.qwerfah.session.models.User
+import com.qwerfah.common.Mappings
+import com.qwerfah.common.models.User
 import com.qwerfah.common.randomUid
 import com.qwerfah.common.models.Token
 import com.qwerfah.common.exceptions._

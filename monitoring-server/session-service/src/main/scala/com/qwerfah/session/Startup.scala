@@ -11,10 +11,10 @@ import slick.dbio._
 import com.rms.miu.slickcats.DBIOInstances._
 
 import com.qwerfah.session.models._
-import com.qwerfah.session.repos.slick._
-import com.qwerfah.session.repos._
-import com.qwerfah.session.services._
-import com.qwerfah.session.services.default._
+import com.qwerfah.common.repos.slick._
+import com.qwerfah.common.repos._
+import com.qwerfah.common.services._
+import com.qwerfah.common.services.default._
 import com.qwerfah.common.repos.local._
 import com.qwerfah.common.db.slick.SlickDbManager
 import com.qwerfah.common.services.default._
@@ -23,7 +23,7 @@ object Startup {
     // Db dependencies
     implicit val pgdb = Database.forConfig("postgres")
     implicit val dbProfile = PostgresProfile
-    implicit val context = new DataContext
+    implicit val context = new SessionContext
 
     // Repository dependencies
     implicit val userRepo = new SlickUserRepo

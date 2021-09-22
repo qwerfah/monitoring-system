@@ -1,4 +1,4 @@
-package com.qwerfah.session.json
+package com.qwerfah.common.json
 
 import io.circe.literal._
 import io.circe.schema.Schema

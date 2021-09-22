@@ -1,6 +1,6 @@
-package com.qwerfah.session.repos
+package com.qwerfah.common.repos
 
-import com.qwerfah.session.models._
+import com.qwerfah.common.models._
 import com.qwerfah.common.Uid
 
 /** Users repository DSL. */

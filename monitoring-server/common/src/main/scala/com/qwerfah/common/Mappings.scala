@@ -1,8 +1,8 @@
-package com.qwerfah.session
+package com.qwerfah.common
 
-import com.qwerfah.session.resources._
+import com.qwerfah.common.resources._
 import com.qwerfah.common.randomUid
-import com.qwerfah.session.models.User
+import com.qwerfah.common.models.User
 import java.security.MessageDigest
 
 object Mappings {
@@ -11,7 +11,9 @@ object Mappings {
           None,
           randomUid,
           request.login,
-          MessageDigest.getInstance("MD5").digest(request.password.getBytes("UTF-8")),
+          MessageDigest
+              .getInstance("MD5")
+              .digest(request.password.getBytes("UTF-8")),
           request.role
         )
 

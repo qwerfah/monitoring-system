@@ -1,4 +1,4 @@
-package com.qwerfah.session.json
+package com.qwerfah.common.json
 
 import io.circe.{Decoder, HCursor}
 
@@ -8,7 +8,7 @@ import cats.implicits._
 
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.Uid
-import com.qwerfah.session.resources._
+import com.qwerfah.common.resources._
 
 object Decoders {
     import JsonSchemas._

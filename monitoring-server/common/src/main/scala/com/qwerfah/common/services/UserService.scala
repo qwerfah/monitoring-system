@@ -1,7 +1,7 @@
-package com.qwerfah.session.services
+package com.qwerfah.common.services
 
-import com.qwerfah.session.models._
-import com.qwerfah.session.resources._
+import com.qwerfah.common.models._
+import com.qwerfah.common.resources._
 import com.qwerfah.common.services.response._
 import com.qwerfah.common.Uid
 import com.qwerfah.common.models.Token

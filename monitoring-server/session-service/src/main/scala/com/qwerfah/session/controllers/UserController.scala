@@ -12,12 +12,12 @@ import io.finch.circe._
 
 import io.circe.generic.auto._
 
-import com.qwerfah.session.services._
-import com.qwerfah.session.repos.slick._
-import com.qwerfah.session.models._
-import com.qwerfah.session.resources._
+import com.qwerfah.common.services._
+import com.qwerfah.common.repos.slick._
+import com.qwerfah.common.models._
+import com.qwerfah.common.resources._
 import com.qwerfah.session.Startup
-import com.qwerfah.session.json.Decoders
+import com.qwerfah.common.json.Decoders
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.Uid
 import com.qwerfah.common.services._

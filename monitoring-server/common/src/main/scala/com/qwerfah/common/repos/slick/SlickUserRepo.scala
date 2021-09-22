@@ -1,11 +1,11 @@
-package com.qwerfah.session.repos.slick
+package com.qwerfah.common.repos.slick
 
 import slick.dbio._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-import com.qwerfah.session.repos._
-import com.qwerfah.session.models._
-import com.qwerfah.session.resources._
+import com.qwerfah.common.repos.UserRepo
+import com.qwerfah.common.models._
+import com.qwerfah.common.resources._
 import com.qwerfah.common.Uid
 
 class SlickUserRepo(implicit val context: DataContext) extends UserRepo[DBIO] {

@@ -8,38 +8,14 @@ import enumeratum._
 
 import java.security.MessageDigest
 
+import com.qwerfah.common.models._
 import com.qwerfah.common.{Uid, randomUid}
-import com.qwerfah.session.resources.UserRole
+import com.qwerfah.common.resources.UserRole
 
-class DataContext(implicit jdbcProfile: JdbcProfile) extends SlickEnumSupport {
-    override val profile = jdbcProfile
-
+class SessionContext(implicit jdbcProfile: JdbcProfile)
+  extends DataContext(jdbcProfile) {
     import profile.api._
 
-    final class UserTable(tag: Tag) extends Table[User](tag, "USERS") {
-
-        /** User role enum to string mapper. */
-        implicit val roleMapper =
-            MappedColumnType.base[UserRole, String](
-              e => e.toString,
-              s => UserRole.withName(s)
-            )
-
-        def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
-        def uid = column[Uid]("UID", O.Unique)
-        def login = column[String]("LOGIN", O.Unique, O.Length(30))
-        def password = column[Array[Byte]]("PASSWORD")
-        def role = column[UserRole]("USER_ROLE")
-        def * = (
-          id.?,
-          uid,
-          login,
-          password,
-          role
-        ).<>(User.tupled, User.unapply)
-    }
-
-    val users = TableQuery[UserTable]
     val setup = DBIO.seq(
       // Create db schema
       users.schema.createIfNotExists,

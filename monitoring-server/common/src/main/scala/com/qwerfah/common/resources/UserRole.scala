@@ -1,4 +1,4 @@
-package com.qwerfah.session.resources
+package com.qwerfah.common.resources
 
 import enumeratum._
 

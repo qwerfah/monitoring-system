@@ -49,7 +49,11 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile)
         def * =
             (monitorUid, paramUid).<>(MonitorParam.tupled, MonitorParam.unapply)
 
-        def monitor = foreignKey("MONITOR_FK", monitorUid, monitors)(_.uid)
+        def monitor = foreignKey("MONITOR_FK", monitorUid, monitors)(
+          _.uid,
+          ForeignKeyAction.Cascade,
+          ForeignKeyAction.Cascade
+        )
     }
 
     val monitors = TableQuery[MonitorTable]

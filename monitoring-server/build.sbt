@@ -16,8 +16,7 @@ lazy val global = project
       documentation,
       generator,
       monitoring,
-      equipmentApi,
-      sessionApi
+      equipmentApi
     )
 
 lazy val common = project
@@ -47,7 +46,7 @@ lazy val session = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(common, sessionApi)
+    .dependsOn(common)
 
 lazy val reporting = project
     .in(file("reporting-service"))
@@ -98,16 +97,6 @@ lazy val equipmentApi = project
     .in(file("equipment-service-api"))
     .settings(
       name := "equipment-service-api",
-      settings,
-      libraryDependencies ++= commonDependencies
-    )
-    .dependsOn(common)
-    .disablePlugins(AssemblyPlugin)
-
-lazy val sessionApi = project
-    .in(file("session-service-api"))
-    .settings(
-      name := "session-service-api",
       settings,
       libraryDependencies ++= commonDependencies
     )

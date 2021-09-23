@@ -92,7 +92,7 @@ lazy val monitoring = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(common, monitoringApi)
+    .dependsOn(common, monitoringApi, equipmentApi)
 
 lazy val equipmentApi = project
     .in(file("equipment-service-api"))

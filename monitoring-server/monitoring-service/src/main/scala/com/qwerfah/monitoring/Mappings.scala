@@ -1,8 +1,8 @@
 package com.qwerfah.monitoring
 
 import com.qwerfah.monitoring.resources._
-import com.qwerfah.monitoring.randomUid
 import com.qwerfah.monitoring.models._
+import com.qwerfah.common.randomUid
 
 object Mappings {
     implicit def requestToMonitor(request: MonitorRequest) =

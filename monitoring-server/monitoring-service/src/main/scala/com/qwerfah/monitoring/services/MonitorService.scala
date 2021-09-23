@@ -1,7 +1,10 @@
 package com.qwerfah.monitoring.services
 
-import com.qwerfah.common.service.response
+import com.qwerfah.monitoring.models._
+import com.qwerfah.monitoring.resources._
 import com.qwerfah.equipment.resources._
+import com.qwerfah.common.services.response._
+import com.qwerfah.common.Uid
 
 trait MonitorService[F[_]] {
 
@@ -59,7 +62,7 @@ trait MonitorService[F[_]] {
       * @return
       *   Message describes successful or failed operation.
       */
-    def update(request: MonitorRequest): F[ServiceReposponse[ResponseMessage]]
+    def update(request: MonitorRequest): F[ServiceResponse[ResponseMessage]]
 
     /** Remove monitor by its uid.
       * @param uid

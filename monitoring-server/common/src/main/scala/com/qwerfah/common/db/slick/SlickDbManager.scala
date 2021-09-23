@@ -1,11 +1,15 @@
 package com.qwerfah.common.db.slick
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
+import com.twitter.util.Future
+
 import slick.dbio.DBIO
 import slick.jdbc.JdbcProfile
 import slick.jdbc.JdbcBackend.Database
-import scala.concurrent.Future
 
 import com.qwerfah.common.db.DbManager
+import com.qwerfah.common.util.Conversions._
 
 /** Slick implementation of db manager trait.
   * @param db
@@ -22,7 +26,8 @@ class SlickDbManager(implicit db: Database, profile: JdbcProfile)
       * @return
       *   Future result placeholder.
       */
-    override def execute[A](action: DBIO[A]): Future[A] = db.run(action)
+    override def execute[A](action: DBIO[A]): Future[A] =
+        db.run(action).asTwitter
 
     /** Launch action (that may be sequence of actions) execution
       * transactionally and return Future result placeholder.
@@ -31,10 +36,12 @@ class SlickDbManager(implicit db: Database, profile: JdbcProfile)
       * @return
       *   Future result placeholder.
       */
-    override def executeTransactionally[A](action: DBIO[A]): Future[A] = {
+    override def executeTransactionally[A](
+      action: DBIO[A]
+    ): Future[A] = {
         import profile.api._
 
-        db.run(action.transactionally)
+        db.run(action.transactionally).asTwitter
     }
 
     /** Pack sequence of DBIO actions into single DBIO action that can be

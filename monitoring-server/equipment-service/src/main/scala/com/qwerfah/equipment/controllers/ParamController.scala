@@ -1,11 +1,11 @@
 package com.qwerfah.equipment.controllers
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import com.twitter.finagle.{Http, ListeningServer}
 import com.twitter.server.TwitterServer
 import com.twitter.finagle.http.{Request, Response}
+import com.twitter.util.Future
 
 import io.finch.catsEffect._
 import io.finch._

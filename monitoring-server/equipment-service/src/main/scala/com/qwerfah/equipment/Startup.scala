@@ -2,11 +2,14 @@ package com.qwerfah.equipment
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, ExecutionContext, Future}
 
 import slick.jdbc.{PostgresProfile, JdbcProfile}
 import slick.jdbc.JdbcBackend.Database
 import slick.dbio._
+
+import com.twitter.util.Future
+
+import io.catbird.util._
 
 import com.rms.miu.slickcats.DBIOInstances._
 
@@ -19,6 +22,7 @@ import com.qwerfah.common.db.slick.SlickDbManager
 import com.qwerfah.common.repos.local.LocalTokenRepo
 import com.qwerfah.common.repos.slick.SlickUserRepo
 import com.qwerfah.common.services.default._
+import com.twitter.util.Await
 
 /** Contain implicitly defined dependencies for db profile, db instance, data
   * context and all repositories and instances.
@@ -47,5 +51,5 @@ object Startup {
     implicit val defaultUserService = new DefaultUserService[Future, DBIO]
 
     def startup() =
-        Await.result(dbManager.execute(context.setup), Duration.Inf)
+        Await.result(dbManager.execute(context.setup))
 }

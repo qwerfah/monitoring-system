@@ -1,11 +1,12 @@
 package com.qwerfah.session.controllers
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import com.twitter.finagle.{Http, ListeningServer}
 import com.twitter.server.TwitterServer
 import com.twitter.finagle.http.{Request, Response}
+import com.twitter.util.{Future, FuturePool}
+
 import io.finch.catsEffect._
 import io.finch._
 import io.finch.circe._
@@ -32,7 +33,8 @@ object TokenController extends Controller {
                         tokenService.refresh(token) map { result =>
                             result.asOutput
                         }
-                    case None => Future.successful(Unauthorized(NoTokenHeader))
+                    case None =>
+                        FuturePool.immediatePool { Unauthorized(NoTokenHeader) }
                 }
         }
 
@@ -44,7 +46,8 @@ object TokenController extends Controller {
                         tokenService.validate(token) map { result =>
                             result.asOutput
                         }
-                    case None => Future.successful(Unauthorized(NoTokenHeader))
+                    case None =>
+                        FuturePool.immediatePool { Unauthorized(NoTokenHeader) }
                 }
         }
 

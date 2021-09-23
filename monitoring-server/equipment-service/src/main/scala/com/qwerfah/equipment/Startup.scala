@@ -7,7 +7,7 @@ import slick.jdbc.{PostgresProfile, JdbcProfile}
 import slick.jdbc.JdbcBackend.Database
 import slick.dbio._
 
-import com.twitter.util.Future
+import com.twitter.util.{Future, Await}
 
 import io.catbird.util._
 
@@ -22,7 +22,6 @@ import com.qwerfah.common.db.slick.SlickDbManager
 import com.qwerfah.common.repos.local.LocalTokenRepo
 import com.qwerfah.common.repos.slick.SlickUserRepo
 import com.qwerfah.common.services.default._
-import com.twitter.util.Await
 
 /** Contain implicitly defined dependencies for db profile, db instance, data
   * context and all repositories and instances.
@@ -50,6 +49,5 @@ object Startup {
     implicit val defaultTokenService = new DefaultTokenService[Future, DBIO]
     implicit val defaultUserService = new DefaultUserService[Future, DBIO]
 
-    def startup() =
-        Await.result(dbManager.execute(context.setup))
+    def startup() = Await.result(dbManager.execute(context.setup))
 }

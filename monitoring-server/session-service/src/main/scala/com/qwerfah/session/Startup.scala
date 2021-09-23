@@ -1,12 +1,14 @@
 package com.qwerfah.session
 
-import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.ExecutionContext.Implicits.global
+
+import com.twitter.util.{Future, Await}
 
 import slick.jdbc.{PostgresProfile, JdbcProfile}
 import slick.jdbc.JdbcBackend.Database
 import slick.dbio._
+
+import io.catbird.util._
 
 import com.rms.miu.slickcats.DBIOInstances._
 
@@ -34,6 +36,5 @@ object Startup {
     implicit val DefaultTokenService = new DefaultTokenService[Future, DBIO]
     implicit val defaultUserService = new DefaultUserService[Future, DBIO]
 
-    def startup() =
-        Await.result(dbManager.execute(context.setup), Duration.Inf)
+    def startup() = Await.result(dbManager.execute(context.setup))
 }

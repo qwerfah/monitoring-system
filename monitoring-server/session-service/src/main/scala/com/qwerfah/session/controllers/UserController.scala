@@ -1,11 +1,12 @@
 package com.qwerfah.session.controllers
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import com.twitter.finagle.{Http, ListeningServer}
 import com.twitter.server.TwitterServer
 import com.twitter.finagle.http.{Request, Response}
+import com.twitter.util.{Future, FuturePool}
+
 import io.finch.catsEffect._
 import io.finch._
 import io.finch.circe._
@@ -38,9 +39,10 @@ object UserController extends Controller {
         case Some(value) =>
             tokenService.validate(value) flatMap {
                 case ObjectResponse(result) => action(result)
-                case e: ErrorResponse => Future.successful(Unauthorized(e))
+                case e: ErrorResponse =>
+                    FuturePool.immediatePool { Unauthorized(e) }
             }
-        case None => Future.successful(Unauthorized(NoTokenHeader))
+        case None => FuturePool.immediatePool { Unauthorized(NoTokenHeader) }
     }
 
     private val getUsers = get("users" :: headerOption("Authorization")) {

@@ -1,8 +1,6 @@
 package com.qwerfah.gateway
 
-import scala.concurrent.duration.Duration
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.{Await, ExecutionContext, Future}
 
 import slick.jdbc.{PostgresProfile, JdbcProfile}
 import slick.jdbc.JdbcBackend.Database

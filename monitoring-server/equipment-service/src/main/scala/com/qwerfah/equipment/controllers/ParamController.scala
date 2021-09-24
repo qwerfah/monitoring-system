@@ -13,6 +13,8 @@ import io.finch.circe._
 
 import io.circe.generic.auto._
 
+import io.catbird.util._
+
 import com.qwerfah.equipment.services._
 import com.qwerfah.equipment.repos.slick._
 import com.qwerfah.equipment.models._
@@ -22,40 +24,43 @@ import com.qwerfah.equipment.json.Decoders
 import com.qwerfah.common.Uid
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.controllers.Controller
+import com.qwerfah.common.services.TokenService
 
 object ParamController extends Controller {
     import Startup._
     import Decoders._
 
     private val paramService = implicitly[ParamService[Future]]
+    private implicit val tokenService = implicitly[TokenService[Future]]
 
-    private val getParams = get("params") {
-        for { result <- paramService.getAll } yield result.asOutput
+    private val getParams = get("params" :: headerOption("Authorization")) {
+        header: Option[String] => authorize(header, _ => paramService.getAll)
     }
 
-    private val getParam = get("params" :: path[Uid]) { uid: Uid =>
-        for { result <- paramService.get(uid) } yield result.asOutput
+    private val getParam = get(
+      "params" :: path[Uid] :: headerOption("Authorization")
+    ) { (uid: Uid, header: Option[String]) =>
+        authorize(header, _ => paramService.get(uid))
     }
 
-    private val addParam = post("params" :: jsonBody[AddParamRequest]) {
-        request: AddParamRequest =>
-            for {
-                result <- paramService.add(request)
-            } yield result.asOutput
+    private val addParam = post(
+      "params" :: jsonBody[AddParamRequest] :: headerOption("Authorization")
+    ) { (request: AddParamRequest, header: Option[String]) =>
+        authorize(header, _ => paramService.add(request))
     }
 
     private val updateParam = patch(
-      "params" :: path[Uid] :: jsonBody[UpdateParamRequest]
-    ) { (uid: Uid, request: UpdateParamRequest) =>
-        for {
-            result <- paramService.update(uid, request)
-        } yield result.asOutput
+      "params" :: path[Uid] :: jsonBody[UpdateParamRequest] :: headerOption(
+        "Authorization"
+      )
+    ) { (uid: Uid, request: UpdateParamRequest, header: Option[String]) =>
+        authorize(header, _ => paramService.update(uid, request))
     }
 
-    private val deleteParam = delete("params" :: path[Uid]) { uid: Uid =>
-        for {
-            result <- paramService.remove(uid)
-        } yield result.asOutput
+    private val deleteParam = delete(
+      "params" :: path[Uid] :: headerOption("Authorization")
+    ) { (uid: Uid, header: Option[String]) =>
+        authorize(header, _ => paramService.remove(uid))
     }
 
     val api =

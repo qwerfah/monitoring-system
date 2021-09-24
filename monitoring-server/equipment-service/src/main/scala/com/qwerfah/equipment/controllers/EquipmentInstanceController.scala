@@ -13,6 +13,8 @@ import io.finch.circe._
 
 import io.circe.generic.auto._
 
+import io.catbird.util._
+
 import com.qwerfah.equipment.services._
 import com.qwerfah.equipment.repos.slick._
 import com.qwerfah.equipment.models._
@@ -29,38 +31,50 @@ object EquipmentInstanceController extends Controller {
     import Decoders._
 
     private val instanceService = implicitly[EquipmentInstanceService[Future]]
+    private implicit val tokenService = implicitly[TokenService[Future]]
 
-    private val getInstances = get("instances") {
-        for { result <- instanceService.getAll } yield result.asOutput
-    }
+    private val getInstances =
+        get("instances" :: headerOption("Authorization")) {
+            header: Option[String] =>
+                authorize(header, _ => instanceService.getAll)
+        }
 
-    private val getInstance = get("instances" :: path[Uid]) { uid: Uid =>
-        for { result <- instanceService.get(uid) } yield result.asOutput
+    private val getInstance = get(
+      "instances" :: path[Uid] :: headerOption("Authorization")
+    ) { (uid: Uid, header: Option[String]) =>
+        authorize(header, _ => instanceService.get(uid))
     }
 
     private val addInstance = post(
-      "instances" :: jsonBody[AddInstanceRequest]
-    ) { request: AddInstanceRequest =>
-        for {
-            result <- instanceService.add(request)
-        } yield result.asOutput
+      "instances" :: jsonBody[AddInstanceRequest] :: headerOption(
+        "Authorization"
+      )
+    ) { (request: AddInstanceRequest, header: Option[String]) =>
+        authorize(header, _ => instanceService.add(request))
     }
 
-    private val updateInstance =
-        patch("instances" :: path[Uid] :: jsonBody[UpdateInstanceRequest]) {
-            (uid: Uid, request: UpdateInstanceRequest) =>
-                for {
-                    result <- instanceService.update(uid, request)
-                } yield result.asOutput
-        }
-
-    private val deleteInstance = delete("instances" :: path[Uid]) { uid: Uid =>
-        for {
-            result <- instanceService.remove(uid)
-        } yield result.asOutput
+    private val updateInstance = patch(
+      "instances" :: path[Uid] :: jsonBody[
+        UpdateInstanceRequest
+      ] :: headerOption("Authorization")
+    ) {
+        (
+          uid: Uid,
+          request: UpdateInstanceRequest,
+          header: Option[String]
+        ) => authorize(header, _ => instanceService.update(uid, request))
     }
 
-    val api =
-        (getInstances :+: getInstance :+: addInstance :+: updateInstance :+: deleteInstance)
-            .handle(errorHandler)
+    private val deleteInstance = delete(
+      "instances" :: path[Uid] :: headerOption("Authorization")
+    ) { (uid: Uid, header: Option[String]) =>
+        authorize(header, _ => instanceService.remove(uid))
+    }
+
+    val api = getInstances
+        .:+:(getInstance)
+        .:+:(addInstance)
+        .:+:(updateInstance)
+        .:+:(deleteInstance)
+        .handle(errorHandler)
 }

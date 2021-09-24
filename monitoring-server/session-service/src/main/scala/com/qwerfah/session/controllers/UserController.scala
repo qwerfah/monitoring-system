@@ -11,7 +11,7 @@ import io.finch.catsEffect._
 import io.finch._
 import io.finch.circe._
 
-import io.circe.generic.auto._
+import io.catbird.util._
 
 import com.qwerfah.common.services._
 import com.qwerfah.common.repos.slick._
@@ -30,56 +30,29 @@ object UserController extends Controller {
     import Decoders._
 
     private val userService = implicitly[UserService[Future]]
-    private val tokenService = implicitly[TokenService[Future]]
-
-    private def authorize[A](
-      token: Option[String],
-      action: String => Future[Output[A]]
-    ): Future[Output[A]] = token match {
-        case Some(value) =>
-            tokenService.validate(value) flatMap {
-                case ObjectResponse(result) => action(result)
-                case e: ErrorResponse =>
-                    FuturePool.immediatePool { Unauthorized(e) }
-            }
-        case None => FuturePool.immediatePool { Unauthorized(NoTokenHeader) }
-    }
+    private implicit val tokenService = implicitly[TokenService[Future]]
 
     private val getUsers = get("users" :: headerOption("Authorization")) {
         header: Option[String] =>
-            {
-                val f = for {
-                    result <- userService.getAll
-                } yield result.asOutput
-                authorize(header, _ => f)
-            }
+            authorize(header, _ => userService.getAll)
     }
 
     private val getUser =
         get("users" :: path[Uid] :: headerOption("Authorization")) {
             (uid: Uid, header: Option[String]) =>
-                {
-                    val f = for {
-                        result <- userService.get(uid)
-                    } yield result.asOutput
-                    authorize(header, _ => f)
-                }
+                authorize(header, _ => userService.get(uid))
         }
 
     private val register =
         post("users" :: "register" :: jsonBody[UserRequest]) {
             request: UserRequest =>
-                for {
-                    result <- userService.register(request)
-                } yield result.asOutput
+                userService.register(request) map { _.asOutput }
         }
 
     private val login =
         post("users" :: "login" :: jsonBody[Credentials]) {
             credentials: Credentials =>
-                for {
-                    result <- userService.login(credentials)
-                } yield result.asOutput
+                userService.login(credentials) map { _.asOutput }
         }
 
     private val updateUser =
@@ -88,26 +61,20 @@ object UserController extends Controller {
             "Authorization"
           )
         ) { (uid: Uid, request: UserRequest, header: Option[String]) =>
-            {
-                val f = for {
-                    result <- userService.update(uid, request)
-                } yield result.asOutput
-                authorize(header, _ => f)
-            }
+            authorize(header, _ => userService.update(uid, request))
         }
 
     private val deleteUser =
         delete("users" :: path[Uid] :: headerOption("Authorization")) {
             (uid: Uid, header: Option[String]) =>
-                {
-                    val f = for {
-                        result <- userService.remove(uid)
-                    } yield result.asOutput
-                    authorize(header, _ => f)
-                }
+                authorize(header, _ => userService.remove(uid))
         }
 
-    val api =
-        (getUsers :+: getUser :+: register :+: login :+: updateUser :+: deleteUser)
-            .handle(errorHandler)
+    val api = getUsers
+        .:+:(getUser)
+        .:+:(register)
+        .:+:(login)
+        .:+:(updateUser)
+        .:+:(deleteUser)
+        .handle(errorHandler)
 }

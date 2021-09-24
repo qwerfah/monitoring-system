@@ -21,6 +21,7 @@ class DefaultEquipmentService[F[_]: Monad](implicit client: HttpClient[F])
   extends EquipmentService[F] {
     import Decoders._
 
-    override def getAll: F[ServiceResponse[Seq[ModelResponse]]] =
-        client.sendAndDecode(Get, "/modelss")
+    override def getAll: F[ServiceResponse[Seq[ModelResponse]]] = {
+        client.sendAndDecode(Get, "/models")
+    }
 }

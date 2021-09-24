@@ -12,9 +12,14 @@ import slick.dbio._
 
 import com.qwerfah.gateway.services.default._
 import com.qwerfah.common.http._
+import com.qwerfah.common.resources.Credentials
 
 object Startup {
     implicit val defaultEquipmentClient =
-        new DefaultHttpClient(Equipment, "localhost:8081")
+        new DefaultHttpClient(
+          Equipment,
+          Credentials("gateway", "gateway"),
+          "localhost:8081"
+        )
     implicit val DefaultEquipmentService = new DefaultEquipmentService[Future]
 }

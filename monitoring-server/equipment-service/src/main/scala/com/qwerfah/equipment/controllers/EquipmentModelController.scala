@@ -36,8 +36,7 @@ object EquipmentModelController extends Controller {
     private implicit val tokenService = implicitly[TokenService[Future]]
 
     private val getModels = get("models" :: headerOption("Authorization")) {
-        header: Option[String] =>
-            authorize(header, _ => modelService.getAll)
+        header: Option[String] => authorize(header, _ => modelService.getAll)
     }
 
     private val getModel = get(

@@ -6,4 +6,4 @@ package com.qwerfah.common.models
   * @param refresh
   *   Refresh token.
   */
-final case class Token(access: String, refresh: String)
+final case class Token(access: String = "", refresh: String = "")

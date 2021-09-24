@@ -56,19 +56,24 @@ case object NoExpiredToken extends ErrorMessage {
     override def getMessage = "Attempted to delete non-existent expired token."
 }
 
-case class ServiceUnavailable(service: String) extends ErrorMessage {
+final case class ServiceUnavailable(service: String) extends ErrorMessage {
     override def getMessage = s"$service service temporarily unavailable."
 }
 
-case class ServiceInternalError(service: String) extends ErrorMessage {
+final case class ServiceInternalError(service: String) extends ErrorMessage {
     override def getMessage = s"$service service internal error."
 }
 
-case class BadServiceResult(service: String) extends ErrorMessage {
+final case class BadServiceResult(service: String) extends ErrorMessage {
     override def getMessage = s"$service service returns unprocessable result."
 }
 
-case class UnknownServiceResponse(service: String) extends ErrorMessage {
+final case class UnknownServiceResponse(service: String) extends ErrorMessage {
     override def getMessage =
         s"$service service returns response with unknown status code."
+}
+
+final case class InterserviceAuthFailed(service: String) extends ErrorMessage {
+    override def getMessage =
+        s"Can't authorize in $service service with current service credentials."
 }

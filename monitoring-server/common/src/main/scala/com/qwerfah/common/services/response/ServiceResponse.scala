@@ -29,7 +29,7 @@ sealed abstract class ErrorResponse(message: ErrorMessage)
 final case class NotFoundResponse(message: ErrorMessage)
   extends ErrorResponse(message)
 
-/** Returns when authorization operation results in error. Corresponds to 400
+/** Returns when authorization operation results in error. Corresponds to 401
   * status code.
   * @param message
   *   Error description.

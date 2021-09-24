@@ -27,22 +27,8 @@ object EquipmentController extends Controller {
 
     private def equipmentService = implicitly[EquipmentService[Future]]
 
-    type Req = com.twitter.finagle.http.Request
-
-    class AuthFilter extends SimpleFilter[Req, Response] {
-        def apply(
-          request: Req,
-          service: Service[Req, Response]
-        ): com.twitter.util.Future[Response] =
-            request match {
-                case req if req.authorization.contains("secret") => service(req)
-                case _ =>
-                    com.twitter.util.Future(Response(Status.Unauthorized))
-            }
-    }
-
     private def getModels = get("models") {
-        equipmentService.getAll map { result => result.asOutput }
+        equipmentService.getAll map { _.asOutput }
     }
 
     def api = (getModels).handle(errorHandler)

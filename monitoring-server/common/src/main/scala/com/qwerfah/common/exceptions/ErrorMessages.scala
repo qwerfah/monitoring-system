@@ -36,6 +36,10 @@ final case class NoUser(uid: Uid) extends ErrorMessage {
     override def getMessage = s"User with uid $uid not found."
 }
 
+final case class NoMonitor(uid: Uid) extends ErrorMessage {
+    override def getMessage = s"Monitor with uid $uid not found."
+}
+
 case object InvalidCredentials extends ErrorMessage {
     override def getMessage = s"User with given credentials not found."
 }

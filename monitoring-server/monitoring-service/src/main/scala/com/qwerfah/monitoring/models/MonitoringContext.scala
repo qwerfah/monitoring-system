@@ -66,6 +66,13 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile)
           .createIfNotExists,
       monitors.exists.result flatMap { exisits =>
           if (!exisits) monitors ++= initialMonitors else DBIO.successful(None)
+      },
+      monitorParams.exists.result flatMap { exisits =>
+          if (!exisits) monitorParams ++= initialMonitorParams
+          else DBIO.successful(None)
+      },
+      users.exists.result flatMap { exisits =>
+          if (!exisits) users ++= initialUsers else DBIO.successful(None)
       }
     )
 
@@ -73,22 +80,22 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile)
 
     private val initialMonitors = Seq(
       Monitor(
-        Some(1),
-        monitorUids(1),
+        Some(0),
+        monitorUids(0),
         randomUid,
         "monitor_1",
         Some("Description of monitor_1")
       ),
       Monitor(
-        Some(2),
-        monitorUids(2),
+        Some(1),
+        monitorUids(1),
         randomUid,
         "monitor_2",
         Some("Description of monitor_2")
       ),
       Monitor(
-        Some(3),
-        monitorUids(3),
+        Some(2),
+        monitorUids(2),
         randomUid,
         "monitor_3",
         Some("Description of monitor_3")
@@ -96,8 +103,18 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile)
     )
 
     private val initialMonitorParams = Seq(
+      MonitorParam(monitorUids(0), randomUid),
       MonitorParam(monitorUids(1), randomUid),
-      MonitorParam(monitorUids(2), randomUid),
-      MonitorParam(monitorUids(3), randomUid)
+      MonitorParam(monitorUids(2), randomUid)
+    )
+
+    private val initialUsers = Seq(
+      User(
+        Some(1),
+        randomUid,
+        "gateway",
+        MessageDigest.getInstance("MD5").digest("gateway".getBytes),
+        UserRole.SystemAdmin
+      )
     )
 }

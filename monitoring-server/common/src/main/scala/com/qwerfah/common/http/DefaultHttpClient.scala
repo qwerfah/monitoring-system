@@ -26,6 +26,7 @@ import com.qwerfah.common.services.response._
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.models.Token
 import com.qwerfah.common.resources.Credentials
+import com.qwerfah.common.util.Conversions._
 
 /** Default http client implementation based on finagle client and twitter
   * future. Contain also access-refresh token pair for authorization in
@@ -109,13 +110,6 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
             }
         }
 
-    val monitor: Monitor = new Monitor {
-        def handle(t: Throwable): Boolean = {
-            println(t.getMessage)
-            true
-        }
-    }
-
     val service: Service[Request, Response] =
         Http.client.withSessionQualifier.noFailFast
             .configured(
@@ -133,15 +127,6 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
             case Right(value) => ObjectResponse(value)
             case Left(error) =>
                 UnprocessableResponse(BadServiceResult(ss.value))
-        }
-    }
-
-    private implicit class methodToTwitterMethod(m: Method) {
-        def asTwitter = m match {
-            case Get    => TwitterMethod.Get
-            case Post   => TwitterMethod.Post
-            case Patch  => TwitterMethod.Patch
-            case Delete => TwitterMethod.Delete
         }
     }
 

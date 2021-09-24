@@ -4,7 +4,10 @@ import scala.concurrent.{Future => ScalaFuture}
 import scala.concurrent.ExecutionContext
 import scala.util.{Success, Failure}
 
+import com.twitter.finagle.http.{Method => TwitterMethod}
 import com.twitter.util.{Future => TwitterFuture, Promise => TwitterPromise}
+
+import com.qwerfah.common.http._
 
 /** Provide implicit classes for different type conversions. */
 object Conversions {
@@ -28,6 +31,15 @@ object Conversions {
                 case Failure(exception) => promise.setException(exception)
             }
             promise
+        }
+    }
+
+    implicit class methodToTwitterMethod(m: Method) {
+        def asTwitter = m match {
+            case Get    => TwitterMethod.Get
+            case Post   => TwitterMethod.Post
+            case Patch  => TwitterMethod.Patch
+            case Delete => TwitterMethod.Delete
         }
     }
 }

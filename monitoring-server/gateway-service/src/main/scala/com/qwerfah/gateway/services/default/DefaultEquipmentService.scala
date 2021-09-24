@@ -11,38 +11,16 @@ import cats.Monad
 import cats.implicits._
 
 import com.qwerfah.gateway.services.EquipmentService
-import com.qwerfah.common.services.response._
-import com.qwerfah.common.exceptions._
 import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.json.Decoders
+import com.qwerfah.common.services.response._
+import com.qwerfah.common.exceptions._
+import com.qwerfah.common.http._
 
-class DefaultEquipmentService extends EquipmentService[Future] {
+class DefaultEquipmentService[F[_]: Monad](implicit client: HttpClient[F])
+  extends EquipmentService[F] {
     import Decoders._
 
-    private def decodeJson[A: Decoder](body: String) = {
-        decode[A](body) match {
-            case Right(value) => ObjectResponse(value)
-            case Left(error) => UnprocessableResponse(BadEquipmentServiceResult)
-        }
-    }
-
-    override def getAll: Future[ServiceResponse[Seq[ModelResponse]]] = {
-        val equipmentService: Service[Request, Response] =
-            Http.client.newService("localhost:8081")
-
-        val request = Request("/models")
-
-        equipmentService(request) map { response =>
-            response.status match {
-                case Status.Ok =>
-                    decodeJson[Seq[ModelResponse]](response.contentString)
-                case Status.InternalServerError =>
-                    InternalErrorResponse(EquipmentServiceInternalError)
-                case Status.ServiceUnavailable =>
-                    BadGatewayResponse(EquipmentServiceUnavailable)
-                case _ => UnknownErrorResponse(UnknownEquipmentServiceResponse)
-            }
-
-        }
-    }
+    override def getAll: F[ServiceResponse[Seq[ModelResponse]]] =
+        client.sendAndDecode(Get, "/modelss")
 }

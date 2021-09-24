@@ -21,12 +21,11 @@ import com.qwerfah.common.services._
 import com.qwerfah.common.controllers.Controller
 import com.qwerfah.equipment.json.Decoders
 
-
 object EquipmentController extends Controller {
     import Startup._
     import Decoders._
 
-    private val equipmentService = implicitly[EquipmentService[Future]]
+    private def equipmentService = implicitly[EquipmentService[Future]]
 
     type Req = com.twitter.finagle.http.Request
 
@@ -42,9 +41,9 @@ object EquipmentController extends Controller {
             }
     }
 
-    private val getModels = get("models") {
+    private def getModels = get("models") {
         equipmentService.getAll map { result => result.asOutput }
     }
 
-    val api = (getModels)
+    def api = (getModels).handle(errorHandler)
 }

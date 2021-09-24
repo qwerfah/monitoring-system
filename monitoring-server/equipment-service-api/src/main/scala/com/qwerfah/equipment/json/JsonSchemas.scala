@@ -135,4 +135,35 @@ object JsonSchemas {
             }
             """
     )
+
+    val paramResponseSchema: Schema = Schema.load(
+      json"""
+            {
+                "type": "object",
+                "required": ["uid", "modelUid", "name"],
+                "properties": {
+                "uid": {
+                    "type": "string",
+                    "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
+                },
+                "modelUid": {
+                    "type": "string",
+                    "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100,
+                    "pattern": "^(?!\\s*$$).+"
+                },
+                "measurmentUnits": {
+                    "type": ["string", "null"],
+                    "minLength": 1,
+                    "maxLength": 30,
+                    "pattern": "^(?!\\s*$$).+"
+                }
+                }
+            }
+            """
+    )
 }

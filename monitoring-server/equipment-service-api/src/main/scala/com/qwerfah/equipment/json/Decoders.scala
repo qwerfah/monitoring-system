@@ -101,4 +101,26 @@ object Decoders {
                     throw InvalidJsonBodyException(errors)
             }
         }
+
+    implicit val decodeParamResponse: Decoder[ParamResponse] =
+        (c: HCursor) => {
+            paramResponseSchema.validate(c.value) match {
+                case Valid(()) =>
+                    for {
+                        uid <- c.downField("uid").as[Uid]
+                        modelUid <- c.downField("modelUid").as[Uid]
+                        name <- c.downField("name").as[String]
+                        measurmentUnits <- c
+                            .downField("measurmentUnits")
+                            .as[Option[String]]
+                    } yield ParamResponse(
+                      uid,
+                      modelUid,
+                      name,
+                      measurmentUnits
+                    )
+                case Invalid(errors) =>
+                    throw InvalidJsonBodyException(errors)
+            }
+        }
 }

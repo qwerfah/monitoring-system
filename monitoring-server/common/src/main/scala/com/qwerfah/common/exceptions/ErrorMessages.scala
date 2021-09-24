@@ -56,19 +56,19 @@ case object NoExpiredToken extends ErrorMessage {
     override def getMessage = "Attempted to delete non-existent expired token."
 }
 
-case object EquipmentServiceUnavailable extends ErrorMessage {
-    override def getMessage = "Equipment service temporarily unavailable."
+case class ServiceUnavailable(service: String) extends ErrorMessage {
+    override def getMessage = s"$service service temporarily unavailable."
 }
 
-case object EquipmentServiceInternalError extends ErrorMessage {
-    override def getMessage = "Equipment service internal error."
+case class ServiceInternalError(service: String) extends ErrorMessage {
+    override def getMessage = s"$service service internal error."
 }
 
-case object BadEquipmentServiceResult extends ErrorMessage {
-    override def getMessage = "Equipment service returns unprocessable result."
+case class BadServiceResult(service: String) extends ErrorMessage {
+    override def getMessage = s"$service service returns unprocessable result."
 }
 
-case object UnknownEquipmentServiceResponse extends ErrorMessage {
+case class UnknownServiceResponse(service: String) extends ErrorMessage {
     override def getMessage =
-        "Equipment service returns response with unknown status code."
+        s"$service service returns response with unknown status code."
 }

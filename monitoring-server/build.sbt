@@ -130,7 +130,10 @@ lazy val commonDependencies = Seq(
   "com.rms.miu" %% "slick-cats" % "0.10.4",
   "com.beachape" %% "enumeratum-circe" % "1.7.0",
   "com.beachape" %% "enumeratum-slick" % "1.7.0",
-  "io.catbird" % "catbird-util_2.13" % "21.5.0"
+  "io.catbird" % "catbird-util_2.13" % "21.5.0",
+  "org.slf4j" % "slf4j-api" % "2.0.0-alpha5",
+  "ch.qos.logback" % "logback-core" % "1.3.0-alpha10",
+  "ch.qos.logback" % "logback-classic" % "1.3.0-alpha10"
 )
 
 lazy val settings = Seq(

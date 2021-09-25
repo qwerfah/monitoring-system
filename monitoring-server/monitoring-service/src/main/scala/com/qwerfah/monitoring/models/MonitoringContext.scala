@@ -113,7 +113,7 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile)
         Some(1),
         randomUid,
         "gateway",
-        MessageDigest.getInstance("MD5").digest("gateway".getBytes),
+        MessageDigest.getInstance("MD5").digest("gateway".getBytes("UTF-8")),
         UserRole.SystemAdmin
       )
     )

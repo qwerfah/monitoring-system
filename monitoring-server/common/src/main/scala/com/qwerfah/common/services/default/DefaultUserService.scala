@@ -23,8 +23,7 @@ import com.qwerfah.common.exceptions._
 
 class DefaultUserService[F[_]: Monad, DB[_]: Monad](implicit
   userRepo: UserRepo[DB],
-  dbManager: DbManager[F, DB],
-  tokenService: TokenService[F]
+  dbManager: DbManager[F, DB]
 ) extends UserService[F] {
     import Mappings._
 
@@ -33,20 +32,6 @@ class DefaultUserService[F[_]: Monad, DB[_]: Monad](implicit
     ): F[ServiceResponse[UserResponse]] = for {
         result <- dbManager.execute(userRepo.add(request))
     } yield ObjectResponse(result)
-
-    override def login(
-      credentials: Credentials
-    ): F[ServiceResponse[Token]] = {
-        val passwordHash = MessageDigest
-            .getInstance("MD5")
-            .digest(credentials.password.getBytes("UTF-8"))
-
-        dbManager.execute(userRepo.getByLogin(credentials.login)) flatMap {
-            case Some(user) if user.password sameElements passwordHash =>
-                tokenService.generate(user.uid.toString)
-            case _ => Monad[F].pure(NotFoundResponse(InvalidCredentials))
-        }
-    }
 
     override def getAll: F[ServiceResponse[Seq[UserResponse]]] =
         for { users <- dbManager.execute(userRepo.get) } yield ObjectResponse(

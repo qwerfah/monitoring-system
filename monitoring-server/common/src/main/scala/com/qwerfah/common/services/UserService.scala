@@ -4,7 +4,6 @@ import com.qwerfah.common.models._
 import com.qwerfah.common.resources._
 import com.qwerfah.common.services.response._
 import com.qwerfah.common.Uid
-import com.qwerfah.common.models.Token
 
 /** Describe user service funcionality. */
 trait UserService[F[_]] {
@@ -16,14 +15,6 @@ trait UserService[F[_]] {
       *   Registered user data.
       */
     def register(request: UserRequest): F[ServiceResponse[UserResponse]]
-
-    /** Authorize user with given credentials.
-      * @param credentials
-      *   User credentials.
-      * @return
-      *   User tokens.
-      */
-    def login(credentials: Credentials): F[ServiceResponse[Token]]
 
     /** Get all registered users.
       * @return

@@ -13,12 +13,15 @@ import io.finch.circe._
 
 import io.circe.generic.auto._
 
+import io.catbird.util._
+
 import com.qwerfah.common.json.Decoders
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.Uid
 import com.qwerfah.common.services._
 import com.qwerfah.common.controllers.Controller
 import com.qwerfah.common.resources.Credentials
+import com.qwerfah.common.services.response.ObjectResponse
 
 /** Provide endpoints for interservice authorization.
   * @param userService
@@ -26,32 +29,33 @@ import com.qwerfah.common.resources.Credentials
   * @param tokenService
   *   Token managment service.
   */
-abstract class AuthController(implicit
-  userService: UserService[Future],
+abstract class SessionController(implicit
   tokenService: TokenService[Future]
 ) extends Controller {
     import Decoders._
 
     private val refresh =
-        post("auth" :: "refresh" :: headerOption("Authorization")) {
+        post("session" :: "refresh" :: headerOption("Authorization")) {
             header: Option[String] =>
-                header match {
-                    case Some(token) =>
-                        tokenService.refresh(token) map { result =>
-                            result.asOutput
-                        }
-                    case None =>
-                        FuturePool.immediatePool { Unauthorized(NoTokenHeader) }
-                }
+                authorize(header, tokenService.refresh(_))
         }
 
     private val login =
-        post("auth" :: "login" :: jsonBody[Credentials]) {
+        post("session" :: "login" :: jsonBody[Credentials]) {
             credentials: Credentials =>
                 for {
-                    result <- userService.login(credentials)
+                    result <- tokenService.login(credentials)
                 } yield result.asOutput
         }
 
-    val api = (refresh :+: login).handle(errorHandler)
+    private val verify =
+        post("session" :: "verify" :: headerOption("Authorization")) {
+            header: Option[String] =>
+                authorize[Future, Uid](
+                  header,
+                  uid => FuturePool immediatePool { ObjectResponse(uid) }
+                )
+        }
+
+    val api = login.:+:(refresh).:+:(verify).handle(errorHandler)
 }

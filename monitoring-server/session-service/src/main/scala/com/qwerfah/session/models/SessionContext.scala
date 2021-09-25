@@ -31,21 +31,21 @@ class SessionContext(implicit jdbcProfile: JdbcProfile)
         Some(1),
         randomUid,
         "user_1",
-        MessageDigest.getInstance("MD5").digest("password_1".getBytes),
+        MessageDigest.getInstance("MD5").digest("password_1".getBytes("UTF-8")),
         UserRole.SystemAdmin
       ),
       User(
         Some(2),
         randomUid,
         "user_2",
-        MessageDigest.getInstance("MD5").digest("password_2".getBytes),
+        MessageDigest.getInstance("MD5").digest("password_2".getBytes("UTF-8")),
         UserRole.EquipmentAdmin
       ),
       User(
         Some(3),
         randomUid,
         "user_3",
-        MessageDigest.getInstance("MD5").digest("password_3".getBytes),
+        MessageDigest.getInstance("MD5").digest("password_3".getBytes("UTF-8")),
         UserRole.EquipmentUser
       )
     )

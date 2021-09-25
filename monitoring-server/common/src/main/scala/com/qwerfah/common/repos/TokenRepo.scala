@@ -2,6 +2,8 @@ package com.qwerfah.common.repos
 
 import scala.util.Try
 
+import com.qwerfah.common.Uid
+
 /** Provide jwt token repository finctionality. */
 trait TokenRepo[DB[_]] {
 
@@ -9,7 +11,7 @@ trait TokenRepo[DB[_]] {
       * @return
       *   Sequence of pairs (subject_id, token).
       */
-    def get: DB[Seq[(String, String)]]
+    def get: DB[Seq[(Uid, String)]]
 
     /** Add new token for spicified subject.
       * @param pair
@@ -17,7 +19,7 @@ trait TokenRepo[DB[_]] {
       * @return
       *   Action.
       */
-    def add(pair: (String, String)): DB[Boolean]
+    def add(pair: (Uid, String)): DB[Boolean]
 
     /** Remove all tokens for specified subject.
       * @param id
@@ -25,7 +27,7 @@ trait TokenRepo[DB[_]] {
       * @return
       *   Action.
       */
-    def removeById(id: String): DB[Unit]
+    def removeById(uid: Uid): DB[Unit]
 
     /** Remove token by value.
       * @param pair
@@ -33,7 +35,7 @@ trait TokenRepo[DB[_]] {
       * @return
       *   Success if removed, otherwise Failure.
       */
-    def removeByValue(pair: (String, String)): DB[Boolean]
+    def removeByValue(pair: (Uid, String)): DB[Boolean]
 
     def removeByToken(token: String): DB[Boolean]
 

@@ -10,6 +10,7 @@ import cats.implicits._
 import com.qwerfah.common.services.response._
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.services.TokenService
+import com.qwerfah.common.Uid
 
 /** Provide basic endpoint controller functionality. */
 trait Controller {
@@ -51,10 +52,10 @@ trait Controller {
       */
     protected def authorize[F[_]: Monad, A](
       header: Option[String],
-      action: String => F[ServiceResponse[A]]
+      action: Uid => F[ServiceResponse[A]]
     )(implicit tokenService: TokenService[F]): F[Output[A]] = header match {
-        case Some(token) if token.toLowerCase.contains("bearer") =>
-            tokenService.validate(token) flatMap {
+        case Some(token) if token.toLowerCase.startsWith("bearer ") =>
+            tokenService.verify(token.drop(7)) flatMap {
                 case ObjectResponse(result) => action(result) map { _.asOutput }
                 case e: ErrorResponse       => Monad[F].pure(Unauthorized(e))
             }

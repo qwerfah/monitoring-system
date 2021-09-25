@@ -10,11 +10,13 @@ import io.circe.generic.auto._
 
 import com.qwerfah.session.controllers._
 import com.qwerfah.common.json.Encoders
-import com.qwerfah.common.controllers.RequestLoggingFilter
+import com.qwerfah.common.controllers._
 
 object Main extends TwitterServer {
     import Startup._
     import Encoders._
+
+    object UserSessionController extends SessionController
 
     startup()
 
@@ -22,7 +24,8 @@ object Main extends TwitterServer {
         Http.serve(
           ":8081",
           RequestLoggingFilter.andThen(
-            (UserController.api :+: TokenController.api)
+            UserController.api
+                .:+:(UserSessionController.api)
                 .toServiceAs[Application.Json]
           )
         )

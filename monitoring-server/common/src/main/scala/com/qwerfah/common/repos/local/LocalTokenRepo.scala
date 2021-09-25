@@ -10,21 +10,23 @@ import slick.dbio.DBIO
 import com.qwerfah.common.repos.TokenRepo
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.models.Token
+import com.qwerfah.common.Uid
 
 class LocalTokenRepo extends TokenRepo[DBIO] {
-    private val tokens = Set[(String, String)]()
+    private val tokens = Set[(Uid, String)]()
 
-    def get: DBIO[Seq[(String, String)]] = DBIO.successful(tokens.toSeq)
+    def get: DBIO[Seq[(Uid, String)]] = DBIO.successful(tokens.toSeq)
 
-    def add(pair: (String, String)): DBIO[Boolean] =
+    def add(pair: (Uid, String)): DBIO[Boolean] =
         DBIO.successful(tokens.add(pair))
 
-    def removeById(id: String): DBIO[Unit] = {
-        for (token <- tokens.filter(pair => pair._1 == id)) tokens.remove(token)
+    def removeById(uid: Uid): DBIO[Unit] = {
+        for (token <- tokens.filter(pair => pair._1 == uid))
+            tokens.remove(token)
         DBIO.successful(Success(()))
     }
 
-    def removeByValue(pair: (String, String)): DBIO[Boolean] =
+    def removeByValue(pair: (Uid, String)): DBIO[Boolean] =
         DBIO.successful(tokens.remove(pair))
 
     def removeByToken(token: String): DBIO[Boolean] = {

@@ -12,7 +12,7 @@ import com.qwerfah.common.models.Token
 object Decoders {
     import JsonSchemas._
 
-    implicit val decodeUserRequest: Decoder[Token] =
+    implicit val decodeToken: Decoder[Token] =
         (c: HCursor) => {
             tokenSchema.validate(c.value) match {
                 case Valid(()) =>

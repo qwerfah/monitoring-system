@@ -13,15 +13,13 @@ import io.finch.circe._
 
 import io.catbird.util._
 
-import com.qwerfah.common.services._
-import com.qwerfah.common.repos.slick._
-import com.qwerfah.common.models._
-import com.qwerfah.common.resources._
 import com.qwerfah.session.Startup
+
+import com.qwerfah.common.services._
+import com.qwerfah.common.resources._
 import com.qwerfah.common.json.Decoders
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.Uid
-import com.qwerfah.common.services._
 import com.qwerfah.common.services.response._
 import com.qwerfah.common.controllers.Controller
 
@@ -49,12 +47,6 @@ object UserController extends Controller {
                 userService.register(request) map { _.asOutput }
         }
 
-    private val login =
-        post("users" :: "login" :: jsonBody[Credentials]) {
-            credentials: Credentials =>
-                userService.login(credentials) map { _.asOutput }
-        }
-
     private val updateUser =
         patch(
           "users" :: path[Uid] :: jsonBody[UserRequest] :: headerOption(
@@ -73,7 +65,6 @@ object UserController extends Controller {
     val api = getUsers
         .:+:(getUser)
         .:+:(register)
-        .:+:(login)
         .:+:(updateUser)
         .:+:(deleteUser)
         .handle(errorHandler)

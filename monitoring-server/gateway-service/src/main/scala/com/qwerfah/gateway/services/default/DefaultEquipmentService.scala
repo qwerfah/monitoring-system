@@ -17,7 +17,7 @@ import com.qwerfah.common.services.response._
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.http._
 
-class DefaultEquipmentService[F[_]: Monad](implicit client: HttpClient[F])
+class DefaultEquipmentService[F[_]: Monad](client: HttpClient[F])
   extends EquipmentService[F] {
     import Decoders._
 

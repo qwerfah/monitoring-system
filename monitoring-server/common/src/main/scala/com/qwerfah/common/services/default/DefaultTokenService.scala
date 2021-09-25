@@ -3,6 +3,7 @@ package com.qwerfah.common.services.default
 import scala.util.{Try, Success, Failure}
 
 import java.time.Instant
+import java.security.MessageDigest
 
 import cats.Monad
 import cats.implicits._
@@ -11,11 +12,13 @@ import pdi.jwt.{JwtCirce, JwtAlgorithm, JwtClaim}
 
 import com.qwerfah.common.services._
 import com.qwerfah.common.services.response._
-import com.qwerfah.common.repos.TokenRepo
+import com.qwerfah.common.repos._
 import com.qwerfah.common.models.Token
 import com.qwerfah.common.db.DbManager
 import com.qwerfah.common.randomUid
 import com.qwerfah.common.exceptions._
+import com.qwerfah.common.resources.Credentials
+import com.qwerfah.common.Uid
 
 object JwtOptions {
     val key = "secretKey"
@@ -30,6 +33,7 @@ object JwtOptions {
 }
 
 class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
+  userRepo: UserRepo[DB],
   tokenRepo: TokenRepo[DB],
   dbManager: DbManager[F, DB]
 ) extends TokenService[F] {
@@ -78,12 +82,31 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
       Seq(JwtOptions.algorithm)
     )
 
-    override def validate(token: String): F[ServiceResponse[String]] = {
+    /** Generate access and refresh tokens for given subject identifier.
+      * @param id
+      *   Subject identifier.
+      * @return
+      *   New access-refresh token pair for given subject.
+      */
+    private def generate(uid: Uid): F[ServiceResponse[Token]] = {
+        val token = generateToken(uid.toString)
+        for {
+            _ <- dbManager.execute(tokenRepo.removeById(uid))
+            _ <- dbManager.execute(tokenRepo.add(uid -> token.access))
+            _ <- dbManager.execute(tokenRepo.add(uid -> token.refresh))
+        } yield ObjectResponse(token)
+    }
+
+    override def verify(token: String): F[ServiceResponse[Uid]] = {
         dbManager.execute(tokenRepo.contains(token)) flatMap {
             case true => {
                 decodeToken(token) match {
                     case Success(value) =>
-                        Monad[F].pure(ObjectResponse(value.subject.get))
+                        Monad[F].pure(
+                          ObjectResponse(
+                            java.util.UUID.fromString(value.subject.get)
+                          )
+                        )
                     case Failure(_) => {
                         dbManager.execute(tokenRepo.removeByToken(token)) map {
                             case true  => BadAuthResponse(ExpiredToken)
@@ -96,19 +119,23 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
         }
     }
 
-    override def generate(id: String): F[ServiceResponse[Token]] = {
-        val token = generateToken(id)
-        for {
-            _ <- dbManager.execute(tokenRepo.removeById(id))
-            _ <- dbManager.execute(tokenRepo.add(id -> token.access))
-            _ <- dbManager.execute(tokenRepo.add(id -> token.refresh))
-        } yield ObjectResponse(token)
-    }
+    override def login(
+      credentials: Credentials
+    ): F[ServiceResponse[Token]] = {
+        val passwordHash = MessageDigest
+            .getInstance("MD5")
+            .digest(credentials.password.getBytes("UTF-8"))
 
-    override def refresh(token: String): F[ServiceResponse[Token]] = {
-        validate(token) flatMap {
-            case ObjectResponse(result) => generate(result)
-            case e: ErrorResponse => Monad[F].pure(e)
+        dbManager.execute(userRepo.getByLogin(credentials.login)) flatMap {
+            case Some(user) if user.password sameElements passwordHash =>
+                generate(user.uid)
+            case _ => Monad[F].pure(NotFoundResponse(InvalidCredentials))
         }
     }
+
+    override def refresh(uid: Uid): F[ServiceResponse[Token]] =
+        dbManager.execute(userRepo.getByUid(uid)) flatMap {
+            case Some(user) => generate(user.uid)
+            case _ => Monad[F].pure(NotFoundResponse(NoTokenUser))
+        }
 }

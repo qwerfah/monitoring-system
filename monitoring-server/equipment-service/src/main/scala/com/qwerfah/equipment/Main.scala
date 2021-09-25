@@ -18,18 +18,18 @@ object Main extends TwitterServer {
     import Startup._
     import Encoders._
 
-    object EquipmentAuthController extends AuthController
+    object EquipmentSessionController extends SessionController
 
     startup()
 
     val server =
         Http.serve(
-          ":8081",
+          ":8083",
           RequestLoggingFilter.andThen(
             EquipmentModelController.api
                 .:+:(EquipmentInstanceController.api)
                 .:+:(ParamController.api)
-                .:+:(EquipmentAuthController.api)
+                .:+:(EquipmentSessionController.api)
                 .toServiceAs[Application.Json]
           )
         )

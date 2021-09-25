@@ -10,5 +10,6 @@ trait MonitorParamRepo[DB[_]] {
     def getByParamUid(paramUid: Uid): DB[Seq[MonitorParam]]
     def add(monitor: MonitorParam): DB[Int]
     def removeByParamUid(paramUid: Uid): DB[Int]
+    def removeByUid(monitorUid: Uid, paramUid: Uid): DB[Int]
     def remove(monitor: MonitorParam): DB[Int]
 }

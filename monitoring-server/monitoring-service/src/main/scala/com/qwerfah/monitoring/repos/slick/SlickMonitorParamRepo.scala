@@ -35,11 +35,19 @@ class SlickMonitorParamRepo(implicit val context: MonitoringContext)
     override def removeByParamUid(paramUid: Uid): DBIO[Int] =
         context.monitorParams.filter(_.paramUid === paramUid).delete
 
+    override def removeByUid(monitorUid: Uid, paramUid: Uid): DBIO[Int] =
+        context.monitorParams
+            .filter(p =>
+                p.paramUid === paramUid &&
+                p.monitorUid === monitorUid
+            )
+            .delete
+
     override def remove(monitorParam: MonitorParam): DBIO[Int] =
         context.monitorParams
             .filter(p =>
                 p.paramUid === monitorParam.paramUid &&
-                p.paramUid === monitorParam.monitorUid
+                p.monitorUid === monitorParam.monitorUid
             )
             .delete
 

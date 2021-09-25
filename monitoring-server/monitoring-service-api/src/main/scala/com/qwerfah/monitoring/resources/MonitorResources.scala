@@ -14,3 +14,7 @@ final case class MonitorResponse(
   name: String,
   description: Option[String]
 )
+
+final case class MonitorParamRequest(paramUid: Uid)
+
+final case class MonitorParamResponse(monitorUid: Uid, paramUid: Uid)

@@ -29,4 +29,7 @@ object Mappings {
           monitor.name,
           monitor.description
         )
+
+    implicit def requestToMonitorParam(request: MonitorParamRequest) =
+        MonitorParam(randomUid, request.paramUid)
 }

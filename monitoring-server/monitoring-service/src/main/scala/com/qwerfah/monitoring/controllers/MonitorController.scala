@@ -20,6 +20,8 @@ import com.qwerfah.monitoring.services.MonitorService
 import com.qwerfah.common.controllers.Controller
 import com.qwerfah.common.services.TokenService
 import com.qwerfah.common.Uid
+import com.qwerfah.monitoring.resources._
+import com.qwerfah.monitoring.models.MonitorParam
 
 object MonitorController extends Controller {
     import Startup._
@@ -44,7 +46,7 @@ object MonitorController extends Controller {
         authorize(header, _ => monitorService.getParams(uid))
     }
 
-    private val getinstanceMonitors = get(
+    private val getInstanceMonitors = get(
       "instances" :: path[Uid] :: "monitors" :: headerOption(
         "Authorization"
       )
@@ -52,5 +54,52 @@ object MonitorController extends Controller {
         authorize(header, _ => monitorService.getByInstanceUid(uid))
     }
 
-    val api = getMonitors.handle(errorHandler)
+    private val addMonitor = post(
+      "monitors" :: jsonBody[MonitorRequest] :: headerOption("Authorization")
+    ) { (request: MonitorRequest, header: Option[String]) =>
+        authorize(header, _ => monitorService.add(request))
+    }
+
+    private val updateMonitor = patch(
+      "monitors" :: path[Uid] :: jsonBody[MonitorRequest] :: headerOption(
+        "Authorization"
+      )
+    ) { (uid: Uid, request: MonitorRequest, header: Option[String]) =>
+        authorize(header, _ => monitorService.update(uid, request))
+    }
+
+    private val addMonitorParam = post(
+      "monitors" :: path[Uid] :: "params" :: jsonBody[
+        MonitorParamRequest
+      ] :: headerOption(
+        "Authorization"
+      )
+    ) { (uid: Uid, request: MonitorParamRequest, header: Option[String]) =>
+        authorize(header, _ => monitorService.addParam(uid, request))
+    }
+
+    private val removeMonitor = delete(
+      "monitors" :: path[Uid] :: headerOption("Authorization")
+    ) { (uid: Uid, header: Option[String]) =>
+        authorize(header, _ => monitorService.remove(uid))
+    }
+
+    private val removeMonitorParam = delete(
+      "monitors" :: path[Uid] :: "params" :: path[Uid] :: headerOption(
+        "Authorization"
+      )
+    ) { (monitorUid: Uid, paramUid: Uid, header: Option[String]) =>
+        authorize(header, _ => monitorService.removeParam(monitorUid, paramUid))
+    }
+
+    val api = getMonitors
+        .:+:(getMonitor)
+        .:+:(getMonitorParams)
+        .:+:(getInstanceMonitors)
+        .:+:(addMonitor)
+        .:+:(updateMonitor)
+        .:+:(addMonitorParam)
+        .:+:(removeMonitor)
+        .:+:(removeMonitorParam)
+        .handle(errorHandler)
 }

@@ -12,19 +12,22 @@ import com.qwerfah.monitoring.controllers._
 import com.qwerfah.common.json.Encoders
 import com.twitter.finagle.SimpleFilter
 
-import com.qwerfah.common.controllers.RequestLoggingFilter
+import com.qwerfah.common.controllers._
 
 object Main extends TwitterServer {
     import Startup._
     import Encoders._
 
+    object MonitoringSessionController extends SessionController
+
     startup()
 
     val server =
         Http.serve(
-          ":8083",
+          ":8084",
           RequestLoggingFilter.andThen(
             MonitorController.api
+                .:+:(MonitoringSessionController.api)
                 .toServiceAs[Application.Json]
           )
         )

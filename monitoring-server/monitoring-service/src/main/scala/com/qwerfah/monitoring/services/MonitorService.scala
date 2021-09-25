@@ -54,15 +54,20 @@ trait MonitorService[F[_]] {
       * @return
       *   Message describes successful or failed operation.
       */
-    def addParam(param: MonitorParam): F[ServiceResponse[ResponseMessage]]
+    def addParam(monitorUid: Uid, param: MonitorParamRequest): F[ServiceResponse[ResponseMessage]]
 
     /** Update existing monitor data.
+      * @param uid
+      *   Monitor uid.
       * @param request
       *   New monitor data.
       * @return
       *   Message describes successful or failed operation.
       */
-    def update(request: MonitorRequest): F[ServiceResponse[ResponseMessage]]
+    def update(
+      uid: Uid,
+      request: MonitorRequest
+    ): F[ServiceResponse[ResponseMessage]]
 
     /** Remove monitor by its uid.
       * @param uid
@@ -78,5 +83,5 @@ trait MonitorService[F[_]] {
       * @return
       *   Message describes successful or failed operation.
       */
-    def removeParam(param: MonitorParam): F[ServiceResponse[ResponseMessage]]
+    def removeParam(monitorUid: Uid, paramUid: Uid): F[ServiceResponse[ResponseMessage]]
 }

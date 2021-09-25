@@ -15,11 +15,21 @@ import com.qwerfah.common.http._
 import com.qwerfah.common.resources.Credentials
 
 object Startup {
-    implicit val defaultEquipmentClient =
+    val defaultSessionClient =
         new DefaultHttpClient(
-          Equipment,
+          Session,
           Credentials("gateway", "gateway"),
           "localhost:8081"
         )
-    implicit val DefaultEquipmentService = new DefaultEquipmentService[Future]
+    val defaultEquipmentClient =
+        new DefaultHttpClient(
+          Equipment,
+          Credentials("gateway", "gateway"),
+          "localhost:8083"
+        )
+
+    implicit val defaultSessionService =
+        new DefaultSessionService[Future](defaultSessionClient)
+    implicit val defaultEquipmentService =
+        new DefaultEquipmentService[Future](defaultEquipmentClient)
 }

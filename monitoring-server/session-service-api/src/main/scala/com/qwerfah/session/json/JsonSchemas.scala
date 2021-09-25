@@ -1,13 +1,13 @@
-package com.qwerfah.common.json
+package com.qwerfah.session.json
 
 import io.circe.literal._
 import io.circe.schema.Schema
 
 object JsonSchemas {
-    val credentialsSchema: Schema = Schema.load(
+    val userRequestSchema: Schema = Schema.load(
       json""" {
         "type": "object",
-        "required": ["login", "password"],
+        "required": ["login", "password", "role"],
         "properties": {
             "login": {
                 "type": "string",
@@ -20,6 +20,10 @@ object JsonSchemas {
                 "minLength": 1,
                 "maxLength": 100,
                 "pattern": "^(?!\\s*$$).+"
+            },
+            "role": {
+                "type": "string",
+                "enum": ["SystemAdmin", "EquipmentAdmin", "EquipmentUser"]
             }
         }  
     }"""

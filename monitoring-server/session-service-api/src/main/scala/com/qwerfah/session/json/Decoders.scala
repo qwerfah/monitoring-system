@@ -1,4 +1,4 @@
-package com.qwerfah.common.json
+package com.qwerfah.session.json
 
 import io.circe.{Decoder, HCursor}
 
@@ -11,17 +11,17 @@ import com.qwerfah.common.resources._
 object Decoders {
     import JsonSchemas._
 
-    implicit val decodeCredentials: Decoder[Credentials] =
+    implicit val decodeUserRequest: Decoder[UserRequest] =
         (c: HCursor) => {
-            credentialsSchema.validate(c.value) match {
+            userRequestSchema.validate(c.value) match {
                 case Valid(()) =>
                     for {
                         login <- c.downField("login").as[String]
                         password <- c.downField("password").as[String]
-                    } yield Credentials(login, password)
+                        role <- c.downField("role").as[UserRole]
+                    } yield UserRequest(login, password, role)
                 case Invalid(errors) =>
                     throw InvalidJsonBodyException(errors)
             }
         }
-
 }

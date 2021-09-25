@@ -20,6 +20,10 @@ case object NoTokenHeader extends ErrorMessage {
     override def getMessage = "No authorization header provided."
 }
 
+case object InvalidTokenHeader extends ErrorMessage {
+    override def getMessage = "Invalid authorization header provided."
+}
+
 final case class NoInstance(uid: Uid) extends ErrorMessage {
     override def getMessage = s"Equipment instance with uid $uid not found."
 }
@@ -38,6 +42,17 @@ final case class NoUser(uid: Uid) extends ErrorMessage {
 
 final case class NoMonitor(uid: Uid) extends ErrorMessage {
     override def getMessage = s"Monitor with uid $uid not found."
+}
+
+final case class NoMonitorParam(puid: Uid, muid: Uid) extends ErrorMessage {
+    override def getMessage =
+        s"Param with uid $puid not tracked by monitor with uid $muid."
+}
+
+final case class DuplicatedMonitorParam(puid: Uid, muid: Uid)
+  extends ErrorMessage {
+    override def getMessage =
+        s"Param with uid $puid already tracked by monitor with uid $muid."
 }
 
 case object InvalidCredentials extends ErrorMessage {

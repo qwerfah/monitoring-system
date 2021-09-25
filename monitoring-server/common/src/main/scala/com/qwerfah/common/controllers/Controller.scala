@@ -53,11 +53,12 @@ trait Controller {
       header: Option[String],
       action: String => F[ServiceResponse[A]]
     )(implicit tokenService: TokenService[F]): F[Output[A]] = header match {
-        case Some(token) =>
+        case Some(token) if token.toLowerCase.contains("bearer") =>
             tokenService.validate(token) flatMap {
                 case ObjectResponse(result) => action(result) map { _.asOutput }
                 case e: ErrorResponse       => Monad[F].pure(Unauthorized(e))
             }
-        case None => Monad[F].pure(Unauthorized(NoTokenHeader))
+        case Some(_) => Monad[F].pure(Unauthorized(InvalidTokenHeader))
+        case None    => Monad[F].pure(Unauthorized(NoTokenHeader))
     }
 }

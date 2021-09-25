@@ -38,7 +38,7 @@ lazy val gateway = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(common, equipmentApi)
+    .dependsOn(common, gatewayApi, equipmentApi, sessionApi)
 
 lazy val session = project
     .in(file("session-service"))
@@ -47,7 +47,7 @@ lazy val session = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(common)
+    .dependsOn(common, sessionApi)
 
 lazy val reporting = project
     .in(file("reporting-service"))
@@ -93,6 +93,25 @@ lazy val monitoring = project
       libraryDependencies ++= commonDependencies
     )
     .dependsOn(common, monitoringApi, equipmentApi)
+
+lazy val gatewayApi = project
+    .in(file("gateway-service-api"))
+    .settings(
+      name := "gateway-service-api",
+      settings,
+      libraryDependencies ++= commonDependencies
+    )
+    .dependsOn(common)
+
+lazy val sessionApi = project
+    .in(file("session-service-api"))
+    .settings(
+      name := "session-service-api",
+      settings,
+      libraryDependencies ++= commonDependencies
+    )
+    .dependsOn(common)
+    .disablePlugins(AssemblyPlugin)
 
 lazy val equipmentApi = project
     .in(file("equipment-service-api"))

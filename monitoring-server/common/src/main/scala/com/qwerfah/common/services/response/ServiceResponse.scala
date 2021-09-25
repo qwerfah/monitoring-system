@@ -62,6 +62,15 @@ final case class InternalErrorResponse(message: ErrorMessage)
 final case class UnprocessableResponse(message: ErrorMessage)
   extends ErrorResponse(message)
 
+/** Returns when service recived valid data but conflict emerged during service
+  * method invocation (i.e. duplicated db records). Corresponds to 409 status
+  * code.
+  * @param message
+  *   Error description.
+  */
+final case class ConflictResponse(message: ErrorMessage)
+  extends ErrorResponse(message)
+
 /** Returns when the request to the remote server inside of service method
   * invocation returns unexpected status code. Corresponds to 520 status code.
   * @param message

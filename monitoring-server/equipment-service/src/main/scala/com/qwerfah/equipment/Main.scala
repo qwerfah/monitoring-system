@@ -12,11 +12,13 @@ import com.qwerfah.equipment.controllers._
 import com.qwerfah.common.json.Encoders
 import com.twitter.finagle.SimpleFilter
 
-import com.qwerfah.common.controllers.RequestLoggingFilter
+import com.qwerfah.common.controllers._
 
 object Main extends TwitterServer {
     import Startup._
     import Encoders._
+
+    object EquipmentAuthController extends AuthController
 
     startup()
 
@@ -27,7 +29,7 @@ object Main extends TwitterServer {
             EquipmentModelController.api
                 .:+:(EquipmentInstanceController.api)
                 .:+:(ParamController.api)
-                .:+:(AuthController.api)
+                .:+:(EquipmentAuthController.api)
                 .toServiceAs[Application.Json]
           )
         )

@@ -10,88 +10,82 @@ object Mappings {
     /** Equipment model request to equipment model mapping.
       * @param request
       *   Equipment model request.
-      * @return
-      *   Equipment model.
       */
-    implicit def requestToModel(request: ModelRequest): EquipmentModel =
-        EquipmentModel(None, randomUid, request.name, request.description)
+    implicit class RequestToModelMapping(request: ModelRequest) {
+        def asModel =
+            EquipmentModel(None, randomUid, request.name, request.description)
+    }
 
     /** Equipment model to equipment model response mapping.
       * @param model
       *   Equipment model.
-      * @return
-      *   Equipment model response.
       */
-    implicit def modelToResponse(model: EquipmentModel): ModelResponse =
-        ModelResponse(model.uid, model.name, model.description)
+    implicit class ModelToResponseMapping(model: EquipmentModel) {
+        def asResponse =
+            ModelResponse(model.uid, model.name, model.description)
+    }
 
     /** Equipment model sequence to equipment model resource sequence mapping.
       * @param models
       *   Equipment model sequence.
-      * @return
-      *   Equipment model resource sequence.
       */
-    implicit def modelsToResponses(
-      models: Seq[EquipmentModel]
-    ): Seq[ModelResponse] =
-        for { model <- models } yield ModelResponse(
-          model.uid,
-          model.name,
-          model.description
-        )
+    implicit class ModelSeqToResponseSeq(models: Seq[EquipmentModel]) {
+        def asResponse =
+            for { model <- models } yield ModelResponse(
+              model.uid,
+              model.name,
+              model.description
+            )
+    }
 
     /** Equipment instance adding request to equipment instance mapping.
       * @param request
       *   Equipment instance adding request.
-      * @return
-      *   Equipment instance.
       */
-    implicit def addRequestToInstance(
-      request: AddInstanceRequest
-    ): EquipmentInstance =
-        EquipmentInstance(
-          None,
-          randomUid,
-          request.modelUid,
-          request.name,
-          request.description,
-          request.status
-        )
+    implicit class AddRequestToInstanceMapping(request: AddInstanceRequest) {
+        def asInstance =
+            EquipmentInstance(
+              None,
+              randomUid,
+              request.modelUid,
+              request.name,
+              request.description,
+              request.status
+            )
+    }
 
     /** Equipment instance updating request to equipment instance mapping.
       * @param request
       *   Equipment instance updating request.
-      * @return
-      *   Equipment instance.
       */
-    implicit def updateRequestToInstance(
+    implicit class UpdateRequestToInstanceMapping(
       request: UpdateInstanceRequest
-    ): EquipmentInstance =
-        EquipmentInstance(
-          None,
-          randomUid,
-          randomUid,
-          request.name,
-          request.description,
-          request.status
-        )
+    ) {
+        def asInstance =
+            EquipmentInstance(
+              None,
+              randomUid,
+              randomUid,
+              request.name,
+              request.description,
+              request.status
+            )
+    }
 
     /** Equipment instance to equipment instance response mapping.
       * @param instance
       *   Equipment instance.
-      * @return
-      *   Equipment instance response.
       */
-    implicit def instanceToResponse(
-      instance: EquipmentInstance
-    ): InstanceResponse =
-        InstanceResponse(
-          instance.uid,
-          instance.modelUid,
-          instance.name,
-          instance.description,
-          instance.status
-        )
+    implicit class InstanceToResponseMapping(instance: EquipmentInstance) {
+        def asResponse =
+            InstanceResponse(
+              instance.uid,
+              instance.modelUid,
+              instance.name,
+              instance.description,
+              instance.status
+            )
+    }
 
     /** Equipment instance sequence to equipment instance response sequence
       * mapping.
@@ -100,46 +94,56 @@ object Mappings {
       * @return
       *   Equipment instance response sequence.
       */
-    implicit def instancesToResponses(
+    implicit class InstanceSeqToResponseSeqMapping(
       instances: Seq[EquipmentInstance]
-    ): Seq[InstanceResponse] =
-        for { instance <- instances } yield InstanceResponse(
-          instance.uid,
-          instance.modelUid,
-          instance.name,
-          instance.description,
-          instance.status
-        )
+    ) {
+        def asResponse =
+            for { instance <- instances } yield InstanceResponse(
+              instance.uid,
+              instance.modelUid,
+              instance.name,
+              instance.description,
+              instance.status
+            )
+    }
 
-    implicit def addRequestToParam(request: AddParamRequest): Param = Param(
-      None,
-      randomUid,
-      request.modelUid,
-      request.name,
-      request.measurmentUnits
-    )
-
-    implicit def updateRequestToParam(request: UpdateParamRequest): Param =
-        Param(
+    implicit class AddRequestToParamMapping(request: AddParamRequest) {
+        def asParam = Param(
           None,
           randomUid,
-          randomUid,
+          request.modelUid,
           request.name,
           request.measurmentUnits
         )
+    }
 
-    implicit def paramToResponse(param: Param): ParamResponse = ParamResponse(
-      param.uid,
-      param.modelUid,
-      param.name,
-      param.measurmentUnits
-    )
+    implicit class UpdateRequestToParamMapping(request: UpdateParamRequest) {
+        def asParam =
+            Param(
+              None,
+              randomUid,
+              randomUid,
+              request.name,
+              request.measurmentUnits
+            )
+    }
 
-    implicit def paramsToResponses(params: Seq[Param]): Seq[ParamResponse] =
-        for { param <- params } yield ParamResponse(
+    implicit class ParamToResponseMapping(param: Param) {
+        def asResponse = ParamResponse(
           param.uid,
           param.modelUid,
           param.name,
           param.measurmentUnits
         )
+    }
+
+    implicit class ParamSeqToResponseSeqMapping(params: Seq[Param]) {
+        def asResponse =
+            for { param <- params } yield ParamResponse(
+              param.uid,
+              param.modelUid,
+              param.name,
+              param.measurmentUnits
+            )
+    }
 }

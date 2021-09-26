@@ -53,7 +53,11 @@ object UserController extends Controller {
             "Authorization"
           )
         ) { (uid: Uid, request: UserRequest, header: Option[String]) =>
-            authorize(header, serviceRoles, _ => userService.update(uid, request))
+            authorize(
+              header,
+              serviceRoles,
+              _ => userService.update(uid, request)
+            )
         }
 
     private val deleteUser =

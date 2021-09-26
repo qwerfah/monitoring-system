@@ -12,7 +12,10 @@ import io.catbird.util._
 
 import com.rms.miu.slickcats.DBIOInstances._
 
+import com.typesafe.config.{Config, ConfigFactory}
+
 import com.qwerfah.session.models._
+
 import com.qwerfah.common.repos.slick._
 import com.qwerfah.common.repos._
 import com.qwerfah.common.services._
@@ -20,8 +23,14 @@ import com.qwerfah.common.services.default._
 import com.qwerfah.common.repos.local._
 import com.qwerfah.common.db.slick.SlickDbManager
 import com.qwerfah.common.services.default._
+import com.qwerfah.common.resources.Credentials
 
 object Startup {
+    implicit val config = ConfigFactory.load
+
+    for (creds <- config.getObjectList("serviceCredentials").toArray)
+        println(creds.asInstanceOf[Credentials])
+
     // Db dependencies
     implicit val pgdb = Database.forConfig("postgres")
     implicit val dbProfile = PostgresProfile

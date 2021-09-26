@@ -1,18 +1,20 @@
 package com.qwerfah.session.models
 
+import java.security.MessageDigest
+
 import slick.jdbc.JdbcProfile
 import slick.jdbc.meta.MTable
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import enumeratum._
 
-import java.security.MessageDigest
+import com.typesafe.config.Config
 
 import com.qwerfah.common.models._
 import com.qwerfah.common.{Uid, randomUid}
 import com.qwerfah.common.resources.UserRole
 
-class SessionContext(implicit jdbcProfile: JdbcProfile)
+class SessionContext(implicit jdbcProfile: JdbcProfile, config: Config)
   extends DataContext(jdbcProfile) {
     import profile.api._
 
@@ -47,6 +49,13 @@ class SessionContext(implicit jdbcProfile: JdbcProfile)
         "user_3",
         MessageDigest.getInstance("MD5").digest("password_3".getBytes("UTF-8")),
         UserRole.EquipmentUser
+      ),
+      User(
+        Some(4),
+        randomUid,
+        "gateway",
+        MessageDigest.getInstance("MD5").digest("gateway".getBytes("UTF-8")),
+        UserRole.Service
       )
     )
 }

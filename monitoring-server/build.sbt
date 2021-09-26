@@ -2,7 +2,6 @@ scalaVersion := "2.13.6"
 name := "monitoring-server"
 organization := "com.qwerfah"
 version := "1.0"
-ThisBuild / resolvers += "jitpack".at("https://jitpack.io")
 
 lazy val global = project
     .in(file("."))
@@ -17,7 +16,9 @@ lazy val global = project
       documentation,
       generator,
       monitoring,
-      equipmentApi
+      gatewayApi,
+      equipmentApi,
+      monitoringApi
     )
 
 lazy val common = project

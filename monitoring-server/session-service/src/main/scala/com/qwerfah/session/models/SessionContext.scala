@@ -8,11 +8,15 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import enumeratum._
 
-import com.typesafe.config.Config
+import com.typesafe.config.{Config, ConfigObject}
+
+import io.circe.generic.auto._
+import io.circe.config.syntax._
 
 import com.qwerfah.common.models._
-import com.qwerfah.common.{Uid, randomUid}
+import com.qwerfah.common.{Uid, randomUid, hashString}
 import com.qwerfah.common.resources.UserRole
+import com.qwerfah.common.resources.Credentials
 
 class SessionContext(implicit jdbcProfile: JdbcProfile, config: Config)
   extends DataContext(jdbcProfile) {
@@ -23,39 +27,50 @@ class SessionContext(implicit jdbcProfile: JdbcProfile, config: Config)
       users.schema.createIfNotExists,
       // Add default users
       users.exists.result flatMap { exisits =>
-          if (!exisits) users ++= initialUsers
+          if (!exisits) addUsers
           else DBIO.successful(None)
       }
     )
 
-    val initialUsers = Seq(
+    private val initialUsers = Seq(
       User(
         Some(1),
         randomUid,
         "user_1",
-        MessageDigest.getInstance("MD5").digest("password_1".getBytes("UTF-8")),
+        hashString("password_1"),
         UserRole.SystemAdmin
       ),
       User(
         Some(2),
         randomUid,
         "user_2",
-        MessageDigest.getInstance("MD5").digest("password_2".getBytes("UTF-8")),
+        hashString("password_2"),
         UserRole.EquipmentAdmin
       ),
       User(
         Some(3),
         randomUid,
         "user_3",
-        MessageDigest.getInstance("MD5").digest("password_3".getBytes("UTF-8")),
+        hashString("password_3"),
         UserRole.EquipmentUser
-      ),
-      User(
-        Some(4),
-        randomUid,
-        "gateway",
-        MessageDigest.getInstance("MD5").digest("gateway".getBytes("UTF-8")),
-        UserRole.Service
       )
     )
+
+    private def addUsers = {
+        val services = collection.mutable.ListBuffer[User]()
+
+        for (
+          creds <- config.getObjectList("serviceCredentials").toArray;
+          cred <- creds.asInstanceOf[ConfigObject].toConfig.as[Credentials]
+        )
+            services += User(
+              None,
+              randomUid,
+              cred.login,
+              hashString(cred.password),
+              UserRole.Service
+            )
+
+        DBIO.seq(users ++= initialUsers ++ services)
+    }
 }

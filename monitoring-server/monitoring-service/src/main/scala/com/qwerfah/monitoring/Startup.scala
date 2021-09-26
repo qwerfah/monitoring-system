@@ -10,6 +10,8 @@ import slick.jdbc.{PostgresProfile, JdbcProfile}
 import slick.jdbc.JdbcBackend.Database
 import slick.dbio._
 
+import com.typesafe.config.ConfigFactory
+
 import com.qwerfah.monitoring.repos.slick._
 import com.qwerfah.monitoring.services.default._
 import com.qwerfah.monitoring.models.MonitoringContext
@@ -22,6 +24,8 @@ import com.qwerfah.common.repos.slick.SlickUserRepo
 import com.qwerfah.common.services.default._
 
 object Startup {
+    implicit val config = ConfigFactory.load
+
     implicit val pgdb = Database.forConfig("postgres")
     implicit val dbProfile = PostgresProfile
     implicit val context = new MonitoringContext

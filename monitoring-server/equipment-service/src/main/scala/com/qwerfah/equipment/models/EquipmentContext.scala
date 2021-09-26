@@ -8,16 +8,21 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import enumeratum._
 
+import com.typesafe.config.{Config, ConfigObject}
+
+import io.circe.generic.auto._
+import io.circe.config.syntax._
+
 import com.qwerfah.equipment.resources._
-import com.qwerfah.common.{Uid, randomUid}
+import com.qwerfah.common.{Uid, randomUid, hashString}
 import com.qwerfah.common.models._
-import com.qwerfah.common.resources.UserRole
+import com.qwerfah.common.resources.{UserRole, Credentials}
 
 /** Database scheme context base on jdbc profile provided.
   * @param jdbcProfile
   *   Current jdbc profile for interaction with db provider.
   */
-class EquipmentContext(implicit jdbcProfile: JdbcProfile)
+class EquipmentContext(implicit jdbcProfile: JdbcProfile, config: Config)
   extends DataContext(jdbcProfile) {
     import profile.api._
 
@@ -166,7 +171,7 @@ class EquipmentContext(implicit jdbcProfile: JdbcProfile)
       },
       // Insert equipment instances
       users.exists.result flatMap { exists =>
-          if (!exists) users ++= initialUsers
+          if (!exists) addUsers
           else DBIO.successful(None)
       }
     )
@@ -227,20 +232,21 @@ class EquipmentContext(implicit jdbcProfile: JdbcProfile)
       )
     )
 
-    private val initialUsers = Seq(
-      User(
-        Some(1),
-        randomUid,
-        "gateway",
-        MessageDigest.getInstance("MD5").digest("gateway".getBytes("UTF-8")),
-        UserRole.Service
-      ),
-      User(
-        Some(2),
-        randomUid,
-        "monitoring",
-        MessageDigest.getInstance("MD5").digest("monitoring".getBytes("UTF-8")),
-        UserRole.Service
-      )
-    )
+    private def addUsers = {
+        val services = collection.mutable.ListBuffer[User]()
+
+        for (
+          creds <- config.getObjectList("serviceCredentials").toArray;
+          cred <- creds.asInstanceOf[ConfigObject].toConfig.as[Credentials]
+        )
+            services += User(
+              None,
+              randomUid,
+              cred.login,
+              hashString(cred.password),
+              UserRole.Service
+            )
+
+        DBIO.seq(users ++= services)
+    }
 }

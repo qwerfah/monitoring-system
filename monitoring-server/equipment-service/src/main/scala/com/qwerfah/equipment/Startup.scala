@@ -13,6 +13,8 @@ import io.catbird.util._
 
 import com.rms.miu.slickcats.DBIOInstances._
 
+import com.typesafe.config.ConfigFactory
+
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.repos.slick._
 import com.qwerfah.equipment.repos._
@@ -27,6 +29,9 @@ import com.qwerfah.common.services.default._
   * context and all repositories and instances.
   */
 object Startup {
+    // Application config
+    implicit val config = ConfigFactory.load
+
     // Db dependencies
     implicit val pgdb = Database.forConfig("postgres")
     implicit val dbProfile = PostgresProfile

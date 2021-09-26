@@ -12,7 +12,7 @@ import io.catbird.util._
 
 import com.rms.miu.slickcats.DBIOInstances._
 
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.ConfigFactory
 
 import com.qwerfah.session.models._
 
@@ -27,9 +27,6 @@ import com.qwerfah.common.resources.Credentials
 
 object Startup {
     implicit val config = ConfigFactory.load
-
-    for (creds <- config.getObjectList("serviceCredentials").toArray)
-        println(creds.asInstanceOf[Credentials])
 
     // Db dependencies
     implicit val pgdb = Database.forConfig("postgres")

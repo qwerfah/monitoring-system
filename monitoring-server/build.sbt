@@ -137,6 +137,7 @@ lazy val commonDependencies = Seq(
   "io.circe" %% "circe-generic" % "0.15.0-M1",
   "io.circe" %% "circe-json-schema" % "0.2.0",
   "io.circe" % "circe-literal_2.13" % "0.15.0-M1",
+  "io.circe" % "circe-config_2.13" % "0.8.0",
   "com.rms.miu" %% "slick-cats" % "0.10.4",
   "com.beachape" %% "enumeratum-circe" % "1.7.0",
   "com.beachape" %% "enumeratum-slick" % "1.7.0",

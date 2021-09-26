@@ -8,12 +8,17 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import enumeratum._
 
-import com.qwerfah.common.{Uid, randomUid}
+import com.typesafe.config.{Config, ConfigObject}
+
+import io.circe.generic.auto._
+import io.circe.config.syntax._
+
+import com.qwerfah.common.{Uid, randomUid, hashString}
 import com.qwerfah.common.models._
-import com.qwerfah.common.resources.UserRole
+import com.qwerfah.common.resources.{UserRole, Credentials}
 import _root_.com.qwerfah.common.models.DataContext
 
-class MonitoringContext(implicit jdbcProfile: JdbcProfile)
+class MonitoringContext(implicit jdbcProfile: JdbcProfile, config: Config)
   extends DataContext(jdbcProfile) {
     import profile.api._
 
@@ -72,7 +77,7 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile)
           else DBIO.successful(None)
       },
       users.exists.result flatMap { exisits =>
-          if (!exisits) users ++= initialUsers else DBIO.successful(None)
+          if (!exisits) addUsers else DBIO.successful(None)
       }
     )
 
@@ -108,13 +113,21 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile)
       MonitorParam(monitorUids(2), randomUid)
     )
 
-    private val initialUsers = Seq(
-      User(
-        Some(1),
-        randomUid,
-        "gateway",
-        MessageDigest.getInstance("MD5").digest("gateway".getBytes("UTF-8")),
-        UserRole.Service
-      )
-    )
+    private def addUsers = {
+        val services = collection.mutable.ListBuffer[User]()
+
+        for (
+          creds <- config.getObjectList("serviceCredentials").toArray;
+          cred <- creds.asInstanceOf[ConfigObject].toConfig.as[Credentials]
+        )
+            services += User(
+              None,
+              randomUid,
+              cred.login,
+              hashString(cred.password),
+              UserRole.Service
+            )
+
+        DBIO.seq(users ++= services)
+    }
 }

@@ -8,6 +8,8 @@ import com.twitter.finagle.http.{Method => TwitterMethod}
 import com.twitter.util.{Future => TwitterFuture, Promise => TwitterPromise}
 
 import com.qwerfah.common.http._
+import com.qwerfah.common.services.response._
+import com.qwerfah.common.exceptions._
 
 /** Provide implicit classes for different type conversions. */
 object Conversions {
@@ -16,7 +18,7 @@ object Conversions {
       * @param sf
       *   Scala future instance.
       */
-    implicit class ScalaToTwitterFuture[A](val sf: ScalaFuture[A]) {
+    implicit class ScalaToTwitterFuture[A](sf: ScalaFuture[A]) {
 
         /** Convert scala future too twitter future.
           * @param e
@@ -34,6 +36,11 @@ object Conversions {
         }
     }
 
+    /** Implicit conversion of custom http client method enum to the Twitter
+      * http method enum.
+      * @param m
+      *   Custom http method enum instance.
+      */
     implicit class methodToTwitterMethod(m: Method) {
         def asTwitter = m match {
             case Get    => TwitterMethod.Get
@@ -41,5 +48,27 @@ object Conversions {
             case Patch  => TwitterMethod.Patch
             case Delete => TwitterMethod.Delete
         }
+    }
+
+    /** Object conversion to the successfull service response with payload.
+      * @param obj
+      *   Service method result instance.
+      */
+    implicit class objectToServiceResponse[A](obj: A) {
+        def as200 = ObjectResponse(obj)
+    }
+
+    /** Error message conversions to the corresponding error responses.
+      * @param msg
+      *   Error message instance.
+      */
+    implicit class errorToServiceResponse(msg: ErrorMessage) {
+        def as401 = BadAuthResponse(msg)
+        def as404 = NotFoundResponse(msg)
+        def as409 = ConflictResponse(msg)
+        def as422 = UnprocessableResponse(msg)
+        def as500 = InternalErrorResponse(msg)
+        def as502 = BadGatewayResponse(msg)
+        def as520 = UnknownErrorResponse(msg)
     }
 }

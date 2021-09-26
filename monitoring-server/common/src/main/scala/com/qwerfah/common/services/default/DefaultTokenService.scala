@@ -18,7 +18,8 @@ import com.qwerfah.common.db.DbManager
 import com.qwerfah.common.randomUid
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.resources.Credentials
-import com.qwerfah.common.Uid
+import com.qwerfah.common.util.Conversions._
+import com.qwerfah.common.{Uid, uidFromString}
 
 object JwtOptions {
     val key = "secretKey"
@@ -94,7 +95,7 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
             _ <- dbManager.execute(tokenRepo.removeById(uid))
             _ <- dbManager.execute(tokenRepo.add(uid -> token.access))
             _ <- dbManager.execute(tokenRepo.add(uid -> token.refresh))
-        } yield ObjectResponse(token)
+        } yield token.as200
     }
 
     override def verify(token: String): F[ServiceResponse[Uid]] = {
@@ -102,20 +103,16 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
             case true => {
                 decodeToken(token) match {
                     case Success(value) =>
-                        Monad[F].pure(
-                          ObjectResponse(
-                            java.util.UUID.fromString(value.subject.get)
-                          )
-                        )
+                        Monad[F].pure(uidFromString(value.subject.get).as200)
                     case Failure(_) => {
                         dbManager.execute(tokenRepo.removeByToken(token)) map {
-                            case true  => BadAuthResponse(ExpiredToken)
-                            case false => BadAuthResponse(NoExpiredToken)
+                            case true  => ExpiredToken.as401
+                            case false => NoExpiredToken.as401
                         }
                     }
                 }
             }
-            case false => Monad[F].pure(BadAuthResponse(InvalidToken))
+            case false => Monad[F].pure(InvalidToken.as401)
         }
     }
 
@@ -129,7 +126,7 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
         dbManager.execute(userRepo.getByLogin(credentials.login)) flatMap {
             case Some(user) if user.password sameElements passwordHash =>
                 generate(user.uid)
-            case _ => Monad[F].pure(NotFoundResponse(InvalidCredentials))
+            case _ => Monad[F].pure(InvalidCredentials.as404)
         }
     }
 

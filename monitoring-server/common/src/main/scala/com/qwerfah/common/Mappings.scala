@@ -6,8 +6,8 @@ import com.qwerfah.common.models.User
 import java.security.MessageDigest
 
 object Mappings {
-    implicit def userRequestToUser(request: UserRequest) =
-        User(
+    implicit class RequestToUserMapping(request: UserRequest) {
+        def asUser = User(
           None,
           randomUid,
           request.login,
@@ -16,14 +16,17 @@ object Mappings {
               .digest(request.password.getBytes("UTF-8")),
           request.role
         )
+    }
 
-    implicit def userToResponse(user: User) =
-        UserResponse(user.uid, user.login, user.role)
+    implicit class UserToResponseMapping(user: User) {
+        def asResponse = UserResponse(user.uid, user.login, user.role)
+    }
 
-    implicit def usersToResponses(users: Seq[User]) =
-        for { user <- users } yield UserResponse(
+    implicit class UserSeqToResponseSeqMapping(users: Seq[User]) {
+        def asResponse = for { user <- users } yield UserResponse(
           user.uid,
           user.login,
           user.role
         )
+    }
 }

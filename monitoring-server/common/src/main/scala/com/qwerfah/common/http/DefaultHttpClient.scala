@@ -48,7 +48,7 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
       *   Access-refresh token pair in case of success, otherwise unauthorized
       *   error response.
       */
-    def authorizeInDest: Future[ServiceResponse[Token]] = {
+    private def authorizeInDest: Future[ServiceResponse[Token]] = {
         val request = Request(TwitterMethod.Post, "/auth/login")
         request.setContentType("application/json")
         request.setContentString(creds.asJson.toString)
@@ -56,7 +56,7 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
         service(request) map { response =>
             response.status match {
                 case Status.Ok => decodeJson[Token](response.contentString)
-                case _ => BadAuthResponse(InterserviceAuthFailed(ss.value))
+                case _         => InterserviceAuthFailed(ss.value).as401
             }
         }
     }
@@ -67,7 +67,7 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
       *   Access-refresh token pair in case of success, otherwise unauthorized
       *   error response.
       */
-    def refreshTokenInDest: Future[ServiceResponse[Token]] = {
+    private def refreshTokenInDest: Future[ServiceResponse[Token]] = {
         val request = Request(TwitterMethod.Post, "/auth/refresh")
         request.headerMap.add(
           "Authorization",
@@ -77,7 +77,7 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
         service(request) map { response =>
             response.status match {
                 case Status.Ok => decodeJson[Token](response.contentString)
-                case _ => BadAuthResponse(InterserviceAuthFailed(ss.value))
+                case _         => InterserviceAuthFailed(ss.value).as401
             }
         }
     }
@@ -88,7 +88,7 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
       *   Access-refresh token pair in case of success, otherwise unauthorized
       *   error response.
       */
-    def getTokenFromDest: Future[ServiceResponse[Token]] = token match {
+    private def getTokenFromDest: Future[ServiceResponse[Token]] = token match {
         case None => authorizeInDest
         case Some(_) =>
             refreshTokenInDest flatMap {
@@ -97,7 +97,15 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
             }
     }
 
-    def sendWithRefresh(request: Request): Future[Response] =
+    /** Send request to the remote server with authorization. If unauthorized
+      * error recived, try to authorize and retry request.
+      * @param request
+      *   Request to the remote server.
+      * @return
+      *   Response of the remote server that represents response to the initial
+      *   request or authorization error in case of failure.
+      */
+    private def sendWithRefresh(request: Request): Future[Response] =
         service(request) flatMap { response =>
             response.status match {
                 case Status.Unauthorized =>
@@ -114,7 +122,35 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
             }
         }
 
-    val service: Service[Request, Response] =
+    private def matchStatus[A](
+      response: Response
+    )(implicit decoder: Decoder[A]) = response.status match {
+        case Status.Ok => decodeJson(response.contentString)
+        case Status.Unauthorized =>
+            if (token.isEmpty) InterserviceAuthFailed(ss.value).as401
+            else InvalidToken.as401
+        case Status.NotFound =>
+            decode[ErrorMessage](response.contentString) match {
+                case Right(value) => value.as404
+                case _            => UnknownServiceResponse(ss.value).as520
+            }
+        case Status.Conflict =>
+            decode[ErrorMessage](response.contentString) match {
+                case Right(value) => value.as409
+                case _            => UnknownServiceResponse(ss.value).as520
+            }
+        case Status.UnprocessableEntity =>
+            decode[ErrorMessage](response.contentString) match {
+                case Right(value) => value.as422
+                case _            => UnknownServiceResponse(ss.value).as520
+            }
+        case Status.InternalServerError => ServiceInternalError(ss.value).as500
+        case Status.ServiceUnavailable  => ServiceUnavailable(ss.value).as502
+        case _ => UnknownServiceResponse(ss.value).as520
+    }
+
+    /** Finagle service with circuit breaker. */
+    private val service: Service[Request, Response] =
         Http.client.withSessionQualifier.noFailFast
             .configured(
               FailureAccrualFactory.Param(() =>
@@ -126,11 +162,18 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
             )
             .newService(dest)
 
+    /** Decode string body of the response as json.
+      * @param body
+      *   Response json body.
+      * @param decoder
+      *   Json decoder for appropriate return type.
+      * @return
+      *   Service response instance with decoded body.
+      */
     private def decodeJson[A](body: String)(implicit decoder: Decoder[A]) = {
         decode[A](body) match {
-            case Right(value) => ObjectResponse(value)
-            case Left(error) =>
-                UnprocessableResponse(BadServiceResult(ss.value))
+            case Right(value) => value.as200
+            case Left(error)  => BadServiceResult(ss.value).as422
         }
     }
 
@@ -154,20 +197,6 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
             case _ => ()
         }
 
-        println(s"Send: $request")
-
-        sendWithRefresh(request) map { response =>
-            response.status match {
-                case Status.Ok => decodeJson[A](response.contentString)
-                case Status.Unauthorized =>
-                    BadAuthResponse(InterserviceAuthFailed(ss.value))
-                case Status.InternalServerError =>
-                    InternalErrorResponse(ServiceInternalError(ss.value))
-                case Status.ServiceUnavailable =>
-                    BadGatewayResponse(ServiceUnavailable(ss.value))
-                case _ =>
-                    UnknownErrorResponse(UnknownServiceResponse(ss.value))
-            }
-        }
+        sendWithRefresh(request) map { response => matchStatus(response) }
     }
 }

@@ -2,7 +2,7 @@ scalaVersion := "2.13.6"
 name := "monitoring-server"
 organization := "com.qwerfah"
 version := "1.0"
-resolvers in ThisBuild += "jitpack".at("https://jitpack.io")
+ThisBuild / resolvers += "jitpack".at("https://jitpack.io")
 
 lazy val global = project
     .in(file("."))
@@ -38,7 +38,7 @@ lazy val gateway = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(common, gatewayApi, equipmentApi, sessionApi)
+    .dependsOn(common, gatewayApi, equipmentApi)
 
 lazy val session = project
     .in(file("session-service"))
@@ -47,7 +47,7 @@ lazy val session = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(common, sessionApi)
+    .dependsOn(common)
 
 lazy val reporting = project
     .in(file("reporting-service"))
@@ -103,16 +103,6 @@ lazy val gatewayApi = project
     )
     .dependsOn(common)
 
-lazy val sessionApi = project
-    .in(file("session-service-api"))
-    .settings(
-      name := "session-service-api",
-      settings,
-      libraryDependencies ++= commonDependencies
-    )
-    .dependsOn(common)
-    .disablePlugins(AssemblyPlugin)
-
 lazy val equipmentApi = project
     .in(file("equipment-service-api"))
     .settings(
@@ -157,7 +147,7 @@ lazy val commonDependencies = Seq(
 
 lazy val settings = Seq(
   scalacOptions ++= compilerOptions,
-  resolvers in ThisBuild += "jitpack".at("https://jitpack.io")
+  ThisBuild / resolvers += "jitpack".at("https://jitpack.io")
 )
 
 lazy val compilerOptions = Seq(

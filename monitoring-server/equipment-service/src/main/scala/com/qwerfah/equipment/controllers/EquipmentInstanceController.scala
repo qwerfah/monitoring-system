@@ -25,6 +25,7 @@ import com.qwerfah.common.exceptions._
 import com.qwerfah.common.Uid
 import com.qwerfah.common.services._
 import com.qwerfah.common.controllers.Controller
+import com.qwerfah.common.resources.UserRole
 
 object EquipmentInstanceController extends Controller {
     import Startup._
@@ -36,13 +37,13 @@ object EquipmentInstanceController extends Controller {
     private val getInstances =
         get("instances" :: headerOption("Authorization")) {
             header: Option[String] =>
-                authorize(header, _ => instanceService.getAll)
+                authorize(header, serviceRoles, _ => instanceService.getAll)
         }
 
     private val getInstance = get(
       "instances" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        authorize(header, _ => instanceService.get(uid))
+        authorize(header, serviceRoles, _ => instanceService.get(uid))
     }
 
     private val addInstance = post(
@@ -50,7 +51,7 @@ object EquipmentInstanceController extends Controller {
         "Authorization"
       )
     ) { (request: AddInstanceRequest, header: Option[String]) =>
-        authorize(header, _ => instanceService.add(request))
+        authorize(header, serviceRoles, _ => instanceService.add(request))
     }
 
     private val updateInstance = patch(
@@ -62,13 +63,18 @@ object EquipmentInstanceController extends Controller {
           uid: Uid,
           request: UpdateInstanceRequest,
           header: Option[String]
-        ) => authorize(header, _ => instanceService.update(uid, request))
+        ) =>
+            authorize(
+              header,
+              serviceRoles,
+              _ => instanceService.update(uid, request)
+            )
     }
 
     private val deleteInstance = delete(
       "instances" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        authorize(header, _ => instanceService.remove(uid))
+        authorize(header, serviceRoles, _ => instanceService.remove(uid))
     }
 
     val api = getInstances

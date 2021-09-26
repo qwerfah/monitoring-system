@@ -32,13 +32,13 @@ object UserController extends Controller {
 
     private val getUsers = get("users" :: headerOption("Authorization")) {
         header: Option[String] =>
-            authorize(header, _ => userService.getAll)
+            authorize(header, serviceRoles, _ => userService.getAll)
     }
 
     private val getUser =
         get("users" :: path[Uid] :: headerOption("Authorization")) {
             (uid: Uid, header: Option[String]) =>
-                authorize(header, _ => userService.get(uid))
+                authorize(header, serviceRoles, _ => userService.get(uid))
         }
 
     private val register =
@@ -53,13 +53,13 @@ object UserController extends Controller {
             "Authorization"
           )
         ) { (uid: Uid, request: UserRequest, header: Option[String]) =>
-            authorize(header, _ => userService.update(uid, request))
+            authorize(header, serviceRoles, _ => userService.update(uid, request))
         }
 
     private val deleteUser =
         delete("users" :: path[Uid] :: headerOption("Authorization")) {
             (uid: Uid, header: Option[String]) =>
-                authorize(header, _ => userService.remove(uid))
+                authorize(header, serviceRoles, _ => userService.remove(uid))
         }
 
     val api = getUsers

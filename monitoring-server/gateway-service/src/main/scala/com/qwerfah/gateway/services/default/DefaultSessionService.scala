@@ -13,16 +13,15 @@ import com.qwerfah.gateway.json.Decoders
 import com.qwerfah.common.services.TokenService
 import com.qwerfah.common.http._
 import com.qwerfah.common.services.response._
-import com.qwerfah.common.models.Token
 import com.qwerfah.common.resources.Credentials
-import com.qwerfah.common.models.Token
+import com.qwerfah.common.models._
 import com.qwerfah.common.Uid
 
 class DefaultSessionService[F[_]: Monad](client: HttpClient[F])
   extends TokenService[F] {
     import Decoders._
 
-    override def verify(token: String): F[ServiceResponse[Uid]] =
+    override def verify(token: String): F[ServiceResponse[Payload]] =
         client.sendAndDecode(Post, "/session/verify", None, Some(token))
 
     override def login(credentials: Credentials): F[ServiceResponse[Token]] =

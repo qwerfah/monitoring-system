@@ -17,7 +17,6 @@ object Main extends TwitterServer {
     import Encoders._
 
     object UserSessionController extends SessionController
-
     startup()
 
     val server =

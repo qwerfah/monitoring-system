@@ -18,6 +18,9 @@ case object UserRole extends Enum[UserRole] with CirceEnum[UserRole] {
     /** Equipment user (access only to equipment data retrieving operations). */
     case object EquipmentUser extends UserRole
 
+    /** External system service. */
+    case object Service extends UserRole
+
     val values = findValues
 
 }

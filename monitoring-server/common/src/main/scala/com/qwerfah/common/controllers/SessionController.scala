@@ -20,7 +20,7 @@ import com.qwerfah.common.exceptions._
 import com.qwerfah.common.Uid
 import com.qwerfah.common.services._
 import com.qwerfah.common.controllers.Controller
-import com.qwerfah.common.resources.Credentials
+import com.qwerfah.common.resources._
 import com.qwerfah.common.services.response.ObjectResponse
 
 /** Provide endpoints for interservice authorization.
@@ -56,6 +56,7 @@ abstract class SessionController(implicit
             header: Option[String] =>
                 authorize[Future, Uid](
                   header,
+                  readRoles,
                   uid => FuturePool immediatePool { ObjectResponse(uid) }
                 )
         }

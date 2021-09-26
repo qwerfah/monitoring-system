@@ -2,7 +2,7 @@ package com.qwerfah.common.services
 
 import scala.util.Try
 
-import com.qwerfah.common.models.Token
+import com.qwerfah.common.models.{Token, Payload}
 import com.qwerfah.common.services.response._
 import com.qwerfah.common.resources.Credentials
 import com.qwerfah.common.Uid
@@ -16,7 +16,7 @@ trait TokenService[F[_]] {
       * @return
       *   Subject uid if token is valid, otherwise error.
       */
-    def verify(token: String): F[ServiceResponse[Uid]]
+    def verify(token: String): F[ServiceResponse[Payload]]
 
     /** Authorize user with given credentials.
       * @param credentials

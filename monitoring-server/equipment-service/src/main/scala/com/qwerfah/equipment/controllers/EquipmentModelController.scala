@@ -36,31 +36,32 @@ object EquipmentModelController extends Controller {
     private implicit val tokenService = implicitly[TokenService[Future]]
 
     private val getModels = get("models" :: headerOption("Authorization")) {
-        header: Option[String] => authorize(header, _ => modelService.getAll)
+        header: Option[String] =>
+            authorize(header, readRoles, _ => modelService.getAll)
     }
 
     private val getModel = get(
       "models" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        authorize(header, _ => modelService.get(uid))
+        authorize(header, serviceRoles, _ => modelService.get(uid))
     }
 
     private val getModelInstances = get(
       "models" :: path[Uid] :: "instances" :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        authorize(header, _ => instanceService.getByModelUid(uid))
+        authorize(header, serviceRoles, _ => instanceService.getByModelUid(uid))
     }
 
     private val getModelParams = get(
       "models" :: path[Uid] :: "params" :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        authorize(header, _ => paramService.getByModelUid(uid))
+        authorize(header, serviceRoles, _ => paramService.getByModelUid(uid))
     }
 
     private val addModel = post(
       "models" :: jsonBody[ModelRequest] :: headerOption("Authorization")
     ) { (request: ModelRequest, header: Option[String]) =>
-        authorize(header, _ => modelService.add(request))
+        authorize(header, serviceRoles, _ => modelService.add(request))
     }
 
     private val updateModel = patch(
@@ -68,13 +69,13 @@ object EquipmentModelController extends Controller {
         "Authorization"
       )
     ) { (uid: Uid, request: ModelRequest, header: Option[String]) =>
-        authorize(header, _ => modelService.update(uid, request))
+        authorize(header, serviceRoles, _ => modelService.update(uid, request))
     }
 
     private val deleteModel = delete(
       "models" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        authorize(header, _ => modelService.remove(uid))
+        authorize(header, serviceRoles, _ => modelService.remove(uid))
     }
 
     val api = getModels

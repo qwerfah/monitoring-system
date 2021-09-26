@@ -33,8 +33,11 @@ object Startup {
     implicit val dbManager = new SlickDbManager
 
     // Service dependencies
-    implicit val DefaultTokenService = new DefaultTokenService[Future, DBIO]
-    implicit val defaultUserService = new DefaultUserService[Future, DBIO]
+    implicit val userTokenService = new DefaultTokenService[Future, DBIO]
+    implicit val externalUserService = new DefaultUserService[Future, DBIO]
+
+    // implicit val serviceTokenService = new DefaultTokenService[Future, DBIO]
+    // implicit val serviceUserService = new DefaultUserService[Future, DBIO]
 
     def startup() = Await.result(dbManager.execute(context.setup))
 }

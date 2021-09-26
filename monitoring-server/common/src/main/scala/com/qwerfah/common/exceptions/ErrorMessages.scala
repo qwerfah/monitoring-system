@@ -24,6 +24,10 @@ case object InvalidTokenHeader extends ErrorMessage {
     override def getMessage = "Invalid authorization header provided."
 }
 
+case object InsufficientRole extends ErrorMessage {
+    override def getMessage = "User have no rights to perform operation."
+}
+
 final case class NoInstance(uid: Uid) extends ErrorMessage {
     override def getMessage = s"Equipment instance with uid $uid not found."
 }

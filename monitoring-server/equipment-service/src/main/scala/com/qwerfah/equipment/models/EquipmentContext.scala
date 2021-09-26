@@ -233,14 +233,14 @@ class EquipmentContext(implicit jdbcProfile: JdbcProfile)
         randomUid,
         "gateway",
         MessageDigest.getInstance("MD5").digest("gateway".getBytes("UTF-8")),
-        UserRole.SystemAdmin
+        UserRole.Service
       ),
       User(
         Some(2),
         randomUid,
         "monitoring",
         MessageDigest.getInstance("MD5").digest("monitoring".getBytes("UTF-8")),
-        UserRole.SystemAdmin
+        UserRole.Service
       )
     )
 }

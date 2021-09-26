@@ -10,16 +10,20 @@ import cats.implicits._
 
 import pdi.jwt.{JwtCirce, JwtAlgorithm, JwtClaim}
 
+import io.circe._
+import io.circe.generic.auto._
+import io.circe.parser._
+import io.circe.syntax._
+
 import com.qwerfah.common.services._
 import com.qwerfah.common.services.response._
 import com.qwerfah.common.repos._
-import com.qwerfah.common.models.Token
+import com.qwerfah.common.models.{Token, Payload}
 import com.qwerfah.common.db.DbManager
-import com.qwerfah.common.randomUid
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.resources.Credentials
 import com.qwerfah.common.util.Conversions._
-import com.qwerfah.common.{Uid, uidFromString}
+import com.qwerfah.common.{Uid, randomUid, uidFromString}
 
 object JwtOptions {
     val key = "secretKey"
@@ -48,12 +52,16 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
       * @return
       *   Jwt token.
       */
-    private def generateToken(id: String, expiration: Some[Long]): String = {
+    private def generateToken(
+      payload: Payload,
+      expiration: Some[Long]
+    ): String = {
         val claim = JwtClaim(
-          subject = Some(id),
+          subject = Some(payload.uid.toString),
           expiration = expiration,
           issuedAt = JwtOptions.issuedAt,
-          jwtId = Some(randomUid.toString)
+          jwtId = Some(randomUid.toString),
+          content = payload.asJson.toString
         )
 
         JwtCirce.encode(claim, JwtOptions.key, JwtOptions.algorithm)
@@ -66,9 +74,9 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
       * @return
       *   Token instance.
       */
-    private def generateToken(id: String): Token = Token(
-      generateToken(id, JwtOptions.accessExpiration),
-      generateToken(id, JwtOptions.refreshExpiration)
+    private def generateToken(payload: Payload): Token = Token(
+      generateToken(payload, JwtOptions.accessExpiration),
+      generateToken(payload, JwtOptions.refreshExpiration)
     )
 
     /** Decode string token representation into JwtClaim.
@@ -89,21 +97,24 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
       * @return
       *   New access-refresh token pair for given subject.
       */
-    private def generate(uid: Uid): F[ServiceResponse[Token]] = {
-        val token = generateToken(uid.toString)
+    private def generate(payload: Payload): F[ServiceResponse[Token]] = {
+        val token = generateToken(payload)
         for {
-            _ <- dbManager.execute(tokenRepo.removeById(uid))
-            _ <- dbManager.execute(tokenRepo.add(uid -> token.access))
-            _ <- dbManager.execute(tokenRepo.add(uid -> token.refresh))
+            _ <- dbManager.execute(tokenRepo.removeById(payload.uid))
+            _ <- dbManager.execute(tokenRepo.add(payload.uid -> token.access))
+            _ <- dbManager.execute(tokenRepo.add(payload.uid -> token.refresh))
         } yield token.as200
     }
 
-    override def verify(token: String): F[ServiceResponse[Uid]] = {
+    override def verify(token: String): F[ServiceResponse[Payload]] = {
         dbManager.execute(tokenRepo.contains(token)) flatMap {
             case true => {
                 decodeToken(token) match {
                     case Success(value) =>
-                        Monad[F].pure(uidFromString(value.subject.get).as200)
+                        decode[Payload](value.content) match {
+                            case Right(payload) => Monad[F].pure(payload.as200)
+                            case Left(_) => Monad[F].pure(InvalidToken.as401)
+                        }
                     case Failure(_) => {
                         dbManager.execute(tokenRepo.removeByToken(token)) map {
                             case true  => ExpiredToken.as401
@@ -125,7 +136,7 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
 
         dbManager.execute(userRepo.getByLogin(credentials.login)) flatMap {
             case Some(user) if user.password sameElements passwordHash =>
-                generate(user.uid)
+                generate(Payload(user.uid, user.role))
             case _ => Monad[F].pure(InvalidCredentials.as404)
         }
     }

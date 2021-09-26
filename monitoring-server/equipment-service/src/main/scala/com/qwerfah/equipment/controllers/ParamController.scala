@@ -34,19 +34,20 @@ object ParamController extends Controller {
     private implicit val tokenService = implicitly[TokenService[Future]]
 
     private val getParams = get("params" :: headerOption("Authorization")) {
-        header: Option[String] => authorize(header, _ => paramService.getAll)
+        header: Option[String] =>
+            authorize(header, serviceRoles, _ => paramService.getAll)
     }
 
     private val getParam = get(
       "params" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        authorize(header, _ => paramService.get(uid))
+        authorize(header, serviceRoles, _ => paramService.get(uid))
     }
 
     private val addParam = post(
       "params" :: jsonBody[AddParamRequest] :: headerOption("Authorization")
     ) { (request: AddParamRequest, header: Option[String]) =>
-        authorize(header, _ => paramService.add(request))
+        authorize(header, serviceRoles, _ => paramService.add(request))
     }
 
     private val updateParam = patch(
@@ -54,13 +55,13 @@ object ParamController extends Controller {
         "Authorization"
       )
     ) { (uid: Uid, request: UpdateParamRequest, header: Option[String]) =>
-        authorize(header, _ => paramService.update(uid, request))
+        authorize(header, serviceRoles, _ => paramService.update(uid, request))
     }
 
     private val deleteParam = delete(
       "params" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        authorize(header, _ => paramService.remove(uid))
+        authorize(header, serviceRoles, _ => paramService.remove(uid))
     }
 
     val api =

@@ -11,6 +11,8 @@ import com.qwerfah.common.services.response._
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.services.TokenService
 import com.qwerfah.common.Uid
+import com.qwerfah.common.resources.UserRole
+import com.qwerfah.common.models.Payload
 
 /** Provide basic endpoint controller functionality. */
 trait Controller {
@@ -53,6 +55,8 @@ trait Controller {
       * Also wraps result of service action with finch Output instance.
       * @param header
       *   Content of Authorize header.
+      * @param roles
+      *   List of user roles that has permissions for action execution.
       * @param action
       *   Service action that must be performed after token validation.
       * @param tokenService
@@ -62,14 +66,34 @@ trait Controller {
       */
     protected def authorize[F[_]: Monad, A](
       header: Option[String],
+      roles: Seq[UserRole],
       action: Uid => F[ServiceResponse[A]]
     )(implicit tokenService: TokenService[F]): F[Output[A]] = header match {
         case Some(token) if token.toLowerCase.startsWith("bearer ") =>
             tokenService.verify(token.drop(7)) flatMap {
-                case ObjectResponse(result) => action(result) map { _.asOutput }
-                case e: ErrorResponse       => Monad[F].pure(Unauthorized(e))
+                case ObjectResponse(payload)
+                    if (roles.contains(payload.role)) =>
+                    action(payload.uid) map { _.asOutput }
+                case ObjectResponse(_) =>
+                    Monad[F].pure(Forbidden(InsufficientRole))
+                case e: ErrorResponse => Monad[F].pure(Unauthorized(e))
             }
         case Some(_) => Monad[F].pure(Unauthorized(InvalidTokenHeader))
         case None    => Monad[F].pure(Unauthorized(NoTokenHeader))
     }
+
+    /** User roles that has read access permissions. */
+    protected val readRoles = UserRole.values
+
+    /** User roles that has write access permissions. */
+    protected val writeRoles =
+        Seq(UserRole.SystemAdmin, UserRole.EquipmentAdmin)
+
+    /** User roles that has administation access permissions (i.e. access to
+      * users data).
+      */
+    protected val adminRoles = Seq(UserRole.SystemAdmin)
+
+    /** Roles that has access to the interservice operations. */
+    protected val serviceRoles = Seq(UserRole.Service)
 }

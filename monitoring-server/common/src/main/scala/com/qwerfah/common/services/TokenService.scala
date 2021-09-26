@@ -26,11 +26,11 @@ trait TokenService[F[_]] {
       */
     def login(credentials: Credentials): F[ServiceResponse[Token]]
 
-    /** Refresh access-refresh token pair for given user.
-      * @param uid
-      *   User uid.
+    /** Refresh access-refresh token pair using given refresh token.
+      * @param token
+      *   Refresh token.
       * @return
       *   New access-refresh token pair or error in case of failure.
       */
-    def refresh(uid: Uid): F[ServiceResponse[Token]]
+    def refresh(token: String): F[ServiceResponse[Token]]
 }

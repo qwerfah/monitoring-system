@@ -39,6 +39,16 @@ trait Controller {
         case e: Exception                => InternalServerError(e)
     }
 
+    protected def validateAuthHeader[F[_]: Monad, A](
+      header: Option[String],
+      action: => F[ServiceResponse[A]]
+    ): F[Output[A]] = header match {
+        case Some(token) if token.toLowerCase.startsWith("bearer ") =>
+            action map { _.asOutput }
+        case Some(_) => Monad[F].pure(Unauthorized(InvalidTokenHeader))
+        case None    => Monad[F].pure(Unauthorized(NoTokenHeader))
+    }
+
     /** Provide simple jwt validation of authorize header using token service.
       * Also wraps result of service action with finch Output instance.
       * @param header

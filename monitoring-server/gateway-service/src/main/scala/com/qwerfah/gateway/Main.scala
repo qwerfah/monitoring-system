@@ -10,17 +10,21 @@ import io.circe.generic.auto._
 
 import com.qwerfah.gateway.controllers._
 import com.qwerfah.common.json.Encoders
-import com.qwerfah.common.controllers.RequestLoggingFilter
+import com.qwerfah.common.controllers._
 
 object Main extends TwitterServer {
     import Startup._
     import Encoders._
 
+    object GatewaySessionController extends SessionController
+
     val server =
         Http.serve(
           ":8082",
           RequestLoggingFilter.andThen(
-            EquipmentController.api.toServiceAs[Application.Json]
+            EquipmentController.api
+                .:+:(GatewaySessionController.api)
+                .toServiceAs[Application.Json]
           )
         )
     onExit { server.close() }

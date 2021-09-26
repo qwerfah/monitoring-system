@@ -25,11 +25,11 @@ object SessionController extends Controller {
     import Startup._
     import Decoders._
 
-    private def sessionService = implicitly[SessionService[Future]]
+    private def sessionService = implicitly[TokenService[Future]]
 
     private val validate = post("validate" :: headerOption("Authorization")) {
         header: Option[String] =>
-            sessionService.validate(header.get) map { _.asOutput }
+            sessionService.verify(header.get) map { _.asOutput }
     }
 
     val api = (validate).handle(errorHandler)

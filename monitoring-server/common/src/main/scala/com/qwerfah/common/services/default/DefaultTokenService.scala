@@ -133,9 +133,10 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
         }
     }
 
-    override def refresh(uid: Uid): F[ServiceResponse[Token]] =
-        dbManager.execute(userRepo.getByUid(uid)) flatMap {
-            case Some(user) => generate(user.uid)
-            case _ => Monad[F].pure(NotFoundResponse(NoTokenUser))
+    override def refresh(token: String): F[ServiceResponse[Token]] = {
+        verify(token) flatMap {
+            case ObjectResponse(uid) => generate(uid)
+            case e: ErrorResponse    => Monad[F].pure(e)
         }
+    }
 }

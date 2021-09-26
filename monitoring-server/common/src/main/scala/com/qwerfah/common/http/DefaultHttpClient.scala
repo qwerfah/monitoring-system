@@ -69,7 +69,10 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
       */
     def refreshTokenInDest: Future[ServiceResponse[Token]] = {
         val request = Request(TwitterMethod.Post, "/auth/refresh")
-        request.headerMap.add("Authorization", token.get.refresh)
+        request.headerMap.add(
+          "Authorization",
+          "Bearer ".concat(token.get.refresh)
+        )
 
         service(request) map { response =>
             response.status match {
@@ -101,7 +104,8 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
                     getTokenFromDest flatMap {
                         case ObjectResponse(token) => {
                             this.token = Some(token)
-                            request.headerMap += ("Authorization" -> this.token.get.access)
+                            request.headerMap += ("Authorization" -> "Bearer "
+                                .concat(this.token.get.access))
                             service(request)
                         }
                         case _ => FuturePool.immediatePool { response }
@@ -133,17 +137,19 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
     override def sendAndDecode[A](
       method: Method = Get,
       url: String = "/",
-      contentType: Option[String] = None,
-      contentString: Option[String] = None
-    )(implicit decoder: Decoder[A]): Future[ServiceResponse[A]] = {
+      content: Option[String] = None,
+      token: Option[String] = None
+    )(implicit
+      decoder: Decoder[A]
+    ): Future[ServiceResponse[A]] = {
         val request = Request(method.asTwitter, url)
-        request.headerMap += ("Authorization" -> this.token
-            .getOrElse(Token())
-            .access)
-        (contentType, contentString) match {
-            case (Some(ct), Some(cs)) => {
-                request.setContentType(ct)
-                request.setContentString(cs)
+        request.headerMap += ("Authorization" -> "Bearer ".concat(
+          token.getOrElse(this.token.getOrElse(Token()).access)
+        ))
+        content match {
+            case Some(value) => {
+                request.setContentType("application/json")
+                request.setContentString(value)
             }
             case _ => ()
         }

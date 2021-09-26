@@ -37,7 +37,10 @@ abstract class SessionController(implicit
     private val refresh =
         post("session" :: "refresh" :: headerOption("Authorization")) {
             header: Option[String] =>
-                authorize(header, tokenService.refresh(_))
+                validateAuthHeader(
+                  header,
+                  tokenService.refresh(header.get.drop(7))
+                )
         }
 
     private val login =

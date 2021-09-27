@@ -1,22 +1,25 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { AuthorizationFormComponent } from './authorization/authorization-form/authorization-form.component';
-import { RegistrationFormComponent } from './registration/registration-form/registration-form.component';
-import { MainFormComponent } from './general/main-form/main-form.component';
+// import { AuthorizationFormComponent } from './authorization/authorization-form/authorization-form.component';
+// import { RegistrationFormComponent } from './registration/registration-form/registration-form.component';
+// import { MainFormComponent } from './general/main-form/main-form.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: MainFormComponent,
+    redirectTo: '/',
+    pathMatch: 'full'
   },
   {
     path: 'login',
-    component: AuthorizationFormComponent,
+    redirectTo: 'login',
+    pathMatch: 'full'
   },
   {
     path: 'register',
-    component: RegistrationFormComponent,
+    redirectTo: 'register',
+    pathMatch: 'full'
   },
 ];
 

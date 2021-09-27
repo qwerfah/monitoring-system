@@ -3,7 +3,9 @@ import { CommonModule } from '@angular/common';
 import { AuthorizationFormComponent } from './authorization-form/authorization-form.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StoreModule } from '@ngrx/store';
+
 import { userReducer } from './authorization.reducers';
+import {AuthorizationRoutingModule} from './authorization-routing.module'
 
 @NgModule({
   declarations: [AuthorizationFormComponent],
@@ -11,6 +13,7 @@ import { userReducer } from './authorization.reducers';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    AuthorizationRoutingModule,
     StoreModule.forRoot({ user: userReducer }),
   ],
   exports: [AuthorizationFormComponent],

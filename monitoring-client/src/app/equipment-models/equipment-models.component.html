@@ -1,3 +1,39 @@
-<p>
-  equipment-models works!
-</p>
+<div class="container-fluid bg-white p-3">
+  <table class="table table-borderless table-hover m-0 p-0 w-100">
+    <thead>
+      <tr>
+        <th scope="col" class="p-2">№</th>
+        <th scope="col" class="p-2">Наименование</th>
+        <th scope="col" class="p-2">Описание</th>
+        <th scope="col" class="p-2 thin-col">ᅠ</th>
+      </tr>
+    </thead>
+  
+    <tbody>
+      <ng-container *ngIf="!(models | notEmpty)">
+        <tr>
+          <th scope="row" class="text-center" colspan="11">Нет доступных моделей оборудования</th>
+          <td></td>
+        </tr>
+      </ng-container>
+
+      <ng-container *ngIf="models | notEmpty">
+        <ng-container *ngFor="let model of models; index as i">
+          <tr id="heading{{i}}">
+            <td class="align-middle" data-toggle="collapse" [attr.data-target]="'#collapse' + i"
+              role="button" aria-expanded="false" [attr.aria-controls]="'collapse' + i">
+              {{model.name}}
+            </td>
+            <td class="align-middle" data-toggle="collapse" [attr.data-target]="'#collapse' + i"
+              role="button" aria-expanded="false" [attr.aria-controls]="'collapse' + i">
+              {{model.description}}
+            </td>
+          </tr>
+          <tr id="collapse{{i}}" class="collapse table-secondary" [attr.aria-labelledby]="'heading' + i">
+            <td class="font-italic" colspan="11">{{model.description || 'Описание отсутствует'}}</td>
+          </tr>
+        </ng-container>
+      </ng-container>
+    </tbody>
+  </table>
+</div>

@@ -1,15 +1,10 @@
 <div class="bg-gray-100">
   <!-- This example requires Tailwind CSS v2.0+ -->
-  <nav class="bg-indigo-800">
+  <nav class="col-start-2 bg-indigo-800">
     <div class="mx-auto px-3">
       <div class="relative flex items-center justify-between h-14">
-        <div
-          class="flex-1 flex items-center justify-between sm:items-stretch sm:justify-start"
-        >
-          <button
-            class="rounded-lg rounded-lg focus:outline-none focus:shadow-outline"
-            (click)="onClicked($event)"
-          >
+        <div class="flex-1 flex items-center justify-between sm:items-stretch sm:justify-start">
+          <button class="focus:outline-none" (click)="onClicked($event)">
             <svg fill="currentColor" viewBox="0 0 20 20" class="w-6 h-6">
               <path
                 *ngIf="!isVisible"
@@ -25,80 +20,60 @@
               ></path>
             </svg>
           </button>
-          <span class="p-4 text-lg text-white"> Сервис мониторинга </span>
+          <span class="p-4 text-lg text-white"> СИСТЕМА МОНИТОРИНГА ОБОРУДОВАНИЯ </span>
         </div>
         <div class="flex items-center pr-2">
-          <button
-            class="text-white text-base border border-white rounded-lg h-10 px-4"
-          >
-            Выход
-          </button>
+          <button class="text-white text-base border border-white rounded-lg h-10 px-4">Выход</button>
         </div>
-      </div>
-    </div>
-
-    <!-- Mobile menu, show/hide based on menu state. -->
-    <div class="sm:hidden" id="mobile-menu">
-      <div class="px-2 pt-2 pb-3 space-y-1">
-        <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-        <a
-          href="#"
-          class="bg-gray-900 text-white block px-3 py-2 rounded-md text-base font-medium"
-          aria-current="page"
-          >Dashboard</a
-        >
-
-        <a
-          href="#"
-          class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-          >Team</a
-        >
-
-        <a
-          href="#"
-          class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-          >Projects</a
-        >
-
-        <a
-          href="#"
-          class="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
-          >Calendar</a
-        >
       </div>
     </div>
   </nav>
-  <div class="md:flex flex-col md:flex-row md:min-h-screen w-full">
-    <div
-      id="sideBarButton"
-      *ngIf="isVisible"
-      class="flex flex-col w-full w-72 text-gray-700 bg-white dark-mode:text-gray-200 dark-mode:bg-gray-800 flex-shrink-0 p-2 space-y-2 shadow-lg"
-    >
-      <button
-        class="bg-transparent hover:bg-indigo-700 hover:text-white py-2 px-4 hover:border-transparent rounded-lg"
+  <div class="flex flex-row">
+    <div class="md:flex flex-col md:flex-row md:min-h-screen">
+      <div
+        id="sideBarButton"
+        *ngIf="isVisible"
+        class="
+          flex flex-col
+          w-72
+          bg-white
+          dark-mode:text-gray-200 dark-mode:bg-gray-800
+          flex-shrink-0
+          p-2
+          space-y-2
+          shadow-lg
+          z-40
+        "
       >
-        Каталог оборудования
-      </button>
-      <button
-        class="bg-transparent hover:bg-indigo-700 hover:text-white py-2 px-4 hover:border-transparent rounded-lg"
-      >
-        Развернутые экземпляры
-      </button>
-      <button
-        class="bg-transparent hover:bg-indigo-700 hover:text-white py-2 px-4 hover:border-transparent rounded-lg"
-      >
-        Мониторинг
-      </button>
-      <button
-        class="bg-transparent hover:bg-indigo-700 hover:text-white py-2 px-4 hover:border-transparent rounded-lg"
-      >
-        Статистика
-      </button>
-      <button
-        class="bg-transparent hover:bg-indigo-700 hover:text-white py-2 px-4 hover:border-transparent rounded-lg"
-      >
-        Администрирование
-      </button>
+        <button
+          class="bg-transparent hover:bg-indigo-700 hover:text-white py-2 px-4 hover:border-transparent rounded-lg"
+        >
+          Каталог оборудования
+        </button>
+        <button
+          class="bg-transparent hover:bg-indigo-700 hover:text-white py-2 px-4 hover:border-transparent rounded-lg"
+        >
+          Развернутые экземпляры
+        </button>
+        <button
+          class="bg-transparent hover:bg-indigo-700 hover:text-white py-2 px-4 hover:border-transparent rounded-lg"
+        >
+          Мониторинг
+        </button>
+        <button
+          class="bg-transparent hover:bg-indigo-700 hover:text-white py-2 px-4 hover:border-transparent rounded-lg"
+        >
+          Статистика
+        </button>
+        <button
+          class="bg-transparent hover:bg-indigo-700 hover:text-white py-2 px-4 hover:border-transparent rounded-lg"
+        >
+          Администрирование
+        </button>
+      </div>
+    </div>
+    <div class="rounded-2xl container p-20 mx-36 mt-40 mb-52 bg-white w-full w-full shadow-lg">
+      <router-outlet></router-outlet>
     </div>
   </div>
 </div>

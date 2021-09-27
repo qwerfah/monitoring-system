@@ -11,9 +11,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
 import {GenealRoutingModule} from './general-routing.module'
+import { MainPageComponent } from './main-page/main-page.component';
 
 @NgModule({
-  declarations: [MainFormComponent],
+  declarations: [MainFormComponent, MainPageComponent],
   imports: [
     CommonModule,
     BrowserAnimationsModule,

@@ -9,17 +9,22 @@ const routes: Routes = [
   {
     path: '',
     redirectTo: '/',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'login',
     redirectTo: 'login',
-    pathMatch: 'full'
+    pathMatch: 'full',
   },
   {
     path: 'register',
     redirectTo: 'register',
-    pathMatch: 'full'
+    pathMatch: 'full',
+  },
+  {
+    path: 'models',
+    redirectTo: 'models',
+    pathMatch: 'full',
   },
 ];
 

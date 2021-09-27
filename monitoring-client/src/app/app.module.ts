@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { AuthorizationModule } from './authorization/authorization.module';
-import { RegistrationModule } from './registration/registration.module';
 import { GeneralModule } from './general/general.module';
+import { RegistrationModule } from './registration/registration.module';
+import { AuthorizationModule } from './authorization/authorization.module';
+import { EquipmentModelsModule } from './equipment-models/equipment-models.module';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -21,9 +22,10 @@ import { environment } from '../environments/environment';
     AppRoutingModule,
     BrowserAnimationsModule,
     MatButtonModule,
+    GeneralModule,
     AuthorizationModule,
     RegistrationModule,
-    GeneralModule,
+    EquipmentModelsModule,
     StoreModule.forRoot({}, {}),
     StoreModule.forRoot(reducers, { metaReducers }),
     !environment.production ? StoreDevtoolsModule.instrument() : [],

@@ -17,7 +17,7 @@ import com.qwerfah.common.http.HttpMethod
   * @param method
   *   Http method of request that was recived by system service that performed
   *   operation.
-  * @param statusCode
+  * @param status
   *   Status code of system service response.
   * @param time
   *   Time of the operation.
@@ -28,6 +28,6 @@ final case class OperationRecord(
   serviceId: String,
   route: String,
   method: HttpMethod,
-  statusCode: Int,
+  status: Int,
   time: LocalDateTime
 )

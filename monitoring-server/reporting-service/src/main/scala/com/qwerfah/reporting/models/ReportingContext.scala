@@ -37,7 +37,7 @@ class ReportingContext(implicit jdbcProfile: JdbcProfile, config: Config)
         def serviceId = column[String]("SERVICE_ID")
         def route = column[String]("ROUTE")
         def method = column[HttpMethod]("METHOD")
-        def statusCode = column[Int]("STATUS_CODE")
+        def status = column[Int]("STATUS_CODE")
         def time = column[LocalDateTime]("DESCRIPTION")
 
         def * = (
@@ -46,7 +46,7 @@ class ReportingContext(implicit jdbcProfile: JdbcProfile, config: Config)
           serviceId,
           route,
           method,
-          statusCode,
+          status,
           time
         ).<>(OperationRecord.tupled, OperationRecord.unapply)
     }
@@ -54,13 +54,11 @@ class ReportingContext(implicit jdbcProfile: JdbcProfile, config: Config)
     val operationRecords = TableQuery[OperationRecordTable]
 
     val setup = DBIO.seq(
-      // Create db schema
       operationRecords.schema.++(users.schema).createIfNotExists,
       operationRecords.exists.result flatMap { exisits =>
           if (!exisits) operationRecords ++= initialRecords
           else DBIO.successful(None)
       },
-      // Insert equipment instances
       users.exists.result flatMap { exists =>
           if (!exists) addUsers
           else DBIO.successful(None)

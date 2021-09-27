@@ -22,16 +22,26 @@ class DefaultSessionService[F[_]: Monad](client: HttpClient[F])
     import Decoders._
 
     override def verify(token: String): F[ServiceResponse[Payload]] =
-        client.sendAndDecode(Post, "/session/verify", None, Some(token))
+        client.sendAndDecode(
+          HttpMethod.Post,
+          "/session/verify",
+          None,
+          Some(token)
+        )
 
     override def login(credentials: Credentials): F[ServiceResponse[Token]] =
         client.sendAndDecode(
-          Post,
+          HttpMethod.Post,
           "/session/login",
           Some(credentials.asJson.toString)
         )
 
     override def refresh(token: String): F[ServiceResponse[Token]] =
-        client.sendAndDecode(Post, "/session/refresh", None, Some(token))
+        client.sendAndDecode(
+          HttpMethod.Post,
+          "/session/refresh",
+          None,
+          Some(token)
+        )
 
 }

@@ -51,7 +51,10 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
         dbManager.execute(monitorParamRepo.getByMonitorUid(uid)) flatMap {
             _.map(p =>
                 client
-                    .sendAndDecode[ParamResponse](Get, s"/params/${p.paramUid}")
+                    .sendAndDecode[ParamResponse](
+                      HttpMethod.Get,
+                      s"/params/${p.paramUid}"
+                    )
             ).sequence map { params =>
                 params.foldLeft(Seq[ParamResponse]()) { (a, b) =>
                     b match {

@@ -6,7 +6,7 @@ import com.qwerfah.common.services.response.ServiceResponse
 
 trait HttpClient[F[_]] {
     def sendAndDecode[A](
-      method: Method = Get,
+      method: HttpMethod = HttpMethod.Get,
       url: String = "/",
       content: Option[String] = None,
       token: Option[String] = None

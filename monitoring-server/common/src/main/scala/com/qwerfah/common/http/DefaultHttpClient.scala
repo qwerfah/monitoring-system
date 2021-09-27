@@ -178,7 +178,7 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
     }
 
     override def sendAndDecode[A](
-      method: Method = Get,
+      method: HttpMethod = HttpMethod.Get,
       url: String = "/",
       content: Option[String] = None,
       token: Option[String] = None

@@ -13,7 +13,8 @@ trait OperationRecordRepo[DB[_]] {
       serviceId: Option[String],
       method: Option[HttpMethod],
       status: Option[Int],
-      interval: Option[(LocalDateTime, LocalDateTime)]
+      fromDate: Option[LocalDateTime],
+      toDate: Option[LocalDateTime]
     ): DB[Seq[OperationRecord]]
     def add(record: OperationRecord): DB[OperationRecord]
     def remove(uid: Uid): DB[Int]

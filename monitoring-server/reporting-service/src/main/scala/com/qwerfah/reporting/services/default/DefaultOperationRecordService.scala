@@ -36,10 +36,11 @@ class DefaultOperationRecordService[F[_]: Monad, DB[_]: Monad](implicit
       serviceId: Option[String],
       method: Option[HttpMethod],
       status: Option[Int],
-      interval: Option[(LocalDateTime, LocalDateTime)]
+      fromDate: Option[LocalDateTime],
+      toDate: Option[LocalDateTime]
     ): F[ServiceResponse[Seq[RecordResponse]]] =
         dbManager.execute(
-          recordRepo.get(serviceId, method, status, interval)
+          recordRepo.get(serviceId, method, status, fromDate, toDate)
         ) map { _.asResponse.as200 }
 
     override def add(

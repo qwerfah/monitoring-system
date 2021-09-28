@@ -40,7 +40,8 @@ trait OperationRecordService[F[_]] {
       serviceId: Option[String],
       method: Option[HttpMethod],
       status: Option[Int],
-      interval: Option[(LocalDateTime, LocalDateTime)]
+      fromDate: Option[LocalDateTime],
+      toDate: Option[LocalDateTime]
     ): F[ServiceResponse[Seq[RecordResponse]]]
 
     /** Add new operation record to the storage.

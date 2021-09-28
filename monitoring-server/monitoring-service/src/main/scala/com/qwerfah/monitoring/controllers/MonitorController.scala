@@ -2,29 +2,32 @@ package com.qwerfah.monitoring.controllers
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-import com.twitter.finagle.{Http, ListeningServer}
-import com.twitter.server.TwitterServer
-import com.twitter.finagle.http.{Request, Response}
 import com.twitter.util.Future
+import com.twitter.server.TwitterServer
+import com.twitter.finagle.{Http, ListeningServer}
+import com.twitter.finagle.http.{Request, Response}
 
-import io.finch.catsEffect._
 import io.finch._
 import io.finch.circe._
+import io.finch.catsEffect._
 
 import io.circe.generic.auto._
 
 import io.catbird.util._
 
 import com.qwerfah.monitoring.Startup
-import com.qwerfah.monitoring.services.MonitorService
-import com.qwerfah.common.controllers.Controller
-import com.qwerfah.common.services.TokenService
-import com.qwerfah.common.Uid
 import com.qwerfah.monitoring.resources._
+import com.qwerfah.monitoring.json.Decoders
 import com.qwerfah.monitoring.models.MonitorParam
+import com.qwerfah.monitoring.services.MonitorService
+
+import com.qwerfah.common.Uid
+import com.qwerfah.common.services.TokenService
+import com.qwerfah.common.controllers.Controller
 
 object MonitorController extends Controller {
     import Startup._
+    import Decoders._
 
     private val monitorService = implicitly[MonitorService[Future]]
     private implicit val tokenService = implicitly[TokenService[Future]]

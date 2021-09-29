@@ -4,8 +4,8 @@ import java.time.LocalDateTime
 
 import com.qwerfah.common.Uid
 import com.qwerfah.common.http.HttpMethod
+import com.qwerfah.common.resources.{RecordRequest, RecordResponse}
 import com.qwerfah.common.services.response.{ServiceResponse, ResponseMessage}
-import com.qwerfah.reporting.resources._
 
 /** Provide operation records service operations. */
 trait OperationRecordService[F[_]] {

@@ -1,8 +1,9 @@
 package com.qwerfah.reporting
 
-import com.qwerfah.reporting.resources._
 import com.qwerfah.reporting.models._
+
 import com.qwerfah.common.randomUid
+import com.qwerfah.common.resources.{RecordRequest, RecordResponse}
 
 object Mappings {
     implicit class RequestToRecordMapping(request: RecordRequest) {
@@ -10,10 +11,12 @@ object Mappings {
             OperationRecord(
               None,
               randomUid,
+              request.userName,
               request.serviceId,
               request.route,
               request.method,
               request.status,
+              request.elapsed,
               request.time
             )
     }
@@ -21,10 +24,12 @@ object Mappings {
     implicit class MonitorToResponseMapping(record: OperationRecord) {
         def asResponse = RecordResponse(
           record.uid,
+          record.userName,
           record.serviceId,
           record.route,
           record.method,
           record.status,
+          record.elapsed,
           record.time
         )
     }
@@ -35,10 +40,12 @@ object Mappings {
         def asResponse =
             for { record <- records } yield RecordResponse(
               record.uid,
+              record.userName,
               record.serviceId,
               record.route,
               record.method,
               record.status,
+              record.elapsed,
               record.time
             )
     }

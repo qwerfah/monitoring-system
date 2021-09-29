@@ -27,7 +27,7 @@ trait TokenRepo[DB[_]] {
       * @return
       *   Action.
       */
-    def removeById(uid: Uid): DB[Unit]
+    def removeByUid(uid: Uid): DB[Unit]
 
     /** Remove token by value.
       * @param pair

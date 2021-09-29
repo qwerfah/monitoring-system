@@ -18,7 +18,6 @@ import io.circe.generic.auto._
 import io.catbird.util._
 
 import com.qwerfah.reporting.Startup
-import com.qwerfah.reporting.resources._
 import com.qwerfah.reporting.json.Decoders
 import com.qwerfah.reporting.models.ReportingContext
 import com.qwerfah.reporting.services.OperationRecordService
@@ -27,6 +26,7 @@ import com.qwerfah.common.Uid
 import com.qwerfah.common.http.HttpMethod
 import com.qwerfah.common.services.TokenService
 import com.qwerfah.common.controllers.Controller
+import com.qwerfah.common.resources.{RecordRequest, RecordResponse}
 
 object OperationRecordController extends Controller {
     import Startup._

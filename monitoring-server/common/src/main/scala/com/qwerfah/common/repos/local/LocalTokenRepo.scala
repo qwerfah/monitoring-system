@@ -20,7 +20,7 @@ class LocalTokenRepo extends TokenRepo[DBIO] {
     def add(pair: (Uid, String)): DBIO[Boolean] =
         DBIO.successful(tokens.add(pair))
 
-    def removeById(uid: Uid): DBIO[Unit] = {
+    def removeByUid(uid: Uid): DBIO[Unit] = {
         for (token <- tokens.filter(pair => pair._1 == uid))
             tokens.remove(token)
         DBIO.successful(Success(()))

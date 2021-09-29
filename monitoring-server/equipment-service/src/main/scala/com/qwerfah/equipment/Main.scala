@@ -10,7 +10,6 @@ import io.circe.generic.auto._
 
 import com.qwerfah.equipment.controllers._
 import com.qwerfah.common.json.Encoders
-import com.twitter.finagle.SimpleFilter
 
 import com.qwerfah.common.controllers._
 
@@ -25,13 +24,15 @@ object Main extends TwitterServer {
     val server =
         Http.serve(
           ":8083",
-          RequestLoggingFilter.andThen(
-            EquipmentModelController.api
-                .:+:(EquipmentInstanceController.api)
-                .:+:(ParamController.api)
-                .:+:(EquipmentSessionController.api)
-                .toServiceAs[Application.Json]
-          )
+          RequestLoggingFilter
+              .andThen(RequestReportingFilter)
+              .andThen(
+                EquipmentModelController.api
+                    .:+:(EquipmentInstanceController.api)
+                    .:+:(ParamController.api)
+                    .:+:(EquipmentSessionController.api)
+                    .toServiceAs[Application.Json]
+              )
         )
     onExit { server.close() }
 

@@ -7,7 +7,9 @@ import com.qwerfah.common.resources.UserRole
   * system.
   * @param uid
   *   Sublect identifier.
+  * @param login
+  *   Subject unique login.
   * @param role
   *   Subject role.
   */
-final case class Payload(uid: Uid, role: UserRole)
+final case class Payload(uid: Uid, login: String, role: UserRole)

@@ -100,7 +100,7 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
     private def generate(payload: Payload): F[ServiceResponse[Token]] = {
         val token = generateToken(payload)
         for {
-            _ <- dbManager.execute(tokenRepo.removeById(payload.uid))
+            _ <- dbManager.execute(tokenRepo.removeByUid(payload.uid))
             _ <- dbManager.execute(tokenRepo.add(payload.uid -> token.access))
             _ <- dbManager.execute(tokenRepo.add(payload.uid -> token.refresh))
         } yield token.as200
@@ -136,7 +136,7 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
 
         dbManager.execute(userRepo.getByLogin(credentials.login)) flatMap {
             case Some(user) if user.password sameElements passwordHash =>
-                generate(Payload(user.uid, user.role))
+                generate(Payload(user.uid, user.login, user.role))
             case _ => Monad[F].pure(InvalidCredentials.as404)
         }
     }

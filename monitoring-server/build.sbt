@@ -1,4 +1,4 @@
-scalaVersion := "2.13.6"
+scalaVersion := "2.12.14"
 name := "monitoring-server"
 organization := "com.qwerfah"
 version := "1.0"
@@ -155,7 +155,10 @@ lazy val commonDependencies = Seq(
   "io.catbird" % "catbird-util_2.13" % "21.5.0",
   "org.slf4j" % "slf4j-api" % "2.0.0-alpha5",
   "ch.qos.logback" % "logback-core" % "1.3.0-alpha10",
-  "ch.qos.logback" % "logback-classic" % "1.3.0-alpha10"
+  "ch.qos.logback" % "logback-classic" % "1.3.0-alpha10",
+  "com.github.pjfanning" %% "op-rabbit-circe" % "2.6.3",
+  "com.github.pjfanning" %% "op-rabbit-core" % "2.6.3",
+  "com.github.pjfanning" %% "op-rabbit-akka-stream" % "2.6.3"
 )
 
 lazy val settings = Seq(

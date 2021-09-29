@@ -50,6 +50,20 @@ object Conversions {
         }
     }
 
+    /** Implicit conversion of twitter http client method enum to the local http
+      * method enum.
+      * @param m
+      *   Twitter http method enum instance.
+      */
+    implicit class twitterMethodToMethod(m: TwitterMethod) {
+        def asMethod = m match {
+            case TwitterMethod.Get    => HttpMethod.Get
+            case TwitterMethod.Post   => HttpMethod.Post
+            case TwitterMethod.Patch  => HttpMethod.Patch
+            case TwitterMethod.Delete => HttpMethod.Delete
+        }
+    }
+
     /** Object conversion to the successfull service response with payload.
       * @param obj
       *   Service method result instance.

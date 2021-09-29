@@ -7,6 +7,7 @@ import com.qwerfah.common.repos.UserRepo
 import com.qwerfah.common.models._
 import com.qwerfah.common.resources._
 import com.qwerfah.common.Uid
+import com.fasterxml.jackson.module.scala.deser.overrides
 
 class SlickUserRepo(implicit val context: DataContext) extends UserRepo[DBIO] {
     import context.profile.api._

@@ -6,7 +6,6 @@ import cats.Monad, cats.implicits._
 
 import com.qwerfah.reporting.models._
 import com.qwerfah.reporting.Mappings
-import com.qwerfah.reporting.resources._
 import com.qwerfah.reporting.repos.OperationRecordRepo
 import com.qwerfah.reporting.services.OperationRecordService
 
@@ -16,6 +15,7 @@ import com.qwerfah.common.db.DbManager
 import com.qwerfah.common.http.HttpMethod
 import com.qwerfah.common.util.Conversions._
 import com.qwerfah.common.services.response._
+import com.qwerfah.common.resources.{RecordRequest, RecordResponse}
 
 class DefaultOperationRecordService[F[_]: Monad, DB[_]: Monad](implicit
   recordRepo: OperationRecordRepo[DB],

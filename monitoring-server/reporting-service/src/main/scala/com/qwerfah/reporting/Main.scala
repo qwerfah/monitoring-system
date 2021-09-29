@@ -6,6 +6,7 @@ import com.twitter.finagle.http.{Request, Response}
 
 import io.finch.circe._
 import io.finch.Application
+
 import io.circe.generic.auto._
 
 import com.qwerfah.reporting.controllers._
@@ -24,13 +25,15 @@ object Main extends TwitterServer {
     val server =
         Http.serve(
           ":8084",
-          RequestLoggingFilter.andThen(
-            OperationRecordController.api
-                .:+:(ReportingSessionController.api)
-                .toServiceAs[Application.Json]
-          )
+          OperationRecordController.api
+              .:+:(ReportingSessionController.api)
+              .toServiceAs[Application.Json]
         )
-    onExit { server.close() }
+    onExit {
+        server.close()
+        subscriptionRef.close()
+    }
 
     com.twitter.util.Await.ready(server)
+
 }

@@ -1,0 +1,9 @@
+@font-face {
+    font-family: "IBMPlexMonoLight";
+    src: url("./IBMPlexMono/IBMPlexMono-Light.ttf");
+}
+
+@font-face {
+    font-family: "IBMPlexMonoMedium";
+    src: url("./IBMPlexMono/IBMPlexMono-Medium.ttf");
+}

@@ -22,6 +22,6 @@ class DefaultEquipmentService[F[_]: Monad](client: HttpClient[F])
     import Decoders._
 
     override def getAll: F[ServiceResponse[Seq[ModelResponse]]] = {
-        client.sendAndDecode(Get, "/models")
+        client.sendAndDecode(HttpMethod.Get, "/models")
     }
 }

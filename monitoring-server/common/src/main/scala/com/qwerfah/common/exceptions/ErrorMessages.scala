@@ -53,6 +53,20 @@ final case class NoMonitorParam(puid: Uid, muid: Uid) extends ErrorMessage {
         s"Param with uid $puid not tracked by monitor with uid $muid."
 }
 
+final case class NoOperationRecord(uid: Uid) extends ErrorMessage {
+    override def getMessage =
+        s"Service operation record with uid $uid not found."
+}
+
+final case class NoOperationRecords(serviceId: String) extends ErrorMessage {
+    override def getMessage =
+        s"No records about any $serviceId service operations found."
+}
+
+case object InvalidStatusCode extends ErrorMessage {
+    override def getMessage = "Status code must be between 100 and 599."
+}
+
 final case class DuplicatedMonitorParam(puid: Uid, muid: Uid)
   extends ErrorMessage {
     override def getMessage =

@@ -53,3 +53,12 @@ final case class MonitorUpdated(uid: Uid) extends ResponseMessage {
 final case class MonitorRemoved(uid: Uid) extends ResponseMessage {
     override val message = s"Monitor with uid $uid removed."
 }
+
+final case class RecordRemoved(uid: Uid) extends ResponseMessage {
+    override val message = s"Service operation record with uid $uid updated."
+}
+
+final case class RecordsRemoved(serviceId: String) extends ResponseMessage {
+    override val message =
+        s"All records about $serviceId service operations removed."
+}

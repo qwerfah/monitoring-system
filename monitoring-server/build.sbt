@@ -18,7 +18,8 @@ lazy val global = project
       monitoring,
       gatewayApi,
       equipmentApi,
-      monitoringApi
+      monitoringApi,
+      reportingApi
     )
 
 lazy val common = project
@@ -57,7 +58,7 @@ lazy val reporting = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(common)
+    .dependsOn(common, reportingApi)
 
 lazy val equipment = project
     .in(file("equipment-service"))
@@ -118,6 +119,16 @@ lazy val monitoringApi = project
     .in(file("monitoring-service-api"))
     .settings(
       name := "monitoring-service-api",
+      settings,
+      libraryDependencies ++= commonDependencies
+    )
+    .dependsOn(common)
+    .disablePlugins(AssemblyPlugin)
+
+lazy val reportingApi = project
+    .in(file("reporting-service-api"))
+    .settings(
+      name := "reporting-service-api",
       settings,
       libraryDependencies ++= commonDependencies
     )

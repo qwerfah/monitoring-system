@@ -41,12 +41,12 @@ object Conversions {
       * @param m
       *   Custom http method enum instance.
       */
-    implicit class methodToTwitterMethod(m: Method) {
+    implicit class methodToTwitterMethod(m: HttpMethod) {
         def asTwitter = m match {
-            case Get    => TwitterMethod.Get
-            case Post   => TwitterMethod.Post
-            case Patch  => TwitterMethod.Patch
-            case Delete => TwitterMethod.Delete
+            case HttpMethod.Get    => TwitterMethod.Get
+            case HttpMethod.Post   => TwitterMethod.Post
+            case HttpMethod.Patch  => TwitterMethod.Patch
+            case HttpMethod.Delete => TwitterMethod.Delete
         }
     }
 

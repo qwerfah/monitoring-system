@@ -71,7 +71,7 @@ class ReportingContext(implicit jdbcProfile: JdbcProfile, config: Config)
       }
     )
 
-    val initialRecords = Seq(
+    private val initialRecords = Seq(
       OperationRecord(
         None,
         randomUid,

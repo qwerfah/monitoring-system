@@ -1,5 +1,5 @@
-<div class="bg-gray-200 h-screen w-screen">
-  <nav class="fixed bg-indigo-800 w-full">
+<div *ngIf="isAuthorized" class="bg-gray-200 h-screen w-screen bg-gradient-to-r from-blue-400 to-indigo-700">
+  <nav class="fixed bg-indigo-800 w-full bg-gradient-to-r from-blue-400 to-indigo-700">
     <div class="mx-auto px-2">
       <div class="flex items-center justify-between">
         <div class="flex flex-row items-center sm:items-stretch sm:justify-start">
@@ -35,39 +35,79 @@
       </div>
     </div>
   </nav>
-  <div class="flex h-full px-2 pb-2 pt-16">
-    <div class="flex flex-row space-x-1 h-full2">
-      <div class="flex w-80 flex-col h-full shadow-lg bg-white rounded-xl" *ngIf="isVisible">
-        <button
-          class="bg-transparent hover:bg-indigo-700 hover:text-white py-2 px-4 hover:border-transparent rounded-lg"
-        >
-          Каталог оборудования
-        </button>
-        <button
-          class="bg-transparent hover:bg-indigo-700 hover:text-white py-2 px-4 hover:border-transparent rounded-lg"
-        >
-          Развернутые экземпляры
-        </button>
-        <button
-          class="bg-transparent hover:bg-indigo-700 hover:text-white py-2 px-4 hover:border-transparent rounded-lg"
-        >
-          Мониторинг
-        </button>
-        <button
-          class="bg-transparent hover:bg-indigo-700 hover:text-white py-2 px-4 hover:border-transparent rounded-lg"
-        >
-          Статистика
-        </button>
-        <button
-          class="bg-transparent hover:bg-indigo-700 hover:text-white py-2 px-4 hover:border-transparent rounded-lg"
-        >
-          Администрирование
-        </button>
-        <div class="h-full"></div>
-      </div>
-      <div class="flex rounded-xl p-32 w-full h-full bg-white shadow-lg">
-        <router-outlet></router-outlet>
-      </div>
+  <div class="flex flex-row px-2 pb-2 pt-16 space-x-1 h-full">
+    <div class="sticky flex w-80 flex-col h-full shadow-lg bg-white rounded-lg" *ngIf="isVisible">
+      <button
+        class="
+          text-left
+          tracking-wider
+          bg-transparent
+          hover:bg-indigo-700 hover:text-white
+          py-4
+          px-4
+          hover:border-transparent
+          rounded-t-lg
+        "
+      >
+        Каталог оборудования
+      </button>
+      <button
+        class="
+          text-left
+          tracking-wider
+          bg-transparent
+          hover:bg-indigo-700 hover:text-white
+          py-4
+          px-4
+          hover:border-transparent
+        "
+      >
+        Развернутые экземпляры
+      </button>
+      <button
+        class="
+          text-left
+          tracking-wider
+          bg-transparent
+          hover:bg-indigo-700 hover:text-white
+          py-4
+          px-4
+          hover:border-transparent
+        "
+      >
+        Мониторинг
+      </button>
+      <button
+        class="
+          text-left
+          tracking-wider
+          bg-transparent
+          hover:bg-indigo-700 hover:text-white
+          py-4
+          px-4
+          hover:border-transparent
+        "
+      >
+        Статистика
+      </button>
+      <button
+        class="
+          text-left
+          tracking-wider
+          bg-transparent
+          hover:bg-indigo-700 hover:text-white
+          py-4
+          px-4
+          hover:border-transparent
+        "
+      >
+        Администрирование
+      </button>
+      <div class="h-full"></div>
+    </div>
+    <div class="flex rounded-lg p-32 w-full bg-white shadow-lg overflow-y-auto">
+      <router-outlet></router-outlet>
     </div>
   </div>
 </div>
+<router-outlet *ngIf="!isAuthorized"></router-outlet>

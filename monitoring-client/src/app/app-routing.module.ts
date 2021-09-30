@@ -13,17 +13,17 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    redirectTo: 'login',
+    redirectTo: '/login',
     pathMatch: 'full',
   },
   {
     path: 'register',
-    redirectTo: 'register',
+    redirectTo: '/register',
     pathMatch: 'full',
   },
   {
     path: 'models',
-    redirectTo: 'models',
+    redirectTo: '/models',
     pathMatch: 'full',
   },
 ];

@@ -1,3 +1,5 @@
+import { InstanceStatus } from './instance-status';
+
 export class EquipmentInstance {
   constructor(
     public uid: string,

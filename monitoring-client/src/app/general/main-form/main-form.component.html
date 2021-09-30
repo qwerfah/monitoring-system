@@ -1,8 +1,8 @@
-<div class="bg-gray-100 h-screen">
-  <nav class="bg-indigo-800 h-14">
-    <div class="mx-auto px-3">
-      <div class="relative flex items-center justify-between">
-        <div class="flex-1 flex items-center justify-between sm:items-stretch sm:justify-start">
+<div class="bg-gray-200 h-screen w-screen">
+  <nav class="fixed bg-indigo-800 w-full">
+    <div class="mx-auto px-2">
+      <div class="flex items-center justify-between">
+        <div class="flex flex-row items-center sm:items-stretch sm:justify-start">
           <button class="focus:outline-none" (click)="onClicked($event)">
             <svg fill="currentColor" viewBox="0 0 20 20" class="w-6 h-6">
               <svg
@@ -35,12 +35,9 @@
       </div>
     </div>
   </nav>
-  <div class="flex flex-row space-x-2 h-auto">
-    <div class="flex w-80 flex-col h-auto" *ngIf="isVisible">
-      <div
-        id="sideBarButton"
-        class="flex flex-col bg-white dark-mode:text-gray-200 dark-mode:bg-gray-800 p-2 space-y-2 shadow-lg"
-      >
+  <div class="flex h-full px-2 pb-2 pt-16">
+    <div class="flex flex-row space-x-1 h-full2">
+      <div class="flex w-80 flex-col h-full shadow-lg bg-white rounded-xl" *ngIf="isVisible">
         <button
           class="bg-transparent hover:bg-indigo-700 hover:text-white py-2 px-4 hover:border-transparent rounded-lg"
         >
@@ -66,11 +63,11 @@
         >
           Администрирование
         </button>
+        <div class="h-full"></div>
       </div>
-      <div class="bg-white min-h-full"></div>
-    </div>
-    <div class="flex rounded-2xl p-20 mx-2 mt-2 mb-52 w-full bg-white shadow-lg">
-      <router-outlet></router-outlet>
+      <div class="flex rounded-xl p-32 w-full h-full bg-white shadow-lg">
+        <router-outlet></router-outlet>
+      </div>
     </div>
   </div>
 </div>

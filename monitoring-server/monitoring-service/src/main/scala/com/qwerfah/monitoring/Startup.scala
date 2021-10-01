@@ -39,8 +39,11 @@ object Startup {
     val defaultEquipmentClient =
         new DefaultHttpClient(
           Equipment,
-          Credentials("monitoring", "monitoring"),
-          "localhost:8081"
+          Credentials(
+            config.getString("serviceId"),
+            config.getString("secret")
+          ),
+          config.getString("equipmentUrl")
         )
 
     implicit val DefaultEquipmentService =

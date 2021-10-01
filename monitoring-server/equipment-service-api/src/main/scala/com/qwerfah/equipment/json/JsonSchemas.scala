@@ -11,18 +11,18 @@ object JsonSchemas {
                 "type": "object",
                 "required": ["name"],
                 "properties": {
-                "name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 100,
-                    "pattern": "^(?!\\s*$$).+"
-                },
-                "description": {
-                    "type": ["string", "null"],
-                    "minLength": 1,
-                    "maxLength": 100,
-                    "pattern": "^(?!\\s*$$).+"
-                }
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "pattern": "^(?!\\s*$$).+"
+                    },
+                    "description": {
+                        "type": ["string", "null"],
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "pattern": "^(?!\\s*$$).+"
+                    }
                 }
             }
             """
@@ -34,26 +34,26 @@ object JsonSchemas {
                 "type": "object",
                 "required": ["modelUid", "name", "status"],
                 "properties": {
-                "modelUid": {
-                    "type": "string",
-                    "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
-                },
-                "name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 100,
-                    "pattern": "^(?!\\s*$$).+"
-                },
-                "description": {
-                    "type": ["string", "null"],
-                    "minLength": 1,
-                    "maxLength": 100,
-                    "pattern": "^(?!\\s*$$).+"
-                },
-                "status": {
-                    "type": "string",
-                    "enum": ["Active", "Inactive", "Decommissioned"]
-                }
+                    "modelUid": {
+                        "type": "string",
+                        "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "pattern": "^(?!\\s*$$).+"
+                    },
+                    "description": {
+                        "type": ["string", "null"],
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "pattern": "^(?!\\s*$$).+"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": ["Active", "Inactive", "Decommissioned"]
+                    }
                 }
             }
             """
@@ -65,22 +65,22 @@ object JsonSchemas {
                 "type": "object",
                 "required": ["name", "status"],
                 "properties": {
-                "name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 100,
-                    "pattern": "^(?!\\s*$$).+"
-                },
-                "description": {
-                    "type": ["string", "null"],
-                    "minLength": 1,
-                    "maxLength": 100,
-                    "pattern": "^(?!\\s*$$).+"
-                },
-                "status": {
-                    "type": "string",
-                    "enum": ["Active", "Inactive", "Decommissioned"]
-                }
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "pattern": "^(?!\\s*$$).+"
+                    },
+                    "description": {
+                        "type": ["string", "null"],
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "pattern": "^(?!\\s*$$).+"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": ["Active", "Inactive", "Decommissioned"]
+                    }
                 }
             }
             """
@@ -92,22 +92,22 @@ object JsonSchemas {
                 "type": "object",
                 "required": ["modelUid", "name"],
                 "properties": {
-                "modelUid": {
-                    "type": "string",
-                    "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
-                },
-                "name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 100,
-                    "pattern": "^(?!\\s*$$).+"
-                },
-                "measurmentUnits": {
-                    "type": ["string", "null"],
-                    "minLength": 1,
-                    "maxLength": 30,
-                    "pattern": "^(?!\\s*$$).+"
-                }
+                    "modelUid": {
+                        "type": "string",
+                        "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "pattern": "^(?!\\s*$$).+"
+                    },
+                    "measurmentUnits": {
+                        "type": ["string", "null"],
+                        "minLength": 1,
+                        "maxLength": 30,
+                        "pattern": "^(?!\\s*$$).+"
+                    }
                 }
             }
             """
@@ -119,18 +119,53 @@ object JsonSchemas {
                 "type": "object",
                 "required": ["name"],
                 "properties": {
-                "name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 100,
-                    "pattern": "^(?!\\s*$$).+"
-                },
-                "measurmentUnits": {
-                    "type": ["string", "null"],
-                    "minLength": 1,
-                    "maxLength": 30,
-                    "pattern": "^(?!\\s*$$).+"
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "pattern": "^(?!\\s*$$).+"
+                    },
+                    "measurmentUnits": {
+                        "type": ["string", "null"],
+                        "minLength": 1,
+                        "maxLength": 30,
+                        "pattern": "^(?!\\s*$$).+"
+                    }
                 }
+            }
+            """
+    )
+
+    val instanceResponseSchema: Schema = Schema.load(
+      json"""
+            {
+                "type": "object",
+                "required": ["uid", "modelUid", "name", "status"],
+                "properties": {
+                    "uid": {
+                        "type": "string",
+                        "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
+                    },
+                    "modelUid": {
+                        "type": "string",
+                        "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "pattern": "^(?!\\s*$$).+"
+                    },
+                    "description": {
+                        "type": ["string", "null"],
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "pattern": "^(?!\\s*$$).+"
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": ["Active", "Inactive", "Decommissioned"]
+                    }
                 }
             }
             """
@@ -142,26 +177,26 @@ object JsonSchemas {
                 "type": "object",
                 "required": ["uid", "modelUid", "name"],
                 "properties": {
-                "uid": {
-                    "type": "string",
-                    "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
-                },
-                "modelUid": {
-                    "type": "string",
-                    "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
-                },
-                "name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 100,
-                    "pattern": "^(?!\\s*$$).+"
-                },
-                "measurmentUnits": {
-                    "type": ["string", "null"],
-                    "minLength": 1,
-                    "maxLength": 30,
-                    "pattern": "^(?!\\s*$$).+"
-                }
+                    "uid": {
+                        "type": "string",
+                        "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
+                    },
+                    "modelUid": {
+                        "type": "string",
+                        "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
+                    },
+                    "name": {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 100,
+                        "pattern": "^(?!\\s*$$).+"
+                    },
+                    "measurmentUnits": {
+                        "type": ["string", "null"],
+                        "minLength": 1,
+                        "maxLength": 30,
+                        "pattern": "^(?!\\s*$$).+"
+                    }
                 }
             }
             """

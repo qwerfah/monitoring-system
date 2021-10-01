@@ -63,6 +63,14 @@ final case class NoOperationRecords(serviceId: String) extends ErrorMessage {
         s"No records about any $serviceId service operations found."
 }
 
+final case class NoFile(uid: Uid) extends ErrorMessage {
+    override def getMessage = s"Documentation file with uid $uid not found."
+}
+
+case object NoMultipartData extends ErrorMessage {
+    override def getMessage = "No file was presented in multipart data."
+}
+
 case object InvalidStatusCode extends ErrorMessage {
     override def getMessage = "Status code must be between 100 and 599."
 }

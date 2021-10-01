@@ -62,3 +62,7 @@ final case class RecordsRemoved(serviceId: String) extends ResponseMessage {
     override val message =
         s"All records about $serviceId service operations removed."
 }
+
+final case class FileRemoved(uid: Uid) extends ResponseMessage {
+    override val message = s"Documentation file with uid $uid removed."
+}

@@ -1,6 +1,6 @@
 package com.qwerfah.documentation
 
-import com.qwerfah.documentation.models.File
+import com.qwerfah.documentation.models.{File, FileMeta}
 import com.qwerfah.documentation.resources._
 
 import com.qwerfah.common.{randomUid}
@@ -17,8 +17,8 @@ object Mappings {
         )
     }
 
-    implicit class FileToMetaResponseMapping(f: File) {
-        def asMeta = FileMetaResponse(
+    implicit class FileMetaToResponseMapping(f: FileMeta) {
+        def asResponse = FileMetaResponse(
           f.uid,
           f.modelUid,
           f.filename,
@@ -26,8 +26,8 @@ object Mappings {
         )
     }
 
-    implicit class FileSeqToMetaResponseSeqMapping(files: Seq[File]) {
-        def asMeta = for { f <- files } yield FileMetaResponse(
+    implicit class FileMetaSeqToResponseSeqMapping(files: Seq[FileMeta]) {
+        def asResponse = for { f <- files } yield FileMetaResponse(
           f.uid,
           f.modelUid,
           f.filename,

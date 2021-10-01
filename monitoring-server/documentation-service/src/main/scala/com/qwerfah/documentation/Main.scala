@@ -13,18 +13,26 @@ import com.qwerfah.documentation.controllers._
 
 import com.qwerfah.common.controllers._
 import com.qwerfah.common.json.Encoders
+import com.twitter.util.StorageUnit
 
 object Main extends TwitterServer {
+    import Startup._
     import Encoders._
 
-    //object ReportingSessionController extends SessionController
+    object DocumentationSessionController extends SessionController
 
     val server =
-        Http.serve(
-          ":8084",
-          FileController.api
-              .toServiceAs[Application.Json]
-        )
+        Http.server
+            .withMaxRequestSize(StorageUnit.fromMegabytes(10))
+            .serve(
+              config.getString("port"),
+              RequestLoggingFilter
+                  .andThen(RequestReportingFilter)
+                  .andThen(
+                    (FileController.api :+: DocumentationSessionController.api)
+                        .toServiceAs[Application.Json]
+                  )
+            )
     onExit {
         server.close()
     }

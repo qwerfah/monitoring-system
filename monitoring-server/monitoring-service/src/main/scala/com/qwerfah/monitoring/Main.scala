@@ -31,7 +31,10 @@ object Main extends TwitterServer {
                 .toServiceAs[Application.Json]
           )
         )
-    onExit { server.close() }
+    onExit {
+        server.close()
+        actorSystem.terminate()
+    }
 
     com.twitter.util.Await.ready(server)
 }

@@ -2,7 +2,6 @@ package com.qwerfah.monitoring.repos.slick
 
 import slick.dbio._
 import slick.jdbc.JdbcProfile
-import scala.concurrent.ExecutionContext.Implicits.global
 
 import com.qwerfah.monitoring.repos.MonitorParamRepo
 import com.qwerfah.monitoring.models._

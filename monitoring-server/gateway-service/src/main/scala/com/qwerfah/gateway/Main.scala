@@ -21,11 +21,13 @@ object Main extends TwitterServer {
     val server =
         Http.serve(
           config.getString("port"),
-          RequestLoggingFilter.andThen(
-            EquipmentController.api
-                .:+:(GatewaySessionController.api)
-                .toServiceAs[Application.Json]
-          )
+          RequestLoggingFilter
+              .andThen(RequestReportingFilter)
+              .andThen(
+                EquipmentController.api
+                    .:+:(GatewaySessionController.api)
+                    .toServiceAs[Application.Json]
+              )
         )
     onExit { server.close() }
 

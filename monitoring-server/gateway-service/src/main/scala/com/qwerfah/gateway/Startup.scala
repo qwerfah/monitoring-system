@@ -5,7 +5,15 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import com.typesafe.config.ConfigFactory
 
 import com.rms.miu.slickcats.DBIOInstances._
+
 import com.twitter.util.Future
+import com.twitter.finagle.http.Request
+
+import akka.actor.{ActorSystem, Props}
+
+import com.spingo.op_rabbit._
+import com.spingo.op_rabbit.CirceSupport._
+
 import io.catbird.util._
 
 import slick.jdbc.{PostgresProfile, JdbcProfile}
@@ -15,6 +23,7 @@ import slick.dbio._
 import com.qwerfah.gateway.services.default._
 import com.qwerfah.common.http._
 import com.qwerfah.common.resources.Credentials
+import com.qwerfah.common.controllers.RequestReportingFilter
 
 object Startup {
     implicit val config = ConfigFactory.load
@@ -78,4 +87,11 @@ object Startup {
         new DefaultSessionService[Future](defaultSessionClient)
     implicit val defaultEquipmentService =
         new DefaultEquipmentService[Future](defaultEquipmentClient)
+
+    implicit val actorSystem = ActorSystem("such-system")
+    implicit val rabbitControl = actorSystem.actorOf(Props[RabbitControl]())
+    implicit val recoveryStrategy = RecoveryStrategy.none
+
+    object RequestReportingFilter
+      extends RequestReportingFilter[Request, Future]
 }

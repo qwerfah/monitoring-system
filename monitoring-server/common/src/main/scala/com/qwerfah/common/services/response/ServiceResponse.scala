@@ -9,7 +9,22 @@ sealed trait ServiceResponse[+T]
   * @param result
   *   Payload of result of service method invocation.
   */
-final case class ObjectResponse[T](result: T) extends ServiceResponse[T]
+sealed abstract class SuccessResponse[T](result: T) extends ServiceResponse[T]
+
+/** Successfull result of service method invocation with payload. Corresponds to
+  * 200 status.
+  * @param result
+  *   Payload of result of service method invocation.
+  */
+final case class OkResponse[T](result: T) extends SuccessResponse[T](result)
+
+/** Successfull result of post service method invocation. Corresponds to 201
+  * status.
+  * @param result
+  *   Payload of result of service method invocation.
+  */
+final case class CreatedResponse[T](result: T)
+  extends SuccessResponse[T](result)
 
 /** Represent result of service method invocation which ends with failure.
   * @param error

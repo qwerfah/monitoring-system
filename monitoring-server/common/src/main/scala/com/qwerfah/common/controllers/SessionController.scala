@@ -21,7 +21,7 @@ import com.qwerfah.common.Uid
 import com.qwerfah.common.services._
 import com.qwerfah.common.controllers.Controller
 import com.qwerfah.common.resources._
-import com.qwerfah.common.services.response.ObjectResponse
+import com.qwerfah.common.services.response.OkResponse
 
 /** Provide endpoints for interservice authorization.
   * @param userService
@@ -57,7 +57,7 @@ abstract class SessionController(implicit
                 authorize[Future, Uid](
                   header,
                   readRoles,
-                  uid => FuturePool immediatePool { ObjectResponse(uid) }
+                  uid => FuturePool immediatePool { OkResponse(uid) }
                 )
         }
 

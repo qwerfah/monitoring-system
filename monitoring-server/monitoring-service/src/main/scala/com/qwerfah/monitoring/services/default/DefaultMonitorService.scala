@@ -58,8 +58,8 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
             ).sequence map { params =>
                 params.foldLeft(Seq[ParamResponse]()) { (a, b) =>
                     b match {
-                        case ObjectResponse(value) => a.appended(value)
-                        case other                 => a
+                        case OkResponse(value) => a.appended(value)
+                        case other             => a
                     }
                 }
             } map { _.as200 }
@@ -69,7 +69,7 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
       request: MonitorRequest
     ): F[ServiceResponse[MonitorResponse]] =
         dbManager.execute(monitorRepo.add(request.asMonitor)) map {
-            _.asResponse.as200
+            _.asResponse.as201
         }
 
     override def addParam(
@@ -83,7 +83,7 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
                     request.asParam.copy(monitorUid = monitorUid)
                   )
                 ) map {
-                    case 1 => MonitorParamAdded(monitorUid).as200
+                    case 1 => MonitorParamAdded(monitorUid).as201
                     case _ =>
                         DuplicatedMonitorParam(
                           request.paramUid,

@@ -69,7 +69,8 @@ object Conversions {
       *   Service method result instance.
       */
     implicit class objectToServiceResponse[A](obj: A) {
-        def as200 = ObjectResponse(obj)
+        def as200 = OkResponse(obj)
+        def as201 = CreatedResponse(obj)
     }
 
     /** Error message conversions to the corresponding error responses.

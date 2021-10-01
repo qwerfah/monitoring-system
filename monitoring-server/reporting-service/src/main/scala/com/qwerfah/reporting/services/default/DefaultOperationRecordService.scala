@@ -47,7 +47,7 @@ class DefaultOperationRecordService[F[_]: Monad, DB[_]: Monad](implicit
       request: RecordRequest
     ): F[ServiceResponse[RecordResponse]] =
         dbManager.execute(recordRepo.add(request.asRecord)) map {
-            _.asResponse.as200
+            _.asResponse.as201
         }
 
     override def remove(uid: Uid): F[ServiceResponse[ResponseMessage]] =

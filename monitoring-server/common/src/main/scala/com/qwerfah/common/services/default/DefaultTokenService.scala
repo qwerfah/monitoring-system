@@ -143,8 +143,8 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
 
     override def refresh(token: String): F[ServiceResponse[Token]] = {
         verify(token) flatMap {
-            case ObjectResponse(uid) => generate(uid)
-            case e: ErrorResponse    => Monad[F].pure(e)
+            case OkResponse(uid)  => generate(uid)
+            case e: ErrorResponse => Monad[F].pure(e)
         }
     }
 }

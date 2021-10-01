@@ -23,6 +23,7 @@ import io.circe.syntax._
 
 import com.qwerfah.common.http.HttpClient
 import com.qwerfah.common.services.response._
+import com.qwerfah.common.services.response.SuccessResponse
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.models.Token
 import com.qwerfah.common.resources.Credentials
@@ -110,7 +111,7 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
             response.status match {
                 case Status.Unauthorized =>
                     getTokenFromDest flatMap {
-                        case ObjectResponse(token) => {
+                        case OkResponse(token) => {
                             this.token = Some(token)
                             request.headerMap += ("Authorization" -> "Bearer "
                                 .concat(this.token.get.access))

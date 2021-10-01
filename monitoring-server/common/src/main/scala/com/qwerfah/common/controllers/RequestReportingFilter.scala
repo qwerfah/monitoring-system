@@ -26,7 +26,7 @@ import com.qwerfah.common.http.HttpMethod
 import com.qwerfah.common.util.Conversions._
 import com.qwerfah.common.services.TokenService
 import com.qwerfah.common.resources.RecordRequest
-import com.qwerfah.common.services.response.ObjectResponse
+import com.qwerfah.common.services.response.OkResponse
 
 abstract class RequestReportingFilter[REQ <: Request, F[_]: Monad](implicit
   tokenService: TokenService[F],
@@ -46,9 +46,8 @@ abstract class RequestReportingFilter[REQ <: Request, F[_]: Monad](implicit
                 val f = request.authorization match {
                     case Some(value) =>
                         tokenService.verify(value.drop(7)) map {
-                            case ObjectResponse(payload) =>
-                                Some(payload.login)
-                            case _ => None
+                            case OkResponse(payload) => Some(payload.login)
+                            case _                   => None
                         }
                     case None => Monad[F].pure(None)
                 }

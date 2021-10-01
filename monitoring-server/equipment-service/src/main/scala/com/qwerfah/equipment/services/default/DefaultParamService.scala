@@ -44,7 +44,7 @@ class DefaultParamService[F[_]: Monad, DB[_]: Monad](implicit
         dbManager.execute(modelRepo.getByUid(request.modelUid)) flatMap {
             case Some(model) =>
                 dbManager.execute(paramRepo.add(request.asParam)) map {
-                    _.asResponse.as200
+                    _.asResponse.as201
                 }
             case None => Monad[F].pure(NoModel(request.modelUid).as404)
         }

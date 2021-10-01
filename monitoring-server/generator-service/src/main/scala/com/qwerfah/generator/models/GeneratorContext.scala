@@ -17,8 +17,9 @@ import com.qwerfah.common.{Uid, randomUid, hashString}
 import com.qwerfah.common.models._
 import com.qwerfah.common.resources.{UserRole, Credentials}
 import com.qwerfah.common.models.DataContext
+import java.time.LocalDateTime
 
-class MonitoringContext(implicit jdbcProfile: JdbcProfile, config: Config)
+class GeneratorContext(implicit jdbcProfile: JdbcProfile, config: Config)
   extends DataContext(jdbcProfile) {
     import profile.api._
 
@@ -33,13 +34,15 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile, config: Config)
         def paramUid = column[Uid]("PARAM_UUID")
         def instanceUid = column[Uid]("INSTANCE_UUID")
         def value = column[String]("VALUE")
+        def time = column[LocalDateTime]("TIME")
 
         def * = (
           id.?,
           uid,
           paramUid,
           instanceUid,
-          value
+          value,
+          time
         ).<>(ParamValue.tupled, ParamValue.unapply)
     }
 
@@ -59,9 +62,30 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile, config: Config)
     )
 
     private val initialParamValues = Seq(
-      ParamValue(None, randomUid, randomUid, randomUid, "100"),
-      ParamValue(None, randomUid, randomUid, randomUid, "200"),
-      ParamValue(None, randomUid, randomUid, randomUid, "300")
+      ParamValue(
+        None,
+        randomUid,
+        randomUid,
+        randomUid,
+        "100",
+        LocalDateTime.now
+      ),
+      ParamValue(
+        None,
+        randomUid,
+        randomUid,
+        randomUid,
+        "200",
+        LocalDateTime.now
+      ),
+      ParamValue(
+        None,
+        randomUid,
+        randomUid,
+        randomUid,
+        "300",
+        LocalDateTime.now
+      )
     )
 
     private def addUsers = {

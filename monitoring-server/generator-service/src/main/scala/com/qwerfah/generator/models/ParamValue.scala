@@ -1,5 +1,7 @@
 package com.qwerfah.generator.models
 
+import java.time.LocalDateTime
+
 import com.qwerfah.common.Uid
 
 /** Equipment model parameter value associated with specific equipment instance.
@@ -13,11 +15,14 @@ import com.qwerfah.common.Uid
   *   Uid of associated equipment instance.
   * @param value
   *   Parameter value string representation.
+  * @param time
+  *   Param adding time.
   */
 final case class ParamValue(
   id: Option[Int],
   uid: Uid,
   paramUid: Uid,
   instanceUid: Uid,
-  value: String
+  value: String,
+  time: LocalDateTime
 )

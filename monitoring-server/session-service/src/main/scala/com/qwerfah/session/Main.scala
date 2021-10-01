@@ -23,7 +23,7 @@ object Main extends TwitterServer {
 
     val server =
         Http.serve(
-          ":8081",
+          config.getString("port"),
           RequestLoggingFilter.andThen(
             UserController.api
                 .:+:(UserSessionController.api)

@@ -23,7 +23,7 @@ object Main extends TwitterServer {
 
     val server =
         Http.serve(
-          ":8083",
+          config.getString("port"),
           RequestLoggingFilter
               .andThen(RequestReportingFilter)
               .andThen(

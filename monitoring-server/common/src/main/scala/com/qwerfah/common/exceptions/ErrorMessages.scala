@@ -67,6 +67,26 @@ final case class NoFile(uid: Uid) extends ErrorMessage {
     override def getMessage = s"Documentation file with uid $uid not found."
 }
 
+final case class NoParamValue(uid: Uid) extends ErrorMessage {
+    override def getMessage =
+        s"Equipment parameter value with uid $uid not found."
+}
+
+final case class NoParamValuesForInstance(iuid: Uid) extends ErrorMessage {
+    override def getMessage =
+        s"Equipment parameter values of instance with uid $iuid not found."
+}
+
+final case class NoValuesForParam(puid: Uid) extends ErrorMessage {
+    override def getMessage =
+        s"Equipment parameter values for param with uid $puid not found."
+}
+
+final case class NoParamValues(puid: Uid, iuid: Uid) extends ErrorMessage {
+    override def getMessage =
+        s"Equipment parameter values of instance with uid $iuid for param with uid $puid not found."
+}
+
 case object NoMultipartData extends ErrorMessage {
     override def getMessage = "No file was presented in multipart data."
 }

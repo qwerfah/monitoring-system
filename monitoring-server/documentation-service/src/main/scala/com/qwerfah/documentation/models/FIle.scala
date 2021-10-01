@@ -15,6 +15,8 @@ import com.qwerfah.common.Uid
 final case class File(
   id: Option[Int],
   uid: Uid,
+  modelUid: Uid,
   filename: String,
+  contentType: String,
   content: Array[Byte]
 )

@@ -60,24 +60,24 @@ class DocumentationContext(implicit jdbcProfile: JdbcProfile, config: Config)
         None,
         randomUid,
         randomUid,
-        "text/plain",
         "file_1.txt",
+        "text/plain",
         "content_1".getBytes
       ),
       File(
         None,
         randomUid,
         randomUid,
-        "text/plain",
         "file_2.txt",
+        "text/plain",
         "content_2".getBytes
       ),
       File(
         None,
         randomUid,
         randomUid,
-        "text/plain",
         "file_3.txt",
+        "text/plain",
         "content_3".getBytes
       )
     )

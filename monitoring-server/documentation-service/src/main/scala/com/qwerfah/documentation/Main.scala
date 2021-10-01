@@ -21,6 +21,8 @@ object Main extends TwitterServer {
 
     object DocumentationSessionController extends SessionController
 
+    startup()
+
     val server =
         Http.server
             .withMaxRequestSize(StorageUnit.fromMegabytes(10))

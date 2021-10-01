@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 
-import { EquipmentModel } from '../models/equipmentModel';
+import { EquipmentModel } from '../models/equipment-model';
 
 import { v4 as uuid } from 'uuid';
 
@@ -11,6 +11,27 @@ import { v4 as uuid } from 'uuid';
 })
 export class EquipmentModelsComponent implements OnInit {
   models: EquipmentModel[] = [
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(uuid(), 'model_1', 'description_1'),
     new EquipmentModel(uuid(), 'model_1', 'description_1'),
     new EquipmentModel(uuid(), 'model_1', 'description_1'),
     new EquipmentModel(uuid(), 'model_1', 'description_1'),

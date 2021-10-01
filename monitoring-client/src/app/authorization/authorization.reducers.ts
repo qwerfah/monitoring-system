@@ -6,9 +6,9 @@ export const initialState = {};
 
 const _userReducer = createReducer(
   initialState,
-  on(login, (state, { user }) => {
+  on(login, (state, { creds }) => {
     console.log('login');
-    return { ...state, user };
+    return { ...state, creds };
   }),
   on(logout, (state) => {
     console.log('login');

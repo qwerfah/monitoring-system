@@ -8,6 +8,7 @@ import { TimeoutError } from 'rxjs';
 })
 export class MainFormComponent implements OnInit {
   isVisible: boolean = true;
+  isAuthorized: boolean = true;
   events: string[] = [];
   opened: boolean = true;
 
@@ -16,15 +17,9 @@ export class MainFormComponent implements OnInit {
   ngOnInit() {}
 
   onClickedOutside(e: Event): void {
-    console.log(
-      (<HTMLButtonElement>event?.srcElement)?.attributes?.getNamedItem('id')
-        ?.value
-    );
+    console.log((<HTMLButtonElement>event?.srcElement)?.attributes?.getNamedItem('id')?.value);
     this.isVisible =
-      (<HTMLElement>event?.srcElement)?.attributes?.getNamedItem('id')?.value ==
-      'sideBarButton'
-        ? true
-        : false;
+      (<HTMLElement>event?.srcElement)?.attributes?.getNamedItem('id')?.value == 'sideBarButton' ? true : false;
     console.log('Clicked outside:', e);
   }
 

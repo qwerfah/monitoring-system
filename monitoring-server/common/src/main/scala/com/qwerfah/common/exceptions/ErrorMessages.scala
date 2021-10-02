@@ -1,6 +1,7 @@
 package com.qwerfah.common.exceptions
 
 import com.qwerfah.common.Uid
+import com.qwerfah.common.http.ServiceTag
 
 sealed abstract class ErrorMessage extends Exception
 
@@ -121,24 +122,27 @@ case object NoExpiredToken extends ErrorMessage {
     override def getMessage = "Attempted to delete non-existent expired token."
 }
 
-final case class ServiceUnavailable(service: String) extends ErrorMessage {
+final case class ServiceUnavailable(service: ServiceTag) extends ErrorMessage {
     override def getMessage = s"$service service temporarily unavailable."
 }
 
-final case class ServiceInternalError(service: String) extends ErrorMessage {
+final case class ServiceInternalError(service: ServiceTag)
+  extends ErrorMessage {
     override def getMessage = s"$service service internal error."
 }
 
-final case class BadServiceResult(service: String) extends ErrorMessage {
+final case class BadServiceResult(service: ServiceTag) extends ErrorMessage {
     override def getMessage = s"$service service returns unprocessable result."
 }
 
-final case class UnknownServiceResponse(service: String) extends ErrorMessage {
+final case class UnknownServiceResponse(service: ServiceTag)
+  extends ErrorMessage {
     override def getMessage =
         s"$service service returns response with unknown status code."
 }
 
-final case class InterserviceAuthFailed(service: String) extends ErrorMessage {
+final case class InterserviceAuthFailed(service: ServiceTag)
+  extends ErrorMessage {
     override def getMessage =
         s"Can't authorize in $service service with current service credentials."
 }

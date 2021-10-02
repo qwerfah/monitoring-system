@@ -40,8 +40,11 @@ import com.qwerfah.common.util.Conversions._
   * @param dest
   *   Destination service url.
   */
-class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
-  extends HttpClient[Future] {
+class DefaultHttpClient(
+  tag: ServiceTag,
+  creds: Credentials,
+  dest: String
+) extends HttpClient[Future] {
     var token: Option[Token] = None
 
     /** Attempt to authorize in destination service using provided credentials.
@@ -57,7 +60,7 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
         service(request) map { response =>
             response.status match {
                 case Status.Ok => decodeJson[Token](response.contentString)
-                case _         => InterserviceAuthFailed(ss.value).as401
+                case _         => InterserviceAuthFailed(tag).as401
             }
         }
     }
@@ -78,7 +81,7 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
         service(request) map { response =>
             response.status match {
                 case Status.Ok => decodeJson[Token](response.contentString)
-                case _         => InterserviceAuthFailed(ss.value).as401
+                case _         => InterserviceAuthFailed(tag).as401
             }
         }
     }
@@ -128,26 +131,26 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
     )(implicit decoder: Decoder[A]) = response.status match {
         case Status.Ok => decodeJson(response.contentString)
         case Status.Unauthorized =>
-            if (token.isEmpty) InterserviceAuthFailed(ss.value).as401
+            if (token.isEmpty) InterserviceAuthFailed(tag).as401
             else InvalidToken.as401
         case Status.NotFound =>
             decode[ErrorMessage](response.contentString) match {
                 case Right(value) => value.as404
-                case _            => UnknownServiceResponse(ss.value).as520
+                case _            => UnknownServiceResponse(tag).as520
             }
         case Status.Conflict =>
             decode[ErrorMessage](response.contentString) match {
                 case Right(value) => value.as409
-                case _            => UnknownServiceResponse(ss.value).as520
+                case _            => UnknownServiceResponse(tag).as520
             }
         case Status.UnprocessableEntity =>
             decode[ErrorMessage](response.contentString) match {
                 case Right(value) => value.as422
-                case _            => UnknownServiceResponse(ss.value).as520
+                case _            => UnknownServiceResponse(tag).as520
             }
-        case Status.InternalServerError => ServiceInternalError(ss.value).as500
-        case Status.ServiceUnavailable  => ServiceUnavailable(ss.value).as502
-        case _ => UnknownServiceResponse(ss.value).as520
+        case Status.InternalServerError => ServiceInternalError(tag).as500
+        case Status.ServiceUnavailable  => ServiceUnavailable(tag).as502
+        case _                          => UnknownServiceResponse(tag).as520
     }
 
     /** Finagle service with circuit breaker. */
@@ -174,7 +177,7 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
     private def decodeJson[A](body: String)(implicit decoder: Decoder[A]) = {
         decode[A](body) match {
             case Right(value) => value.as200
-            case Left(error)  => BadServiceResult(ss.value).as422
+            case Left(error)  => BadServiceResult(tag).as422
         }
     }
 

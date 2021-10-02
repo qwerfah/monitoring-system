@@ -1,11 +1,18 @@
 package com.qwerfah.common.http
 
-sealed trait ServiceTag { val value: String }
+import enumeratum._
 
-case object Session extends ServiceTag { val value = "Session" }
-case object Gateway extends ServiceTag { val value = "Gateway" }
-case object Equipment extends ServiceTag { val value = "Equipment" }
-case object Monitoring extends ServiceTag { val value = "Monitoring" }
-case object Documentation extends ServiceTag { val value = "Documentation" }
-case object Generator extends ServiceTag { val value = "Generator" }
-case object Reporting extends ServiceTag { val value = "Reporting" }
+sealed trait ServiceTag extends EnumEntry
+
+case object ServiceTag extends Enum[ServiceTag] with CirceEnum[ServiceTag] {
+
+    case object Session extends ServiceTag
+    case object Gateway extends ServiceTag
+    case object Equipment extends ServiceTag
+    case object Monitoring extends ServiceTag
+    case object Documentation extends ServiceTag
+    case object Generator extends ServiceTag
+    case object Reporting extends ServiceTag
+
+    val values = findValues
+}

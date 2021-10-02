@@ -64,7 +64,10 @@ object ParamController extends Controller {
         authorize(header, serviceRoles, _ => paramService.remove(uid))
     }
 
-    val api =
-        (getParams :+: getParam :+: addParam :+: updateParam :+: deleteParam)
-            .handle(errorHandler)
+    val api = "api" :: getParams
+        .:+:(getParam)
+        .:+:(addParam)
+        .:+:(updateParam)
+        .:+:(deleteParam)
+        .handle(errorHandler)
 }

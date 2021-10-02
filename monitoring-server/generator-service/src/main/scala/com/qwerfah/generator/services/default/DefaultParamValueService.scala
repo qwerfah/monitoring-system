@@ -37,8 +37,8 @@ class DefaultParamValueService[F[_]: Monad, DB[_]: Monad](
         }
 
     override def get(
-      paramUid: Uid,
-      instanceUid: Uid
+      paramUid: Option[Uid],
+      instanceUid: Option[Uid]
     ): F[ServiceResponse[Seq[ParamValueResponse]]] =
         dbManager.execute(paramValueRepo.get(paramUid, instanceUid)) map {
             _.asResponse.as200

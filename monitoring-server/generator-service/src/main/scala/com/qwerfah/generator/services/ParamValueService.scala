@@ -9,8 +9,8 @@ trait ParamValueService[F[_]] {
     def get: F[ServiceResponse[Seq[ParamValueResponse]]]
     def get(uid: Uid): F[ServiceResponse[ParamValueResponse]]
     def get(
-      paramUid: Uid,
-      instanceUid: Uid
+      paramUid: Option[Uid],
+      instanceUid: Option[Uid]
     ): F[ServiceResponse[Seq[ParamValueResponse]]]
     def getLast(
       paramUid: Uid,

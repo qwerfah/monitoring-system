@@ -20,14 +20,14 @@ class SlickParamValueRepo(implicit val context: GeneratorContext)
         context.paramValues.filter(_.uid === uid).result.headOption
 
     override def get(
-      paramUid: Uid,
-      instanceUid: Uid
-    ): DBIO[Seq[ParamValue]] =
-        context.paramValues
-            .filter(v =>
-                v.paramUid === paramUid && v.instanceUid === instanceUid
-            )
-            .result
+      paramUid: Option[Uid],
+      instanceUid: Option[Uid]
+    ): DBIO[Seq[ParamValue]] = context.paramValues
+        .filterOpt(paramUid) { case (table, uid) => table.paramUid === uid }
+        .filterOpt(instanceUid) { case (table, uid) =>
+            table.instanceUid === uid
+        }
+        .result
 
     override def getLast(
       paramUid: Uid,

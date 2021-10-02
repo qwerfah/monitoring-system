@@ -146,3 +146,8 @@ final case class InterserviceAuthFailed(service: ServiceTag)
     override def getMessage =
         s"Can't authorize in $service service with current service credentials."
 }
+
+case object NonexistentInstance extends ErrorMessage {
+    override def getMessage =
+        s"Attempted to add param values for instance that was removed during request processing."
+}

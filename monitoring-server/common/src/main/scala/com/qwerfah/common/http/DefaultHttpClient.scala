@@ -46,6 +46,8 @@ class DefaultHttpClient(
   dest: String
 ) extends HttpClient[Future] {
     var token: Option[Token] = None
+    val loginUrl = "/api/session/login"
+    val refreshUrl = "/api/session/refresh"
 
     /** Attempt to authorize in destination service using provided credentials.
       * @return
@@ -53,7 +55,7 @@ class DefaultHttpClient(
       *   error response.
       */
     private def authorizeInDest: Future[ServiceResponse[Token]] = {
-        val request = Request(TwitterMethod.Post, "/auth/login")
+        val request = Request(TwitterMethod.Post, loginUrl)
         request.setContentType("application/json")
         request.setContentString(creds.asJson.toString)
 
@@ -72,7 +74,7 @@ class DefaultHttpClient(
       *   error response.
       */
     private def refreshTokenInDest: Future[ServiceResponse[Token]] = {
-        val request = Request(TwitterMethod.Post, "/auth/refresh")
+        val request = Request(TwitterMethod.Post, refreshUrl)
         request.headerMap.add(
           "Authorization",
           "Bearer ".concat(token.get.refresh)

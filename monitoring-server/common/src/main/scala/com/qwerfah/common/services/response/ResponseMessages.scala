@@ -67,6 +67,11 @@ final case class FileRemoved(uid: Uid) extends ResponseMessage {
     override val message = s"Documentation file with uid $uid removed."
 }
 
+case object ParamValuesAdded extends ResponseMessage {
+    override val message =
+        "Param values for all tracked equipment instances added."
+}
+
 final case class ParamValueRemoved(uid: Uid) extends ResponseMessage {
     override val message = s"Parameter value with uid $uid removed."
 }

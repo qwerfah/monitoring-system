@@ -45,6 +45,9 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
             _.asResponse.as200
         }
 
+    override def getInstances: F[ServiceResponse[Seq[Uid]]] =
+        dbManager.execute(monitorRepo.getInstances) map { _.as200 }
+
     override def getParams(
       uid: Uid
     ): F[ServiceResponse[Seq[ParamResponse]]] =

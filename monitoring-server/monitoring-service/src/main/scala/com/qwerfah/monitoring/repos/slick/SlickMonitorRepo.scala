@@ -23,6 +23,9 @@ class SlickMonitorRepo(implicit val context: MonitoringContext)
     override def getByInstanceUid(instanceUid: Uid): DBIO[Seq[Monitor]] =
         context.monitors.filter(_.instanceUid === instanceUid).result
 
+    override def getInstances: DBIO[Seq[Uid]] =
+        context.monitors.result.map(seq => seq.map(_.instanceUid).distinct)
+
     override def add(monitor: Monitor): DBIO[Monitor] =
         (context.monitors returning context.monitors.map(_.id) into (
           (param, id) => param.copy(id = Some(id))

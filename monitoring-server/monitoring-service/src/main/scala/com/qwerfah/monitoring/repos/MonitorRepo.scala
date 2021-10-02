@@ -8,6 +8,8 @@ trait MonitorRepo[DB[_]] {
     def get(id: Int): DB[Option[Monitor]]
     def get(uid: Uid): DB[Option[Monitor]]
     def getByInstanceUid(instanceUid: Uid): DB[Seq[Monitor]]
+    def getInstances: DB[Seq[Uid]]
+
     def add(monitor: Monitor): DB[Monitor]
     def update(monitor: Monitor): DB[Int]
     def removeById(id: Int): DB[Int]

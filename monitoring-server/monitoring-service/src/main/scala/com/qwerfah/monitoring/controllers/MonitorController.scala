@@ -61,6 +61,14 @@ object MonitorController extends Controller {
         )
     }
 
+    private val getMonitorIsntances = get(
+      "monitors" :: "instances" :: headerOption(
+        "Authorization"
+      )
+    ) { header: Option[String] =>
+        authorize(header, serviceRoles, _ => monitorService.getInstances)
+    }
+
     private val addMonitor = post(
       "monitors" :: jsonBody[MonitorRequest] :: headerOption("Authorization")
     ) { (request: MonitorRequest, header: Option[String]) =>
@@ -115,6 +123,7 @@ object MonitorController extends Controller {
         .:+:(getMonitor)
         .:+:(getMonitorParams)
         .:+:(getInstanceMonitors)
+        .:+:(getMonitorIsntances)
         .:+:(addMonitor)
         .:+:(updateMonitor)
         .:+:(addMonitorParam)

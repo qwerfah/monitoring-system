@@ -24,10 +24,13 @@ import com.qwerfah.generator.models.GeneratorContext
 import com.qwerfah.generator.repos.slick.SlickParamValueRepo
 import com.qwerfah.generator.services.default.DefaultParamValueService
 
-import com.qwerfah.common.http.Equipment
+import com.qwerfah.common.http.ServiceTag
+import com.qwerfah.common.services.default._
 import com.qwerfah.common.resources.Credentials
 import com.qwerfah.common.http.DefaultHttpClient
 import com.qwerfah.common.db.slick.SlickDbManager
+import com.qwerfah.common.repos.slick.SlickUserRepo
+import com.qwerfah.common.repos.local.LocalTokenRepo
 
 object Startup {
     implicit val config = ConfigFactory.load
@@ -39,7 +42,7 @@ object Startup {
 
     val defaultEquipmentClient =
         new DefaultHttpClient(
-          Equipment,
+          ServiceTag.Generator,
           Credentials(
             config.getString("serviceId"),
             config.getString("secret")
@@ -48,9 +51,17 @@ object Startup {
         )
 
     implicit val paramValueRepo = new SlickParamValueRepo
+    implicit val tokenRepo = new LocalTokenRepo
+    implicit val userRepo = new SlickUserRepo
 
     implicit val defaultParamValueService =
         new DefaultParamValueService[Future, DBIO](defaultEquipmentClient)
+    implicit val defaultTokenService = new DefaultTokenService[Future, DBIO]
+    implicit val defaultUserService = new DefaultUserService[Future, DBIO]
 
     def startup() = Await.result(dbManager.execute(context.setup))
+
+    implicit val actorSystem = ActorSystem("such-system")
+    val rabbitControl = actorSystem.actorOf(Props[RabbitControl]())
+    implicit val recoveryStrategy = RecoveryStrategy.none
 }

@@ -32,6 +32,7 @@ object Main extends TwitterServer {
     onExit {
         server.close()
         subscriptionRef.close()
+        actorSystem.terminate()
     }
 
     com.twitter.util.Await.ready(server)

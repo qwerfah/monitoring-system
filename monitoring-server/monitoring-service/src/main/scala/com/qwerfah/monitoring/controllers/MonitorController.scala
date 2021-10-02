@@ -119,7 +119,7 @@ object MonitorController extends Controller {
         )
     }
 
-    val api = getMonitors
+    val api = "api" :: getMonitors
         .:+:(getMonitor)
         .:+:(getMonitorParams)
         .:+:(getInstanceMonitors)

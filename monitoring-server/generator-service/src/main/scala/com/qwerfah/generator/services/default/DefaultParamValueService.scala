@@ -58,10 +58,10 @@ class DefaultParamValueService[F[_]: Monad, DB[_]: Monad](
     ): F[ServiceResponse[ParamValueResponse]] =
         (for {
             req1 <- client.sendAndDecode[InstanceResponse](
-              url = s"instances/${request.instanceUid}"
+              url = s"/api/instances/${request.instanceUid}"
             )
             req2 <- client.sendAndDecode[ParamResponse](
-              url = s"params/${request.paramUid}"
+              url = s"/api/params/${request.paramUid}"
             )
         } yield (req1, req2)) flatMap {
             case (OkResponse(_), OkResponse(_)) =>

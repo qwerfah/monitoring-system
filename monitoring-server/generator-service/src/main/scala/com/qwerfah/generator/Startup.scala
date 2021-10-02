@@ -20,9 +20,9 @@ import com.spingo.op_rabbit.CirceSupport._
 
 import com.typesafe.config.ConfigFactory
 
+import com.qwerfah.generator.services.default._
 import com.qwerfah.generator.models.GeneratorContext
 import com.qwerfah.generator.repos.slick.SlickParamValueRepo
-import com.qwerfah.generator.services.default.DefaultParamValueService
 
 import com.qwerfah.common.http.ServiceTag
 import com.qwerfah.common.services.default._
@@ -31,6 +31,8 @@ import com.qwerfah.common.http.DefaultHttpClient
 import com.qwerfah.common.db.slick.SlickDbManager
 import com.qwerfah.common.repos.slick.SlickUserRepo
 import com.qwerfah.common.repos.local.LocalTokenRepo
+import com.twitter.util.JavaTimer
+import com.twitter.util.Duration
 
 object Startup {
     implicit val config = ConfigFactory.load
@@ -40,7 +42,7 @@ object Startup {
     implicit val context = new GeneratorContext
     implicit val dbManager = new SlickDbManager
 
-    val defaultEquipmentClient =
+    val equipmentClient =
         new DefaultHttpClient(
           ServiceTag.Generator,
           Credentials(
@@ -50,12 +52,27 @@ object Startup {
           config.getString("equipmentUrl")
         )
 
+    val monitoringClient =
+        new DefaultHttpClient(
+          ServiceTag.Generator,
+          Credentials(
+            config.getString("serviceId"),
+            config.getString("secret")
+          ),
+          config.getString("monitoringUrl")
+        )
+
     implicit val paramValueRepo = new SlickParamValueRepo
     implicit val tokenRepo = new LocalTokenRepo
     implicit val userRepo = new SlickUserRepo
 
     implicit val defaultParamValueService =
-        new DefaultParamValueService[Future, DBIO](defaultEquipmentClient)
+        new DefaultParamValueService[Future, DBIO](equipmentClient)
+    implicit val defaultGeneratorService =
+        new DefaultGeneratorService[Future, DBIO](
+          monitoringClient,
+          equipmentClient
+        )
     implicit val defaultTokenService = new DefaultTokenService[Future, DBIO]
     implicit val defaultUserService = new DefaultUserService[Future, DBIO]
 
@@ -64,4 +81,8 @@ object Startup {
     implicit val actorSystem = ActorSystem("such-system")
     val rabbitControl = actorSystem.actorOf(Props[RabbitControl]())
     implicit val recoveryStrategy = RecoveryStrategy.none
+
+    val timer = new JavaTimer
+    timer.schedule(Duration.fromSeconds(config.getInt("genPeriod"))) { defaultGeneratorService.generate }
+
 }

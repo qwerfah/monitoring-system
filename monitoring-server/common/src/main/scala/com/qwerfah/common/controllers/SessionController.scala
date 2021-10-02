@@ -61,5 +61,5 @@ abstract class SessionController(implicit
                 )
         }
 
-    val api = login.:+:(refresh).:+:(verify).handle(errorHandler)
+    val api = "api" :: login.:+:(refresh).:+:(verify).handle(errorHandler)
 }

@@ -48,7 +48,7 @@ object Startup {
 
     val defaultEquipmentClient =
         new DefaultHttpClient(
-          Equipment,
+          ServiceTag.Monitoring,
           Credentials(
             config.getString("serviceId"),
             config.getString("secret")

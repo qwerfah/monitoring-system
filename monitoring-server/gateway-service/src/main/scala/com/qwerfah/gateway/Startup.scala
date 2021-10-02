@@ -30,7 +30,7 @@ object Startup {
 
     val defaultSessionClient =
         new DefaultHttpClient(
-          Session,
+          ServiceTag.Gateway,
           Credentials(
             config.getString("serviceId"),
             config.getString("secret")
@@ -39,7 +39,7 @@ object Startup {
         )
     val defaultEquipmentClient =
         new DefaultHttpClient(
-          Equipment,
+          ServiceTag.Gateway,
           Credentials(
             config.getString("serviceId"),
             config.getString("secret")
@@ -48,7 +48,7 @@ object Startup {
         )
     val defaultDocumentationClient =
         new DefaultHttpClient(
-          Equipment,
+          ServiceTag.Gateway,
           Credentials(
             config.getString("serviceId"),
             config.getString("secret")
@@ -57,7 +57,7 @@ object Startup {
         )
     val defaultMonitoringClient =
         new DefaultHttpClient(
-          Equipment,
+          ServiceTag.Gateway,
           Credentials(
             config.getString("serviceId"),
             config.getString("secret")
@@ -66,7 +66,7 @@ object Startup {
         )
     val defaultGeneratorClient =
         new DefaultHttpClient(
-          Equipment,
+          ServiceTag.Gateway,
           Credentials(
             config.getString("serviceId"),
             config.getString("secret")
@@ -75,7 +75,7 @@ object Startup {
         )
     val defaultReportingClient =
         new DefaultHttpClient(
-          Equipment,
+          ServiceTag.Gateway,
           Credentials(
             config.getString("serviceId"),
             config.getString("secret")

@@ -25,7 +25,8 @@ object Main extends TwitterServer {
     val server =
         Http.serve(
           config.getString("port"),
-          { ParamValueController }.api
+          GeneratorSessionController.api
+              .:+:(ParamValueController.api)
               .toServiceAs[Application.Json]
         )
     onExit {

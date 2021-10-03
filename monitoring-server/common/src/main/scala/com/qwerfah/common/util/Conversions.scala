@@ -78,12 +78,12 @@ object Conversions {
       *   Error message instance.
       */
     implicit class errorToServiceResponse(msg: ErrorMessage) {
-        def as401 = BadAuthResponse(msg)
-        def as404 = NotFoundResponse(msg)
-        def as409 = ConflictResponse(msg)
-        def as422 = UnprocessableResponse(msg)
-        def as500 = InternalErrorResponse(msg)
-        def as502 = BadGatewayResponse(msg)
-        def as520 = UnknownErrorResponse(msg)
+        def as401 = BadAuthResponse(msg.getMessage)
+        def as404 = NotFoundResponse(msg.getMessage)
+        def as409 = ConflictResponse(msg.getMessage)
+        def as422 = UnprocessableResponse(msg.getMessage)
+        def as500 = InternalErrorResponse(msg.getMessage)
+        def as502 = BadGatewayResponse(msg.getMessage)
+        def as520 = UnknownErrorResponse(msg.getMessage)
     }
 }

@@ -32,10 +32,10 @@ final case class CreatedResponse[T](override val result: T)
   * @param error
   *   Error instance.
   */
-sealed abstract class ErrorResponse(message: ErrorMessage)
+sealed abstract class ErrorResponse(val message: String)
   extends Exception
   with ServiceResponse[Nothing] {
-    override def getMessage = message.getMessage
+    override def getMessage = message
 }
 
 /** Returns when service operation can't can't get the required resource.
@@ -43,7 +43,7 @@ sealed abstract class ErrorResponse(message: ErrorMessage)
   * @param message
   *   Error description.
   */
-final case class NotFoundResponse(message: ErrorMessage)
+final case class NotFoundResponse(override val message: String)
   extends ErrorResponse(message)
 
 /** Returns when authorization operation results in error. Corresponds to 401
@@ -51,7 +51,7 @@ final case class NotFoundResponse(message: ErrorMessage)
   * @param message
   *   Error description.
   */
-final case class BadAuthResponse(message: ErrorMessage)
+final case class BadAuthResponse(override val message: String)
   extends ErrorResponse(message)
 
 /** Returns when the request to the remote server inside of service method
@@ -59,7 +59,7 @@ final case class BadAuthResponse(message: ErrorMessage)
   * @param message
   *   Error description.
   */
-final case class BadGatewayResponse(message: ErrorMessage)
+final case class BadGatewayResponse(override val message: String)
   extends ErrorResponse(message)
 
 /** Returns when service operation ends with unprocessed error. Corresponds to
@@ -67,7 +67,7 @@ final case class BadGatewayResponse(message: ErrorMessage)
   * @param message
   *   Error description.
   */
-final case class InternalErrorResponse(message: ErrorMessage)
+final case class InternalErrorResponse(override val message: String)
   extends ErrorResponse(message)
 
 /** Returns when the successful request to the remote server inside of service
@@ -76,7 +76,7 @@ final case class InternalErrorResponse(message: ErrorMessage)
   * @param message
   *   Error description.
   */
-final case class UnprocessableResponse(message: ErrorMessage)
+final case class UnprocessableResponse(override val message: String)
   extends ErrorResponse(message)
 
 /** Returns when service recived valid data but conflict emerged during service
@@ -85,7 +85,7 @@ final case class UnprocessableResponse(message: ErrorMessage)
   * @param message
   *   Error description.
   */
-final case class ConflictResponse(message: ErrorMessage)
+final case class ConflictResponse(override val message: String)
   extends ErrorResponse(message)
 
 /** Returns when the request to the remote server inside of service method
@@ -93,5 +93,5 @@ final case class ConflictResponse(message: ErrorMessage)
   * @param message
   *   Error description.
   */
-final case class UnknownErrorResponse(message: ErrorMessage)
+final case class UnknownErrorResponse(override val message: String)
   extends ErrorResponse(message)

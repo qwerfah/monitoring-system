@@ -40,4 +40,7 @@ class SlickFileRepo(implicit val context: DocumentationContext)
 
     override def remove(uid: Uid): DBIO[Int] =
         context.files.filter(_.uid === uid).delete
+
+    override def removeModelFiles(modelUid: Uid): DBIO[Int] =
+        context.files.filter(_.modelUid === modelUid).delete
 }

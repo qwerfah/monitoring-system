@@ -34,7 +34,7 @@ class DefaultFileService[F[_]: Monad, DB[_]: Monad](implicit
         dbManager.execute(fileRepo.getModelMeta(modelUid)) map {
             _.asResponse.as200
         }
- 
+
     override def add(file: FileRequest): F[ServiceResponse[FileMetaResponse]] =
         dbManager.execute(fileRepo.add(file.asFile)) map { _.asResponse.as201 }
 
@@ -42,5 +42,12 @@ class DefaultFileService[F[_]: Monad, DB[_]: Monad](implicit
         dbManager.execute(fileRepo.remove(uid)) map {
             case 1 => FileRemoved(uid).as200
             case _ => NoFile(uid).as404
+        }
+
+    override def removeModelFiles(
+      modelUid: Uid
+    ): F[ServiceResponse[ResponseMessage]] =
+        dbManager.execute(fileRepo.removeModelFiles(modelUid)) map { _ =>
+            ModelFilesRemoved(modelUid).as200
         }
 }

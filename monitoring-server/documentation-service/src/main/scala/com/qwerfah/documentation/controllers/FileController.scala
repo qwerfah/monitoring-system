@@ -108,10 +108,22 @@ object FileController extends Controller {
                 authorize(header, serviceRoles, _ => fileService.remove(uid))
         }
 
+    private val removeModelFiles =
+        delete(
+          "models" :: path[Uid] :: "files" :: headerOption("Authorization")
+        ) { (modelUid: Uid, header: Option[String]) =>
+            authorize(
+              header,
+              serviceRoles,
+              _ => fileService.removeModelFiles(modelUid)
+            )
+        }
+
     val api = "api" :: getFiles
         .:+:(getModelFiles)
         .:+:(getFile)
         .:+:(addFile)
         .:+:(removeFile)
+        .:+:(removeModelFiles)
         .handle(errorHandler)
 }

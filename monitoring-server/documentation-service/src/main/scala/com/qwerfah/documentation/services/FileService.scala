@@ -47,7 +47,15 @@ trait FileService[F[_]] {
       * @param uid
       *   File external identifier.
       * @return
-      *   Number of records in repo affected or error in case failure.
+      *   Description of operation result.
       */
     def remove(uid: Uid): F[ServiceResponse[ResponseMessage]]
+
+    /** Remove all files for specified model.
+      * @param modelUid
+      *   Equipment model identifier.
+      * @return
+      *   Description of operation result.
+      */
+    def removeModelFiles(modelUid: Uid): F[ServiceResponse[ResponseMessage]]
 }

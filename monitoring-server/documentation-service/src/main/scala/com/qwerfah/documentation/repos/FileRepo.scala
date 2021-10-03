@@ -43,4 +43,12 @@ trait FileRepo[DB[_]] {
       *   Number of records in repo affected.
       */
     def remove(uid: Uid): DB[Int]
+
+    /** Remove all files for specified equipment model.
+      * @param uid
+      *   Equipment model identifier.
+      * @return
+      *   Number of records in repo affected.
+      */
+    def removeModelFiles(modelUid: Uid): DB[Int]
 }

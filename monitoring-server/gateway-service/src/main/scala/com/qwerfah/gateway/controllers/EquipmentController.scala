@@ -31,5 +31,5 @@ object EquipmentController extends Controller {
         equipmentService.getAll map { _.asOutput }
     }
 
-    def api = (getModels).handle(errorHandler)
+    def api = "api" :: "equipment" :: (getModels).handle(errorHandler)
 }

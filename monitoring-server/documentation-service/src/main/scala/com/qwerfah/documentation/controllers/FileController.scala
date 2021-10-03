@@ -42,7 +42,7 @@ object FileController extends Controller {
         }
 
     private val getModelFiles =
-        get("files" :: path[Uid] :: headerOption("Authorization")) {
+        get("models" :: path[Uid] :: "files" :: headerOption("Authorization")) {
             (modelUid: Uid, header: Option[String]) =>
                 authorize(
                   header,
@@ -68,15 +68,16 @@ object FileController extends Controller {
 
     private val addFile =
         post(
-          "files" :: path[Uid] :: headerOption(
+          "models" :: path[Uid] :: "files" :: headerOption(
             "Authorization"
           ) :: multipartFileUploadOption("file")
         ) { (modelUid: Uid, header: Option[String], data: Option[FileUpload]) =>
             data match {
                 case Some(file) => {
                     val reader = file match {
-                        case d: Multipart.OnDiskFileUpload =>
+                        case d: Multipart.OnDiskFileUpload => {
                             Reader.fromFile(d.content)
+                        }
                         case m: Multipart.InMemoryFileUpload =>
                             Reader.fromBuf(m.content)
                     }
@@ -107,7 +108,7 @@ object FileController extends Controller {
                 authorize(header, serviceRoles, _ => fileService.remove(uid))
         }
 
-    val api = getFiles
+    val api = "api" :: getFiles
         .:+:(getModelFiles)
         .:+:(getFile)
         .:+:(addFile)

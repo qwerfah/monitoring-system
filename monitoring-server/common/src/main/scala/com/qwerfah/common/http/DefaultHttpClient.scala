@@ -28,6 +28,8 @@ import com.qwerfah.common.exceptions._
 import com.qwerfah.common.models.Token
 import com.qwerfah.common.resources.Credentials
 import com.qwerfah.common.util.Conversions._
+import com.twitter.finagle.http.exp.Multipart
+import com.twitter.io.BufInputStream
 
 /** Default http client implementation based on finagle client and twitter
   * future. Contain also access-refresh token pair for authorization in
@@ -136,18 +138,18 @@ class DefaultHttpClient(
             if (token.isEmpty) InterserviceAuthFailed(tag).as401
             else InvalidToken.as401
         case Status.NotFound =>
-            decode[ErrorMessage](response.contentString) match {
-                case Right(value) => value.as404
+            decode[NotFoundResponse](response.contentString) match {
+                case Right(value) => value
                 case _            => UnknownServiceResponse(tag).as520
             }
         case Status.Conflict =>
-            decode[ErrorMessage](response.contentString) match {
-                case Right(value) => value.as409
+            decode[ConflictResponse](response.contentString) match {
+                case Right(value) => value
                 case _            => UnknownServiceResponse(tag).as520
             }
         case Status.UnprocessableEntity =>
-            decode[ErrorMessage](response.contentString) match {
-                case Right(value) => value.as422
+            decode[UnprocessableResponse](response.contentString) match {
+                case Right(value) => value
                 case _            => UnknownServiceResponse(tag).as520
             }
         case Status.InternalServerError => ServiceInternalError(tag).as500
@@ -183,6 +185,52 @@ class DefaultHttpClient(
         }
     }
 
+    override def send(request: Request): Future[Response] = {
+        sendWithRefresh(request) map { response =>
+            response.status match {
+                case Status.ServiceUnavailable =>
+                    response.status = Status.BadGateway
+                case _ => ()
+            }
+
+            response
+        }
+    }
+
+    override def send(
+      method: HttpMethod = HttpMethod.Get,
+      url: String = "/",
+      content: Option[String] = None,
+      token: Option[String] = None
+    ): Future[Response] = {
+        val request = Request(method.asTwitter, url)
+        request.headerMap += ("Authorization" -> "Bearer ".concat(
+          token.getOrElse(this.token.getOrElse(Token()).access)
+        ))
+        content match {
+            case Some(value) => {
+                request.setContentType("application/json")
+                request.setContentString(value)
+            }
+            case _ => ()
+        }
+
+        val response = token match {
+            case Some(_) => service(request)
+            case None    => sendWithRefresh(request)
+        }
+
+        response map { response =>
+            response.status match {
+                case Status.ServiceUnavailable =>
+                    response.status = Status.BadGateway
+                case _ => ()
+            }
+        }
+
+        response
+    }
+
     override def sendAndDecode[A](
       method: HttpMethod = HttpMethod.Get,
       url: String = "/",
@@ -203,6 +251,11 @@ class DefaultHttpClient(
             case _ => ()
         }
 
-        sendWithRefresh(request) map { response => matchStatus(response) }
+        val response = token match {
+            case Some(_) => service(request)
+            case None    => sendWithRefresh(request)
+        }
+
+        response map { response => matchStatus(response) }
     }
 }

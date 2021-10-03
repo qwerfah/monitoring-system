@@ -24,13 +24,15 @@ object Main extends TwitterServer {
           RequestLoggingFilter
               .andThen(RequestReportingFilter)
               .andThen(
-                EquipmentController.api
-                    .:+:(GatewaySessionController.api)
+                GatewaySessionController.api
+                    .:+:(EquipmentController.api)
+                    .:+:(DocumentationController.api)
                     .toServiceAs[Application.Json]
               )
         )
     onExit {
         server.close()
+
         actorSystem.terminate()
     }
 

@@ -28,65 +28,64 @@ import com.qwerfah.common.controllers.RequestReportingFilter
 object Startup {
     implicit val config = ConfigFactory.load
 
-    val defaultSessionClient =
-        new DefaultHttpClient(
-          ServiceTag.Gateway,
-          Credentials(
-            config.getString("serviceId"),
-            config.getString("secret")
-          ),
-          config.getString("sessionUrl")
-        )
-    val defaultEquipmentClient =
-        new DefaultHttpClient(
-          ServiceTag.Gateway,
-          Credentials(
-            config.getString("serviceId"),
-            config.getString("secret")
-          ),
-          config.getString("equipmentUrl")
-        )
-    val defaultDocumentationClient =
-        new DefaultHttpClient(
-          ServiceTag.Gateway,
-          Credentials(
-            config.getString("serviceId"),
-            config.getString("secret")
-          ),
-          config.getString("documentationUrl")
-        )
-    val defaultMonitoringClient =
-        new DefaultHttpClient(
-          ServiceTag.Gateway,
-          Credentials(
-            config.getString("serviceId"),
-            config.getString("secret")
-          ),
-          config.getString("monitoringUrl")
-        )
-    val defaultGeneratorClient =
-        new DefaultHttpClient(
-          ServiceTag.Gateway,
-          Credentials(
-            config.getString("serviceId"),
-            config.getString("secret")
-          ),
-          config.getString("generatorUrl")
-        )
-    val defaultReportingClient =
-        new DefaultHttpClient(
-          ServiceTag.Gateway,
-          Credentials(
-            config.getString("serviceId"),
-            config.getString("secret")
-          ),
-          config.getString("reportingUrl")
-        )
+    val sessionClient = new DefaultHttpClient(
+      ServiceTag.Session,
+      Credentials(
+        config.getString("serviceId"),
+        config.getString("secret")
+      ),
+      config.getString("sessionUrl")
+    )
+    val equipmentClient = new DefaultHttpClient(
+      ServiceTag.Equipment,
+      Credentials(
+        config.getString("serviceId"),
+        config.getString("secret")
+      ),
+      config.getString("equipmentUrl")
+    )
+    val documentationClient = new DefaultHttpClient(
+      ServiceTag.Documentation,
+      Credentials(
+        config.getString("serviceId"),
+        config.getString("secret")
+      ),
+      config.getString("documentationUrl")
+    )
+    val monitoringClient = new DefaultHttpClient(
+      ServiceTag.Monitoring,
+      Credentials(
+        config.getString("serviceId"),
+        config.getString("secret")
+      ),
+      config.getString("monitoringUrl")
+    )
+    val generatorClient = new DefaultHttpClient(
+      ServiceTag.Generator,
+      Credentials(
+        config.getString("serviceId"),
+        config.getString("secret")
+      ),
+      config.getString("generatorUrl")
+    )
+    val reportingClient = new DefaultHttpClient(
+      ServiceTag.Reporting,
+      Credentials(
+        config.getString("serviceId"),
+        config.getString("secret")
+      ),
+      config.getString("reportingUrl")
+    )
 
     implicit val defaultSessionService =
-        new DefaultSessionService[Future](defaultSessionClient)
+        new DefaultSessionService[Future](sessionClient)
     implicit val defaultEquipmentService =
-        new DefaultEquipmentService[Future](defaultEquipmentClient)
+        new DefaultEquipmentService[Future](equipmentClient)
+    implicit val defaultDocumentationService =
+        new DefaultDocumentationService[Future](
+          documentationClient,
+          equipmentClient
+        )
 
     implicit val actorSystem = ActorSystem("such-system")
     implicit val rabbitControl = actorSystem.actorOf(Props[RabbitControl]())

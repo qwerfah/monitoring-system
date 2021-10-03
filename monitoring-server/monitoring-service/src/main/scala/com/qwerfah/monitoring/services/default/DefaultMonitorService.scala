@@ -69,7 +69,7 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
         }
 
     override def add(
-      request: MonitorRequest
+      request: AddMonitorRequest
     ): F[ServiceResponse[MonitorResponse]] =
         dbManager.execute(monitorRepo.add(request.asMonitor)) map {
             _.asResponse.as201
@@ -99,7 +99,7 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
 
     override def update(
       uid: Uid,
-      request: MonitorRequest
+      request: UpdateMonitorRequest
     ): F[ServiceResponse[ResponseMessage]] =
         dbManager.execute(
           monitorRepo.update(request.asMonitor.copy(uid = uid))

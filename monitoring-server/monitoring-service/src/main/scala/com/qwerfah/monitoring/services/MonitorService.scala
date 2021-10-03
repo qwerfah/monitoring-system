@@ -52,7 +52,7 @@ trait MonitorService[F[_]] {
       * @return
       *   New monitor instance added to storage.
       */
-    def add(request: MonitorRequest): F[ServiceResponse[MonitorResponse]]
+    def add(request: AddMonitorRequest): F[ServiceResponse[MonitorResponse]]
 
     /** Add new param tracked by specified monitor.
       * @param param
@@ -75,7 +75,7 @@ trait MonitorService[F[_]] {
       */
     def update(
       uid: Uid,
-      request: MonitorRequest
+      request: UpdateMonitorRequest
     ): F[ServiceResponse[ResponseMessage]]
 
     /** Remove monitor by its uid.

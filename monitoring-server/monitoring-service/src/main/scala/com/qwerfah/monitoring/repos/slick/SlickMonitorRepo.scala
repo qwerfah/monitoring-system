@@ -35,7 +35,11 @@ class SlickMonitorRepo(implicit val context: MonitoringContext)
         val targetRows = context.monitors.filter(_.uid === monitor.uid)
         for {
             old <- targetRows.result.headOption
-            updateActionOption = old.map(b => targetRows.update(monitor))
+            updateActionOption = old.map(b =>
+                targetRows.update(
+                  monitor.copy(id = b.id, instanceUid = b.instanceUid)
+                )
+            )
             affected <- updateActionOption.getOrElse(DBIO.successful(0))
         } yield affected
     }

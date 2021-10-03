@@ -7,6 +7,7 @@ import cats.data.Validated.{Valid, Invalid}
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.Uid
 import com.qwerfah.common.resources._
+import com.qwerfah.common.models.Payload
 
 object Decoders {
     import JsonSchemas._
@@ -33,6 +34,20 @@ object Decoders {
                         login <- c.downField("login").as[String]
                         password <- c.downField("password").as[String]
                     } yield Credentials(login, password)
+                case Invalid(errors) =>
+                    throw InvalidJsonBodyException(errors)
+            }
+        }
+
+    implicit val decodePayload: Decoder[Payload] =
+        (c: HCursor) => {
+            payloadSchema.validate(c.value) match {
+                case Valid(()) =>
+                    for {
+                        uid <- c.downField("uid").as[Uid]
+                        login <- c.downField("login").as[String]
+                        role <- c.downField("role").as[UserRole]
+                    } yield Payload(uid, login, role)
                 case Invalid(errors) =>
                     throw InvalidJsonBodyException(errors)
             }

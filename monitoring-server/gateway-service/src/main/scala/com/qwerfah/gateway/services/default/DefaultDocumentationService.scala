@@ -65,7 +65,10 @@ class DefaultDocumentationService[F[_]: Monad](
         ) flatMap { response =>
             response.status match {
                 case Status.Ok =>
-                    documentationClient.send(HttpMethod.Delete, "/api/files")
+                    documentationClient.send(
+                      HttpMethod.Delete,
+                      s"/api/models/$modelUid/files"
+                    )
                 case _ => Monad[F].pure(response)
             }
         }

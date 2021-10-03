@@ -86,7 +86,22 @@ object DocumentationController extends Controller {
                 )
         }
 
-    val api = ("api" :: "documentation") :: (getFiles
-        .:+:(getFile.:+:(getModelFiles.:+:(addFile.:+:(removeFile)))))
+    private val removeModelFiles =
+        delete(
+          "models" :: path[Uid] :: "files" :: headerOption("Authorization")
+        ) { (modelUid: Uid, header: Option[String]) =>
+            authorizeRaw(
+              header,
+              serviceRoles,
+              _ => fileService.removeModelFiles(modelUid)
+            )
+        }
+
+    val api = "api" :: "documentation" :: getFiles
+        .:+:(getFile)
+        .:+:(getModelFiles)
+        .:+:(addFile)
+        .:+:(removeFile)
+        .:+:(removeModelFiles)
         .handle(errorHandler)
 }

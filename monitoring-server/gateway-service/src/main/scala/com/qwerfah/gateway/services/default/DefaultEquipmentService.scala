@@ -11,8 +11,10 @@ import cats.Monad
 import cats.implicits._
 
 import com.qwerfah.gateway.services.EquipmentService
+
 import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.json.Decoders
+
 import com.qwerfah.common.services.response._
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.http._
@@ -22,6 +24,7 @@ class DefaultEquipmentService[F[_]: Monad](client: HttpClient[F])
     import Decoders._
 
     override def getAll: F[ServiceResponse[Seq[ModelResponse]]] = {
-        client.sendAndDecode(HttpMethod.Get, "/models")
+        client.sendAndDecode(HttpMethod.Get, "/api/models")
     }
+
 }

@@ -83,6 +83,8 @@ object Startup {
     implicit val recoveryStrategy = RecoveryStrategy.none
 
     val timer = new JavaTimer
-    timer.schedule(Duration.fromSeconds(config.getInt("genPeriod"))) { defaultGeneratorService.generate }
+    timer.schedule(Duration.fromSeconds(config.getInt("genPeriod"))) {
+        defaultGeneratorService.generate
+    }
 
 }

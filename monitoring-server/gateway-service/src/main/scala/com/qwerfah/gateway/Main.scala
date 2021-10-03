@@ -27,6 +27,7 @@ object Main extends TwitterServer {
                 GatewaySessionController.api
                     .:+:(EquipmentController.api)
                     .:+:(DocumentationController.api)
+                    .:+:(MonitoringController.api)
                     .toServiceAs[Application.Json]
               )
         )

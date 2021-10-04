@@ -12,3 +12,13 @@
     font-family: "MontserratRegular";
     src: url("./Montserrat/Montserrat-Regular.ttf");
 }
+
+@font-face {
+    font-family: "MontserratSemiBold";
+    src: url("./Montserrat/Montserrat-SemiBold.ttf");
+}
+
+@font-face {
+    font-family: "MontserratBold";
+    src: url("./Montserrat/Montserrat-Bold.ttf");
+}

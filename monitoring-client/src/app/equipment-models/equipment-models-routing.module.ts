@@ -1,12 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { EquipmentModelsComponent } from './equipment-models.component';
+import { EquipmentModelsTableComponent } from './equipment-models-table/equipment-models-table.component';
+import { EquipmentModelInfoComponent } from './equipment-model-info/equipment-model-info.component';
 
 const routes: Routes = [
   {
     path: 'models',
-    component: EquipmentModelsComponent,
+    component: EquipmentModelsTableComponent,
+  },
+  {
+    path: 'models/:uid',
+    component: EquipmentModelInfoComponent,
   },
 ];
 

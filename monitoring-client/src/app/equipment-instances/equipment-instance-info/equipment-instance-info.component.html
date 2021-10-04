@@ -1,0 +1,96 @@
+<div class="flex flex-col h-full w-full bg-white rounded-lg p-10 space-y-4" *ngIf="instance$ | async as instance">
+  <div class="flex flex-col w-full pl-4 pt-2 items-center border-b-2 border-blue-500">
+    <h2>Экземпляр оборудования</h2>
+  </div>
+  <div class="flex flex-row pt-4 w-full h-1/6 rounded-lg pl-4 pt-2 overflow-y-auto">
+    <ol class="list-disc list-inside tracking-wider space-y-1">
+      <li>Идентификатор: {{ instance.uid }}</li>
+      <li>Наименование: {{ instance.name }}</li>
+      <li>Модель: {{ instance.modelUid }}</li>
+      <li>Статус: {{ instance.status }}</li>
+      <li>Описание: {{ instance.description }}</li>
+    </ol>
+  </div>
+  <div class="flex flex-col w-full pl-4 pt-2 items-center border-b-2 border-blue-500">
+    <h2 class="bold">Технические параметры</h2>
+  </div>
+  <div class="flex bg-white w-full overflow-y-auto place-content-center" *ngIf="params$ | async as params">
+    <table class="table-fixed w-full">
+      <thead>
+        <tr>
+          <th scope="col" class="p-2">№</th>
+          <th scope="col" class="p-2 w-6/12">Наименование</th>
+          <th scope="col" class="p-2 w-6/12">Единицы измерения</th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y-2 divide-gray-200">
+        <ng-container *ngIf="!(params | notEmpty)">
+          <tr>
+            <th scope="row" class="text-center" colspan="11">Нет доступных параметров</th>
+            <td></td>
+          </tr>
+        </ng-container>
+
+        <ng-container *ngIf="params | notEmpty">
+          <ng-container *ngFor="let param of params; index as i">
+            <tr id="heading{{ i }}" class="hover:bg-indigo-700 hover:text-white w-full h-10">
+              <td class="pl-3 text-center">
+                {{ i + 1 }}
+              </td>
+              <td class="text-center">
+                {{ param.name }}
+              </td>
+              <td class="text-center">
+                {{ param.measurmentUnits }}
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+  <div class="flex flex-col w-full border-b-2 border-blue-500 pl-4 pt-2 items-center">
+    <h2>Активные экраны мониторинга</h2>
+  </div>
+  <div class="flex bg-white w-full overflow-y-auto place-content-center" *ngIf="monitors$ | async as monitors">
+    <table class="table-fixed w-full">
+      <thead>
+        <tr>
+          <th scope="col" class="p-2">№</th>
+          <th scope="col" class="p-2 w-6/12">Наименование</th>
+          <th scope="col" class="p-2 w-6/12">Описание</th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y-2 divide-gray-200">
+        <ng-container *ngIf="!(monitors | notEmpty)">
+          <tr>
+            <th scope="row" class="text-center" colspan="11">Нет активных экранов мониторинга</th>
+            <td></td>
+          </tr>
+        </ng-container>
+
+        <ng-container *ngIf="monitors | notEmpty">
+          <ng-container *ngFor="let monitor of monitors; index as i">
+            <tr
+              id="heading{{ i }}"
+              class="hover:bg-indigo-700 hover:text-white w-full h-12"
+              routerLink="/monitors/{{ monitor.uid }}"
+            >
+              <td class="pl-3 text-center">
+                {{ i + 1 }}
+              </td>
+              <td class="text-center">
+                {{ monitor.name }}
+              </td>
+              <td class="text-center">
+                {{ monitor.description }}
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -27,7 +27,7 @@
               </svg>
             </svg>
           </button>
-          <span class="p-4 text-lg text-white"> СИСТЕМА МОНИТОРИНГА ОБОРУДОВАНИЯ </span>
+          <a class="p-4 text-lg text-white hover:underline" routerLink="/"> СИСТЕМА МОНИТОРИНГА ОБОРУДОВАНИЯ </a>
         </div>
         <div class="flex items-center pr-2">
           <button class="text-white text-base border border-white rounded-lg h-10 px-4">Выход</button>
@@ -48,6 +48,7 @@
           hover:border-transparent
           rounded-t-lg
         "
+        routerLink="/models"
       >
         Каталог оборудования
       </button>
@@ -61,6 +62,7 @@
           px-4
           hover:border-transparent
         "
+        routerLink="/instances"
       >
         Развернутые экземпляры
       </button>
@@ -105,7 +107,7 @@
       </button>
       <div class="h-full"></div>
     </div>
-    <div class="flex rounded-lg p-32 w-full bg-white shadow-lg overflow-y-auto">
+    <div class="flex w-full overflow-y-auto">
       <router-outlet></router-outlet>
     </div>
   </div>

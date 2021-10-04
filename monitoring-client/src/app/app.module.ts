@@ -14,6 +14,7 @@ import { StoreModule } from '@ngrx/store';
 import { reducers, metaReducers } from './reducers';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
+import { EquipmentInstancesModule } from './equipment-instances/equipment-instances.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -26,6 +27,7 @@ import { environment } from '../environments/environment';
     AuthorizationModule,
     RegistrationModule,
     EquipmentModelsModule,
+    EquipmentInstancesModule,
     StoreModule.forRoot({}, {}),
     StoreModule.forRoot(reducers, { metaReducers }),
     !environment.production ? StoreDevtoolsModule.instrument() : [],
@@ -34,7 +36,7 @@ import { environment } from '../environments/environment';
       logOnly: environment.production,
     }),
   ],
-  providers: [],
+  providers: [{ provide: 'GATEWAY_URI', useValue: environment.gatewayUri }],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

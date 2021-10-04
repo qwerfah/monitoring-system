@@ -51,11 +51,28 @@ trait FileService[F[_]] {
       */
     def remove(uid: Uid): F[ServiceResponse[ResponseMessage]]
 
+    /** Restore file by its external identifier if it wasn't removed
+      * permanently.
+      * @param uid
+      *   File external identifier.
+      * @return
+      *   Description of operation result.
+      */
+    def restore(uid: Uid): F[ServiceResponse[ResponseMessage]]
+
     /** Remove all files for specified model.
       * @param modelUid
       *   Equipment model identifier.
       * @return
       *   Description of operation result.
       */
-    def removeModelFiles(modelUid: Uid): F[ServiceResponse[ResponseMessage]]
+    def removeByModelUid(modelUid: Uid): F[ServiceResponse[ResponseMessage]]
+
+    /** Restore all files for specified model if it wasn't removed permanently.
+      * @param modelUid
+      *   Equipment model identifier.
+      * @return
+      *   Description of operation result.
+      */
+    def restoreByModelUid(modelUid: Uid): F[ServiceResponse[ResponseMessage]]
 }

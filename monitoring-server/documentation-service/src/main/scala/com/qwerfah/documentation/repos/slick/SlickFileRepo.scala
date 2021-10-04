@@ -14,13 +14,18 @@ class SlickFileRepo(implicit val context: DocumentationContext)
   extends FileRepo[DBIO] {
     import context.profile.api._
 
-    override def getMeta: DBIO[Seq[FileMeta]] = context.files.result.map(
-      _.map(f => FileMeta(f.id, f.uid, f.modelUid, f.filename, f.contentType))
-    )
+    override def getMeta: DBIO[Seq[FileMeta]] = context.files
+        .filter(!_.isDeleted)
+        .result
+        .map(
+          _.map(f =>
+              FileMeta(f.id, f.uid, f.modelUid, f.filename, f.contentType)
+          )
+        )
 
     override def getModelMeta(modelUid: Uid): DBIO[Seq[FileMeta]] =
         context.files
-            .filter(_.modelUid === modelUid)
+            .filter(f => !f.isDeleted && f.modelUid === modelUid)
             .result
             .map(
               _.map(f =>
@@ -29,7 +34,10 @@ class SlickFileRepo(implicit val context: DocumentationContext)
             )
 
     override def get(uid: Uid): DBIO[Option[File]] =
-        context.files.filter(_.uid === uid).result.headOption
+        context.files
+            .filter(f => !f.isDeleted && f.uid === uid)
+            .result
+            .headOption
 
     override def add(file: File): DBIO[FileMeta] =
         (context.files returning context.files.map(
@@ -38,9 +46,52 @@ class SlickFileRepo(implicit val context: DocumentationContext)
             FileMeta(Some(id), f.uid, f.modelUid, f.filename, f.contentType)
         )) += file
 
-    override def remove(uid: Uid): DBIO[Int] =
-        context.files.filter(_.uid === uid).delete
+    override def remove(uid: Uid): DBIO[Int] = {
+        val targetRows =
+            context.files.filter(f => !f.isDeleted && f.uid === uid)
+        for {
+            booleanOption <- targetRows.result.headOption
+            updateActionOption = booleanOption.map(f =>
+                targetRows.update(f.copy(isDeleted = true))
+            )
+            affected <- updateActionOption.getOrElse(DBIO.successful(0))
+        } yield affected
+    }
 
-    override def removeModelFiles(modelUid: Uid): DBIO[Int] =
-        context.files.filter(_.modelUid === modelUid).delete
+    override def removeByModelUid(modelUid: Uid): DBIO[Int] = {
+        val targetRows =
+            context.files.filter(f => !f.isDeleted && f.modelUid === modelUid)
+        for {
+            values <- targetRows.result
+            updateActions = DBIO.sequence(
+              values.map(f => targetRows.update(f.copy(isDeleted = true)))
+            )
+            affected <- updateActions.map { _.sum }
+        } yield affected
+    }
+
+    override def restore(uid: Uid): DBIO[Int] = {
+        val targetRows =
+            context.files.filter(f => f.isDeleted && f.uid === uid)
+        for {
+            booleanOption <- targetRows.result.headOption
+            updateActionOption = booleanOption.map(f =>
+                targetRows.update(f.copy(isDeleted = false))
+            )
+            affected <- updateActionOption.getOrElse(DBIO.successful(0))
+        } yield affected
+    }
+
+    override def restoreByModelUid(modelUid: Uid): DBIO[Int] = {
+        val targetRows =
+            context.files.filter(f => f.isDeleted && f.modelUid === modelUid)
+        for {
+            values <- targetRows.result
+            updateActions = DBIO.sequence(
+              values.map(f => targetRows.update(f.copy(isDeleted = false)))
+            )
+            affected <- updateActions.map { _.sum }
+        } yield affected
+    }
+
 }

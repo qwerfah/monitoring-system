@@ -18,5 +18,6 @@ final case class File(
   modelUid: Uid,
   filename: String,
   contentType: String,
-  content: Array[Byte]
+  content: Array[Byte],
+  isDeleted: Boolean
 )

@@ -50,5 +50,21 @@ trait FileRepo[DB[_]] {
       * @return
       *   Number of records in repo affected.
       */
-    def removeModelFiles(modelUid: Uid): DB[Int]
+    def removeByModelUid(modelUid: Uid): DB[Int]
+
+    /** Restore file if it wasn't removed permanently.
+      * @param uid
+      *   File identifier.
+      * @return
+      *   Number of records in repo affected.
+      */
+    def restore(uid: Uid): DB[Int]
+
+    /** Restore all equipment model files if it wasn't removed permanently.
+      * @param modelUid
+      *   Model identifier.
+      * @return
+      *   Number of records in repo affected.
+      */
+    def restoreByModelUid(modelUid: Uid): DB[Int]
 }

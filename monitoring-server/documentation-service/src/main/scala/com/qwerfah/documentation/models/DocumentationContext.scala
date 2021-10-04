@@ -30,6 +30,7 @@ class DocumentationContext(implicit jdbcProfile: JdbcProfile, config: Config)
         def filename = column[String]("FILENAME")
         def contentType = column[String]("CONTENT_TYPE")
         def content = column[Array[Byte]]("CONTENT")
+        def isDeleted = column[Boolean]("IS_DELETED")
 
         def * = (
           id.?,
@@ -37,7 +38,8 @@ class DocumentationContext(implicit jdbcProfile: JdbcProfile, config: Config)
           modelUid,
           filename,
           contentType,
-          content
+          content,
+          isDeleted
         ).<>(File.tupled, File.unapply)
     }
 
@@ -62,7 +64,8 @@ class DocumentationContext(implicit jdbcProfile: JdbcProfile, config: Config)
         randomUid,
         "file_1.txt",
         "text/plain",
-        "content_1".getBytes
+        "content_1".getBytes,
+        false
       ),
       File(
         None,
@@ -70,7 +73,8 @@ class DocumentationContext(implicit jdbcProfile: JdbcProfile, config: Config)
         randomUid,
         "file_2.txt",
         "text/plain",
-        "content_2".getBytes
+        "content_2".getBytes,
+        false
       ),
       File(
         None,
@@ -78,7 +82,8 @@ class DocumentationContext(implicit jdbcProfile: JdbcProfile, config: Config)
         randomUid,
         "file_3.txt",
         "text/plain",
-        "content_3".getBytes
+        "content_3".getBytes,
+        false
       )
     )
 

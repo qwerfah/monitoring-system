@@ -44,10 +44,23 @@ class DefaultFileService[F[_]: Monad, DB[_]: Monad](implicit
             case _ => NoFile(uid).as404
         }
 
-    override def removeModelFiles(
+    override def removeByModelUid(
       modelUid: Uid
     ): F[ServiceResponse[ResponseMessage]] =
-        dbManager.execute(fileRepo.removeModelFiles(modelUid)) map { _ =>
+        dbManager.execute(fileRepo.removeByModelUid(modelUid)) map { _ =>
             ModelFilesRemoved(modelUid).as200
+        }
+
+    override def restore(uid: Uid): F[ServiceResponse[ResponseMessage]] =
+        dbManager.execute(fileRepo.restore(uid)) map {
+            case 1 => FileRestored(uid).as200
+            case _ => NoFile(uid).as404
+        }
+
+    override def restoreByModelUid(
+      modelUid: Uid
+    ): F[ServiceResponse[ResponseMessage]] =
+        dbManager.execute(fileRepo.restoreByModelUid(modelUid)) map { _ =>
+            ModelFilesRestored(modelUid).as200
         }
 }

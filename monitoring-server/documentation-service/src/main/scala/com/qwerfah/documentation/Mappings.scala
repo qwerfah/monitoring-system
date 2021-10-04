@@ -13,7 +13,8 @@ object Mappings {
           r.modelUid,
           r.filename,
           r.contentType,
-          r.content
+          r.content,
+          false
         )
     }
 

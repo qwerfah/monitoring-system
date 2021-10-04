@@ -115,7 +115,27 @@ object FileController extends Controller {
             authorize(
               header,
               serviceRoles,
-              _ => fileService.removeModelFiles(modelUid)
+              _ => fileService.removeByModelUid(modelUid)
+            )
+        }
+
+    private val restoreFile =
+        patch(
+          "files" :: path[Uid] :: "restore" :: headerOption("Authorization")
+        ) { (uid: Uid, header: Option[String]) =>
+            authorize(header, serviceRoles, _ => fileService.restore(uid))
+        }
+
+    private val restoreModelFiles =
+        patch(
+          "models" :: path[Uid] :: "files" :: "restore" :: headerOption(
+            "Authorization"
+          )
+        ) { (modelUid: Uid, header: Option[String]) =>
+            authorize(
+              header,
+              serviceRoles,
+              _ => fileService.restoreByModelUid(modelUid)
             )
         }
 
@@ -125,5 +145,7 @@ object FileController extends Controller {
         .:+:(addFile)
         .:+:(removeFile)
         .:+:(removeModelFiles)
+        .:+:(restoreFile)
+        .:+:(restoreModelFiles)
         .handle(errorHandler)
 }

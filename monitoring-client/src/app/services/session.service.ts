@@ -7,8 +7,8 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class HeroService {
-  constructor(private http: HttpClient, @Inject('SESSION_URI') private sessionUri: string) {}
+export class SessionService {
+  constructor(private http: HttpClient, @Inject('GATEWAY_URI') private gatewayUri: string) {}
 
   login(creds: Credentials) {}
 

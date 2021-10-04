@@ -32,6 +32,7 @@ object EquipmentInstanceController extends Controller {
     import Decoders._
 
     private val instanceService = implicitly[EquipmentInstanceService[Future]]
+    private val paramService = implicitly[ParamService[Future]]
     private implicit val tokenService = implicitly[TokenService[Future]]
 
     private val getInstances =
@@ -44,6 +45,12 @@ object EquipmentInstanceController extends Controller {
       "instances" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
         authorize(header, serviceRoles, _ => instanceService.get(uid))
+    }
+
+    private val getInstanceParams = get(
+      "instances" :: path[Uid] :: "params" :: headerOption("Authorization")
+    ) { (uid: Uid, header: Option[String]) =>
+        authorize(header, serviceRoles, _ => paramService.getByInstanceUid(uid))
     }
 
     private val addInstance = post(
@@ -77,8 +84,9 @@ object EquipmentInstanceController extends Controller {
         authorize(header, serviceRoles, _ => instanceService.remove(uid))
     }
 
-    val api = getInstances
+    val api = "api" :: getInstances
         .:+:(getInstance)
+        .:+:(getInstanceParams)
         .:+:(addInstance)
         .:+:(updateInstance)
         .:+:(deleteInstance)

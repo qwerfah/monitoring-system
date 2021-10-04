@@ -78,7 +78,7 @@ object EquipmentModelController extends Controller {
         authorize(header, serviceRoles, _ => modelService.remove(uid))
     }
 
-    val api = getModels
+    val api = "api" :: getModels
         .:+:(getModel)
         .:+:(getModelInstances)
         .:+:(getModelParams)

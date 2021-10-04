@@ -29,7 +29,7 @@ class DefaultUserService[F[_]: Monad, DB[_]: Monad](implicit
       request: UserRequest
     ): F[ServiceResponse[UserResponse]] = for {
         user <- dbManager.execute(userRepo.add(request.asUser))
-    } yield user.asResponse.as200
+    } yield user.asResponse.as201
 
     override def getAll: F[ServiceResponse[Seq[UserResponse]]] =
         for {

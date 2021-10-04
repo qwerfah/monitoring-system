@@ -24,7 +24,7 @@ object Main extends TwitterServer {
 
     val server =
         Http.serve(
-          ":8084",
+          config.getString("port"),
           OperationRecordController.api
               .:+:(ReportingSessionController.api)
               .toServiceAs[Application.Json]
@@ -32,6 +32,7 @@ object Main extends TwitterServer {
     onExit {
         server.close()
         subscriptionRef.close()
+        actorSystem.terminate()
     }
 
     com.twitter.util.Await.ready(server)

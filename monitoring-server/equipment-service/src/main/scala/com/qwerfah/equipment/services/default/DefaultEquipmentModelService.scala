@@ -41,7 +41,7 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
     override def add(
       request: ModelRequest
     ): F[ServiceResponse[ModelResponse]] =
-        dbManager.execute(repo.add(request.asModel)) map { _.asResponse.as200 }
+        dbManager.execute(repo.add(request.asModel)) map { _.asResponse.as201 }
 
     override def update(
       uid: Uid,

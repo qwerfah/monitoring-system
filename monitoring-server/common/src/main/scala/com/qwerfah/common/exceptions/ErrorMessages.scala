@@ -1,6 +1,7 @@
 package com.qwerfah.common.exceptions
 
 import com.qwerfah.common.Uid
+import com.qwerfah.common.http.ServiceTag
 
 sealed abstract class ErrorMessage extends Exception
 
@@ -63,6 +64,34 @@ final case class NoOperationRecords(serviceId: String) extends ErrorMessage {
         s"No records about any $serviceId service operations found."
 }
 
+final case class NoFile(uid: Uid) extends ErrorMessage {
+    override def getMessage = s"Documentation file with uid $uid not found."
+}
+
+final case class NoParamValue(uid: Uid) extends ErrorMessage {
+    override def getMessage =
+        s"Equipment parameter value with uid $uid not found."
+}
+
+final case class NoParamValuesForInstance(iuid: Uid) extends ErrorMessage {
+    override def getMessage =
+        s"Equipment parameter values of instance with uid $iuid not found."
+}
+
+final case class NoValuesForParam(puid: Uid) extends ErrorMessage {
+    override def getMessage =
+        s"Equipment parameter values for param with uid $puid not found."
+}
+
+final case class NoParamValues(puid: Uid, iuid: Uid) extends ErrorMessage {
+    override def getMessage =
+        s"Equipment parameter values of instance with uid $iuid for param with uid $puid not found."
+}
+
+case object NoMultipartData extends ErrorMessage {
+    override def getMessage = "No file was presented in multipart data."
+}
+
 case object InvalidStatusCode extends ErrorMessage {
     override def getMessage = "Status code must be between 100 and 599."
 }
@@ -93,24 +122,32 @@ case object NoExpiredToken extends ErrorMessage {
     override def getMessage = "Attempted to delete non-existent expired token."
 }
 
-final case class ServiceUnavailable(service: String) extends ErrorMessage {
+final case class ServiceUnavailable(service: ServiceTag) extends ErrorMessage {
     override def getMessage = s"$service service temporarily unavailable."
 }
 
-final case class ServiceInternalError(service: String) extends ErrorMessage {
+final case class ServiceInternalError(service: ServiceTag)
+  extends ErrorMessage {
     override def getMessage = s"$service service internal error."
 }
 
-final case class BadServiceResult(service: String) extends ErrorMessage {
+final case class BadServiceResult(service: ServiceTag) extends ErrorMessage {
     override def getMessage = s"$service service returns unprocessable result."
 }
 
-final case class UnknownServiceResponse(service: String) extends ErrorMessage {
+final case class UnknownServiceResponse(service: ServiceTag)
+  extends ErrorMessage {
     override def getMessage =
         s"$service service returns response with unknown status code."
 }
 
-final case class InterserviceAuthFailed(service: String) extends ErrorMessage {
+final case class InterserviceAuthFailed(service: ServiceTag)
+  extends ErrorMessage {
     override def getMessage =
         s"Can't authorize in $service service with current service credentials."
+}
+
+case object NonexistentInstance extends ErrorMessage {
+    override def getMessage =
+        s"Attempted to add param values for instance that was removed during request processing."
 }

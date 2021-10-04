@@ -18,7 +18,9 @@ lazy val global = project
       monitoring,
       gatewayApi,
       equipmentApi,
+      documentationApi,
       monitoringApi,
+      generatorApi,
       reportingApi
     )
 
@@ -40,7 +42,15 @@ lazy val gateway = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(common, gatewayApi, equipmentApi)
+    .dependsOn(
+      common,
+      gatewayApi,
+      equipmentApi,
+      documentationApi,
+      monitoringApi,
+      generatorApi,
+      reportingApi
+    )
 
 lazy val session = project
     .in(file("session-service"))
@@ -76,7 +86,7 @@ lazy val documentation = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(common)
+    .dependsOn(common, documentationApi)
 
 lazy val generator = project
     .in(file("generator-service"))
@@ -85,7 +95,7 @@ lazy val generator = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(common)
+    .dependsOn(common, generatorApi, equipmentApi)
 
 lazy val monitoring = project
     .in(file("monitoring-service"))
@@ -115,10 +125,30 @@ lazy val equipmentApi = project
     .dependsOn(common)
     .disablePlugins(AssemblyPlugin)
 
+lazy val documentationApi = project
+    .in(file("documentation-service-api"))
+    .settings(
+      name := "documentation-service-api",
+      settings,
+      libraryDependencies ++= commonDependencies
+    )
+    .dependsOn(common)
+    .disablePlugins(AssemblyPlugin)
+
 lazy val monitoringApi = project
     .in(file("monitoring-service-api"))
     .settings(
       name := "monitoring-service-api",
+      settings,
+      libraryDependencies ++= commonDependencies
+    )
+    .dependsOn(common)
+    .disablePlugins(AssemblyPlugin)
+
+lazy val generatorApi = project
+    .in(file("generator-service-api"))
+    .settings(
+      name := "generator-service-api",
       settings,
       libraryDependencies ++= commonDependencies
     )

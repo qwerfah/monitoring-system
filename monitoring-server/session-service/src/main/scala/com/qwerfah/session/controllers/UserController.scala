@@ -66,7 +66,7 @@ object UserController extends Controller {
                 authorize(header, serviceRoles, _ => userService.remove(uid))
         }
 
-    val api = getUsers
+    val api = "api" :: getUsers
         .:+:(getUser)
         .:+:(register)
         .:+:(updateUser)

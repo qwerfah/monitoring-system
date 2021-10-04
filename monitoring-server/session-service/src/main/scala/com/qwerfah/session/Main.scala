@@ -23,14 +23,19 @@ object Main extends TwitterServer {
 
     val server =
         Http.serve(
-          ":8081",
-          RequestLoggingFilter.andThen(
-            UserController.api
-                .:+:(UserSessionController.api)
-                .toServiceAs[Application.Json]
-          )
+          config.getString("port"),
+          RequestLoggingFilter
+              .andThen(RequestReportingFilter)
+              .andThen(
+                UserController.api
+                    .:+:(UserSessionController.api)
+                    .toServiceAs[Application.Json]
+              )
         )
-    onExit { server.close() }
+    onExit {
+        server.close()
+        actorSystem.terminate()
+    }
 
     com.twitter.util.Await.ready(server)
 }

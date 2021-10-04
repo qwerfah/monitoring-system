@@ -45,6 +45,9 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
             _.asResponse.as200
         }
 
+    override def getInstances: F[ServiceResponse[Seq[Uid]]] =
+        dbManager.execute(monitorRepo.getInstances) map { _.as200 }
+
     override def getParams(
       uid: Uid
     ): F[ServiceResponse[Seq[ParamResponse]]] =
@@ -58,18 +61,18 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
             ).sequence map { params =>
                 params.foldLeft(Seq[ParamResponse]()) { (a, b) =>
                     b match {
-                        case ObjectResponse(value) => a.appended(value)
-                        case other                 => a
+                        case OkResponse(value) => a.appended(value)
+                        case other             => a
                     }
                 }
             } map { _.as200 }
         }
 
     override def add(
-      request: MonitorRequest
+      request: AddMonitorRequest
     ): F[ServiceResponse[MonitorResponse]] =
         dbManager.execute(monitorRepo.add(request.asMonitor)) map {
-            _.asResponse.as200
+            _.asResponse.as201
         }
 
     override def addParam(
@@ -83,7 +86,7 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
                     request.asParam.copy(monitorUid = monitorUid)
                   )
                 ) map {
-                    case 1 => MonitorParamAdded(monitorUid).as200
+                    case 1 => MonitorParamAdded(monitorUid).as201
                     case _ =>
                         DuplicatedMonitorParam(
                           request.paramUid,
@@ -96,7 +99,7 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
 
     override def update(
       uid: Uid,
-      request: MonitorRequest
+      request: UpdateMonitorRequest
     ): F[ServiceResponse[ResponseMessage]] =
         dbManager.execute(
           monitorRepo.update(request.asMonitor.copy(uid = uid))

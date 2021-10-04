@@ -26,13 +26,17 @@ class DocumentationContext(implicit jdbcProfile: JdbcProfile, config: Config)
       extends Table[File](tag, "FILES") {
         def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
         def uid = column[Uid]("UUID", O.Unique)
+        def modelUid = column[Uid]("MODEL_UUID")
         def filename = column[String]("FILENAME")
+        def contentType = column[String]("CONTENT_TYPE")
         def content = column[Array[Byte]]("CONTENT")
 
         def * = (
           id.?,
           uid,
+          modelUid,
           filename,
+          contentType,
           content
         ).<>(File.tupled, File.unapply)
     }
@@ -52,9 +56,30 @@ class DocumentationContext(implicit jdbcProfile: JdbcProfile, config: Config)
     )
 
     private val initialFiles = Seq(
-      File(None, randomUid, "file_1.txt", "content_1".getBytes),
-      File(None, randomUid, "file_2.txt", "content_2".getBytes),
-      File(None, randomUid, "file_3.txt", "content_3".getBytes)
+      File(
+        None,
+        randomUid,
+        randomUid,
+        "file_1.txt",
+        "text/plain",
+        "content_1".getBytes
+      ),
+      File(
+        None,
+        randomUid,
+        randomUid,
+        "file_2.txt",
+        "text/plain",
+        "content_2".getBytes
+      ),
+      File(
+        None,
+        randomUid,
+        randomUid,
+        "file_3.txt",
+        "text/plain",
+        "content_3".getBytes
+      )
     )
 
     private def addUsers = {

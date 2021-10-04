@@ -9,6 +9,9 @@ trait ParamService[F[_]] {
     def getAll: F[ServiceResponse[Seq[ParamResponse]]]
     def get(uid: Uid): F[ServiceResponse[ParamResponse]]
     def getByModelUid(modelUid: Uid): F[ServiceResponse[Seq[ParamResponse]]]
+    def getByInstanceUid(
+      instanceUid: Uid
+    ): F[ServiceResponse[Seq[ParamResponse]]]
     def add(param: AddParamRequest): F[ServiceResponse[ParamResponse]]
     def update(
       uid: Uid,

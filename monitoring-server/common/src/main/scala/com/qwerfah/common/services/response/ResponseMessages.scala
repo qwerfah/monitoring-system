@@ -62,3 +62,30 @@ final case class RecordsRemoved(serviceId: String) extends ResponseMessage {
     override val message =
         s"All records about $serviceId service operations removed."
 }
+
+final case class FileRemoved(uid: Uid) extends ResponseMessage {
+    override val message = s"Documentation file with uid $uid removed."
+}
+
+final case class ModelFilesRemoved(uid: Uid) extends ResponseMessage {
+    override val message =
+        s"All documentation files for model with uid $uid removed."
+}
+
+case object ParamValuesAdded extends ResponseMessage {
+    override val message =
+        "Param values for all tracked equipment instances added."
+}
+
+final case class ParamValueRemoved(uid: Uid) extends ResponseMessage {
+    override val message = s"Parameter value with uid $uid removed."
+}
+
+final case class ParamValuesRemoved(uid: Uid) extends ResponseMessage {
+    override val message = s"All values for parameter with uid $uid removed."
+}
+
+final case class InstanceParamValuesRemoved(uid: Uid) extends ResponseMessage {
+    override val message =
+        s"All parameter values for instance with uid $uid removed."
+}

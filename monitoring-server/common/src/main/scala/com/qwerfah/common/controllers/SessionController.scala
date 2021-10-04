@@ -16,12 +16,13 @@ import io.circe.generic.auto._
 import io.catbird.util._
 
 import com.qwerfah.common.json.Decoders
+import com.qwerfah.common.models.Payload
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.Uid
 import com.qwerfah.common.services._
 import com.qwerfah.common.controllers.Controller
 import com.qwerfah.common.resources._
-import com.qwerfah.common.services.response.ObjectResponse
+import com.qwerfah.common.services.response.OkResponse
 
 /** Provide endpoints for interservice authorization.
   * @param userService
@@ -54,12 +55,12 @@ abstract class SessionController(implicit
     private val verify =
         post("session" :: "verify" :: headerOption("Authorization")) {
             header: Option[String] =>
-                authorize[Future, Uid](
+                authorize[Future, Payload](
                   header,
                   readRoles,
-                  uid => FuturePool immediatePool { ObjectResponse(uid) }
+                  payload => FuturePool immediatePool { OkResponse(payload) }
                 )
         }
 
-    val api = login.:+:(refresh).:+:(verify).handle(errorHandler)
+    val api = "api" :: login.:+:(refresh).:+:(verify).handle(errorHandler)
 }

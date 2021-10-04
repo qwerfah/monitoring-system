@@ -102,6 +102,30 @@ object Decoders {
             }
         }
 
+    implicit val decodeInstanceResponse: Decoder[InstanceResponse] =
+        (c: HCursor) => {
+            instanceResponseSchema.validate(c.value) match {
+                case Valid(()) =>
+                    for {
+                        uid <- c.downField("uid").as[Uid]
+                        modelUid <- c.downField("modelUid").as[Uid]
+                        name <- c.downField("name").as[String]
+                        description <- c
+                            .downField("description")
+                            .as[Option[String]]
+                        status <- c.downField("status").as[EquipmentStatus]
+                    } yield InstanceResponse(
+                      uid,
+                      modelUid,
+                      name,
+                      description,
+                      status
+                    )
+                case Invalid(errors) =>
+                    throw InvalidJsonBodyException(errors)
+            }
+        }
+
     implicit val decodeParamResponse: Decoder[ParamResponse] =
         (c: HCursor) => {
             paramResponseSchema.validate(c.value) match {

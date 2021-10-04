@@ -17,6 +17,7 @@ import com.qwerfah.common.util.Conversions._
 
 class DefaultParamService[F[_]: Monad, DB[_]: Monad](implicit
   modelRepo: EquipmentModelRepo[DB],
+  instanceRepo: EquipmentInstanceRepo[DB],
   paramRepo: ParamRepo[DB],
   dbManager: DbManager[F, DB]
 ) extends ParamService[F] {
@@ -38,13 +39,24 @@ class DefaultParamService[F[_]: Monad, DB[_]: Monad](implicit
             _.asResponse.as200
         }
 
+    override def getByInstanceUid(
+      instanceUid: Uid
+    ): F[ServiceResponse[Seq[ParamResponse]]] =
+        dbManager.execute(instanceRepo.getByUid(instanceUid)) flatMap {
+            case Some(value) =>
+                dbManager.execute(paramRepo.getByModelUid(value.modelUid)) map {
+                    _.asResponse.as200
+                }
+            case None => Monad[F].pure(NoInstance(instanceUid).as404)
+        }
+
     override def add(
       request: AddParamRequest
     ): F[ServiceResponse[ParamResponse]] =
         dbManager.execute(modelRepo.getByUid(request.modelUid)) flatMap {
             case Some(model) =>
                 dbManager.execute(paramRepo.add(request.asParam)) map {
-                    _.asResponse.as200
+                    _.asResponse.as201
                 }
             case None => Monad[F].pure(NoModel(request.modelUid).as404)
         }

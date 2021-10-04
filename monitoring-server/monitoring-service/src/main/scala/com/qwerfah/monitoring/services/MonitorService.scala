@@ -32,6 +32,12 @@ trait MonitorService[F[_]] {
       instanceUid: Uid
     ): F[ServiceResponse[Seq[MonitorResponse]]]
 
+    /** Get uids of all instances that monitor by monitoring service.
+      * @return
+      *   Collection of all traked instances uids
+      */
+    def getInstances: F[ServiceResponse[Seq[Uid]]]
+
     /** Get params tracked by specified monitor.
       * @param uid
       *   Monitor uid.
@@ -46,7 +52,7 @@ trait MonitorService[F[_]] {
       * @return
       *   New monitor instance added to storage.
       */
-    def add(request: MonitorRequest): F[ServiceResponse[MonitorResponse]]
+    def add(request: AddMonitorRequest): F[ServiceResponse[MonitorResponse]]
 
     /** Add new param tracked by specified monitor.
       * @param param
@@ -54,7 +60,10 @@ trait MonitorService[F[_]] {
       * @return
       *   Message describes successful or failed operation.
       */
-    def addParam(monitorUid: Uid, param: MonitorParamRequest): F[ServiceResponse[ResponseMessage]]
+    def addParam(
+      monitorUid: Uid,
+      param: MonitorParamRequest
+    ): F[ServiceResponse[ResponseMessage]]
 
     /** Update existing monitor data.
       * @param uid
@@ -66,7 +75,7 @@ trait MonitorService[F[_]] {
       */
     def update(
       uid: Uid,
-      request: MonitorRequest
+      request: UpdateMonitorRequest
     ): F[ServiceResponse[ResponseMessage]]
 
     /** Remove monitor by its uid.
@@ -83,5 +92,8 @@ trait MonitorService[F[_]] {
       * @return
       *   Message describes successful or failed operation.
       */
-    def removeParam(monitorUid: Uid, paramUid: Uid): F[ServiceResponse[ResponseMessage]]
+    def removeParam(
+      monitorUid: Uid,
+      paramUid: Uid
+    ): F[ServiceResponse[ResponseMessage]]
 }

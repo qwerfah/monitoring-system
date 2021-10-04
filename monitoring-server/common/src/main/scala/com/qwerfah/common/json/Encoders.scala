@@ -6,6 +6,7 @@ import scala.language.reflectiveCalls
 
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.services.response.ResponseMessage
+import com.qwerfah.common.services.response.ErrorResponse
 
 /** Provide json encoders for different respose types. */
 object Encoders {
@@ -17,6 +18,16 @@ object Encoders {
     implicit val encodeResponseMessage: Encoder[ResponseMessage] =
         Encoder.instance({ message =>
             Json.obj("message" -> Json.fromString(message.message))
+        })
+
+    implicit val encodeErrorMessage: Encoder[ErrorMessage] =
+        Encoder.instance({ message =>
+            Json.obj("message" -> Json.fromString(message.getMessage))
+        })
+
+    implicit val encodeErrorResponse: Encoder[ErrorResponse] =
+        Encoder.instance({ response =>
+            Json.obj("message" -> Json.fromString(response.message))
         })
 
     /** Json encoder for error response type. */

@@ -8,6 +8,7 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 import com.qwerfah.reporting.models._
 import com.qwerfah.reporting.repos.OperationRecordRepo
+
 import com.qwerfah.common.Uid
 import com.qwerfah.common.http.HttpMethod
 

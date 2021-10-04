@@ -61,17 +61,25 @@ object MonitorController extends Controller {
         )
     }
 
+    private val getMonitorIsntances = get(
+      "monitors" :: "instances" :: headerOption(
+        "Authorization"
+      )
+    ) { header: Option[String] =>
+        authorize(header, serviceRoles, _ => monitorService.getInstances)
+    }
+
     private val addMonitor = post(
-      "monitors" :: jsonBody[MonitorRequest] :: headerOption("Authorization")
-    ) { (request: MonitorRequest, header: Option[String]) =>
+      "monitors" :: jsonBody[AddMonitorRequest] :: headerOption("Authorization")
+    ) { (request: AddMonitorRequest, header: Option[String]) =>
         authorize(header, serviceRoles, _ => monitorService.add(request))
     }
 
     private val updateMonitor = patch(
-      "monitors" :: path[Uid] :: jsonBody[MonitorRequest] :: headerOption(
+      "monitors" :: path[Uid] :: jsonBody[UpdateMonitorRequest] :: headerOption(
         "Authorization"
       )
-    ) { (uid: Uid, request: MonitorRequest, header: Option[String]) =>
+    ) { (uid: Uid, request: UpdateMonitorRequest, header: Option[String]) =>
         authorize(
           header,
           serviceRoles,
@@ -111,10 +119,11 @@ object MonitorController extends Controller {
         )
     }
 
-    val api = getMonitors
+    val api = "api" :: getMonitors
         .:+:(getMonitor)
         .:+:(getMonitorParams)
         .:+:(getInstanceMonitors)
+        .:+:(getMonitorIsntances)
         .:+:(addMonitor)
         .:+:(updateMonitor)
         .:+:(addMonitorParam)

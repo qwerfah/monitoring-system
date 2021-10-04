@@ -2,8 +2,13 @@ package com.qwerfah.monitoring.resources
 
 import com.qwerfah.common.Uid
 
-final case class MonitorRequest(
+final case class AddMonitorRequest(
   instanceUid: Uid,
+  name: String,
+  description: Option[String]
+)
+
+final case class UpdateMonitorRequest(
   name: String,
   description: Option[String]
 )

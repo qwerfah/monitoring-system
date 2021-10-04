@@ -13,10 +13,10 @@ import com.typesafe.config.{Config, ConfigObject}
 import io.circe.generic.auto._
 import io.circe.config.syntax._
 
-import com.qwerfah.common.{Uid, randomUid, hashString}
 import com.qwerfah.common.models._
+import com.qwerfah.common.models.DataContext
+import com.qwerfah.common.{Uid, randomUid, hashString}
 import com.qwerfah.common.resources.{UserRole, Credentials}
-import _root_.com.qwerfah.common.models.DataContext
 
 class MonitoringContext(implicit jdbcProfile: JdbcProfile, config: Config)
   extends DataContext(jdbcProfile) {

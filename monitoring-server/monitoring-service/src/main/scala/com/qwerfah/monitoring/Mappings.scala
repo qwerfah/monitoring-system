@@ -5,12 +5,25 @@ import com.qwerfah.monitoring.models._
 import com.qwerfah.common.randomUid
 
 object Mappings {
-    implicit class RequestToMonitorMapping(request: MonitorRequest) {
+    implicit class AddRequestToMonitorMapping(request: AddMonitorRequest) {
         def asMonitor =
             Monitor(
               None,
               randomUid,
               request.instanceUid,
+              request.name,
+              request.description
+            )
+    }
+
+    implicit class UpdateRequestToMonitorMapping(
+      request: UpdateMonitorRequest
+    ) {
+        def asMonitor =
+            Monitor(
+              None,
+              randomUid,
+              randomUid,
               request.name,
               request.description
             )

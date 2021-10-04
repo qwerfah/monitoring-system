@@ -18,9 +18,9 @@ import com.qwerfah.monitoring.json.JsonSchemas._
 /** Provide custom json decoders with validation for different model resources.
   */
 object Decoders {
-    implicit val decodeMonitorRequest: Decoder[MonitorRequest] = (c: HCursor) =>
-        {
-            monitorRequestSchema.validate(c.value) match {
+    implicit val decodeAddMonitorRequest: Decoder[AddMonitorRequest] =
+        (c: HCursor) => {
+            addMonitorRequestSchema.validate(c.value) match {
                 case Valid(()) =>
                     for {
                         instanceUid <- c.downField("instanceUid").as[Uid]
@@ -28,7 +28,22 @@ object Decoders {
                         description <- c
                             .downField("description")
                             .as[Option[String]]
-                    } yield MonitorRequest(instanceUid, name, description)
+                    } yield AddMonitorRequest(instanceUid, name, description)
+                case Invalid(errors) =>
+                    throw InvalidJsonBodyException(errors)
+            }
+        }
+
+    implicit val decodeUpdateMonitorRequest: Decoder[UpdateMonitorRequest] =
+        (c: HCursor) => {
+            updateMonitorRequestSchema.validate(c.value) match {
+                case Valid(()) =>
+                    for {
+                        name <- c.downField("name").as[String]
+                        description <- c
+                            .downField("description")
+                            .as[Option[String]]
+                    } yield UpdateMonitorRequest(name, description)
                 case Invalid(errors) =>
                     throw InvalidJsonBodyException(errors)
             }
@@ -36,7 +51,7 @@ object Decoders {
 
     implicit val decodeMonitorResponse: Decoder[MonitorResponse] =
         (c: HCursor) => {
-            monitorRequestSchema.validate(c.value) match {
+            monitorResponseSchema.validate(c.value) match {
                 case Valid(()) =>
                     for {
                         uid <- c.downField("uid").as[Uid]
@@ -53,7 +68,7 @@ object Decoders {
 
     implicit val decodeMonitorParamRequest: Decoder[MonitorParamRequest] =
         (c: HCursor) => {
-            monitorRequestSchema.validate(c.value) match {
+            monitorParamRequestSchema.validate(c.value) match {
                 case Valid(()) =>
                     for {
                         paramUid <- c.downField("paramUid").as[Uid]
@@ -65,7 +80,7 @@ object Decoders {
 
     implicit val decodeMonitorParamResponse: Decoder[MonitorParamResponse] =
         (c: HCursor) => {
-            monitorRequestSchema.validate(c.value) match {
+            monitorParamResponseSchema.validate(c.value) match {
                 case Valid(()) =>
                     for {
                         monitorUid <- c.downField("monitorUid").as[Uid]

@@ -23,10 +23,13 @@ import io.circe.syntax._
 
 import com.qwerfah.common.http.HttpClient
 import com.qwerfah.common.services.response._
+import com.qwerfah.common.services.response.SuccessResponse
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.models.Token
 import com.qwerfah.common.resources.Credentials
 import com.qwerfah.common.util.Conversions._
+import com.twitter.finagle.http.exp.Multipart
+import com.twitter.io.BufInputStream
 
 /** Default http client implementation based on finagle client and twitter
   * future. Contain also access-refresh token pair for authorization in
@@ -39,9 +42,14 @@ import com.qwerfah.common.util.Conversions._
   * @param dest
   *   Destination service url.
   */
-class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
-  extends HttpClient[Future] {
+class DefaultHttpClient(
+  tag: ServiceTag,
+  creds: Credentials,
+  dest: String
+) extends HttpClient[Future] {
     var token: Option[Token] = None
+    val loginUrl = "/api/session/login"
+    val refreshUrl = "/api/session/refresh"
 
     /** Attempt to authorize in destination service using provided credentials.
       * @return
@@ -49,14 +57,14 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
       *   error response.
       */
     private def authorizeInDest: Future[ServiceResponse[Token]] = {
-        val request = Request(TwitterMethod.Post, "/auth/login")
+        val request = Request(TwitterMethod.Post, loginUrl)
         request.setContentType("application/json")
         request.setContentString(creds.asJson.toString)
 
         service(request) map { response =>
             response.status match {
                 case Status.Ok => decodeJson[Token](response.contentString)
-                case _         => InterserviceAuthFailed(ss.value).as401
+                case _         => InterserviceAuthFailed(tag).as401
             }
         }
     }
@@ -68,7 +76,7 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
       *   error response.
       */
     private def refreshTokenInDest: Future[ServiceResponse[Token]] = {
-        val request = Request(TwitterMethod.Post, "/auth/refresh")
+        val request = Request(TwitterMethod.Post, refreshUrl)
         request.headerMap.add(
           "Authorization",
           "Bearer ".concat(token.get.refresh)
@@ -77,7 +85,7 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
         service(request) map { response =>
             response.status match {
                 case Status.Ok => decodeJson[Token](response.contentString)
-                case _         => InterserviceAuthFailed(ss.value).as401
+                case _         => InterserviceAuthFailed(tag).as401
             }
         }
     }
@@ -110,7 +118,7 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
             response.status match {
                 case Status.Unauthorized =>
                     getTokenFromDest flatMap {
-                        case ObjectResponse(token) => {
+                        case OkResponse(token) => {
                             this.token = Some(token)
                             request.headerMap += ("Authorization" -> "Bearer "
                                 .concat(this.token.get.access))
@@ -127,26 +135,26 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
     )(implicit decoder: Decoder[A]) = response.status match {
         case Status.Ok => decodeJson(response.contentString)
         case Status.Unauthorized =>
-            if (token.isEmpty) InterserviceAuthFailed(ss.value).as401
+            if (token.isEmpty) InterserviceAuthFailed(tag).as401
             else InvalidToken.as401
         case Status.NotFound =>
-            decode[ErrorMessage](response.contentString) match {
-                case Right(value) => value.as404
-                case _            => UnknownServiceResponse(ss.value).as520
+            decode[NotFoundResponse](response.contentString) match {
+                case Right(value) => value
+                case _            => UnknownServiceResponse(tag).as520
             }
         case Status.Conflict =>
-            decode[ErrorMessage](response.contentString) match {
-                case Right(value) => value.as409
-                case _            => UnknownServiceResponse(ss.value).as520
+            decode[ConflictResponse](response.contentString) match {
+                case Right(value) => value
+                case _            => UnknownServiceResponse(tag).as520
             }
         case Status.UnprocessableEntity =>
-            decode[ErrorMessage](response.contentString) match {
-                case Right(value) => value.as422
-                case _            => UnknownServiceResponse(ss.value).as520
+            decode[UnprocessableResponse](response.contentString) match {
+                case Right(value) => value
+                case _            => UnknownServiceResponse(tag).as520
             }
-        case Status.InternalServerError => ServiceInternalError(ss.value).as500
-        case Status.ServiceUnavailable  => ServiceUnavailable(ss.value).as502
-        case _ => UnknownServiceResponse(ss.value).as520
+        case Status.InternalServerError => ServiceInternalError(tag).as500
+        case Status.ServiceUnavailable  => ServiceUnavailable(tag).as502
+        case _                          => UnknownServiceResponse(tag).as520
     }
 
     /** Finagle service with circuit breaker. */
@@ -173,8 +181,54 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
     private def decodeJson[A](body: String)(implicit decoder: Decoder[A]) = {
         decode[A](body) match {
             case Right(value) => value.as200
-            case Left(error)  => BadServiceResult(ss.value).as422
+            case Left(error)  => BadServiceResult(tag).as422
         }
+    }
+
+    override def send(request: Request): Future[Response] = {
+        sendWithRefresh(request) map { response =>
+            response.status match {
+                case Status.ServiceUnavailable =>
+                    response.status = Status.BadGateway
+                case _ => ()
+            }
+
+            response
+        }
+    }
+
+    override def send(
+      method: HttpMethod = HttpMethod.Get,
+      url: String = "/",
+      content: Option[String] = None,
+      token: Option[String] = None
+    ): Future[Response] = {
+        val request = Request(method.asTwitter, url)
+        request.headerMap += ("Authorization" -> "Bearer ".concat(
+          token.getOrElse(this.token.getOrElse(Token()).access)
+        ))
+        content match {
+            case Some(value) => {
+                request.setContentType("application/json")
+                request.setContentString(value)
+            }
+            case _ => ()
+        }
+
+        val response = token match {
+            case Some(_) => service(request)
+            case None    => sendWithRefresh(request)
+        }
+
+        response map { response =>
+            response.status match {
+                case Status.ServiceUnavailable =>
+                    response.status = Status.BadGateway
+                case _ => ()
+            }
+        }
+
+        response
     }
 
     override def sendAndDecode[A](
@@ -197,6 +251,11 @@ class DefaultHttpClient(ss: ServiceTag, creds: Credentials, dest: String)
             case _ => ()
         }
 
-        sendWithRefresh(request) map { response => matchStatus(response) }
+        val response = token match {
+            case Some(_) => service(request)
+            case None    => sendWithRefresh(request)
+        }
+
+        response map { response => matchStatus(response) }
     }
 }

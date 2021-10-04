@@ -79,7 +79,7 @@ class DefaultParamService[F[_]: Monad, DB[_]: Monad](implicit
 
     override def restore(uid: Uid): F[ServiceResponse[ResponseMessage]] =
         dbManager.execute(paramRepo.restoreByUid(uid)) map {
-            case 1 => ParamRemoved(uid).as200
+            case 1 => ParamRestored(uid).as200
             case _ => NoParam(uid).as404
         }
 

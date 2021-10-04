@@ -14,6 +14,10 @@ final case class ModelRemoved(uid: Uid) extends ResponseMessage {
     override val message = s"Equipment model with uid $uid removed."
 }
 
+final case class ModelRestored(uid: Uid) extends ResponseMessage {
+    override val message = s"Equipment model with uid $uid restored."
+}
+
 final case class InstanceUpdated(uid: Uid) extends ResponseMessage {
     override val message = s"Equipment instance with uid $uid updated."
 }
@@ -22,12 +26,20 @@ final case class InstanceRemoved(uid: Uid) extends ResponseMessage {
     override val message = s"Equipment instance with uid $uid removed."
 }
 
+final case class InstanceRestored(uid: Uid) extends ResponseMessage {
+    override val message = s"Equipment instance with uid $uid restored."
+}
+
 final case class ParamUpdated(uid: Uid) extends ResponseMessage {
     override val message = s"Equipment model param with uid $uid updated."
 }
 
 final case class ParamRemoved(uid: Uid) extends ResponseMessage {
     override val message = s"Equipment model param with uid $uid removed."
+}
+
+final case class ParamRestored(uid: Uid) extends ResponseMessage {
+    override val message = s"Equipment model param with uid $uid restored."
 }
 
 final case class UserUpdated(uid: Uid) extends ResponseMessage {

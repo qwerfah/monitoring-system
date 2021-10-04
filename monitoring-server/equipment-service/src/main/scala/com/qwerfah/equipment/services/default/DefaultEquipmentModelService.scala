@@ -73,7 +73,7 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
         _ <- dbManager.execute(instnaceRepo.restoreByModelUid(uid))
         _ <- dbManager.execute(paramRepo.restoreByModelUid(uid))
     } yield result match {
-        case 1 => ModelRemoved(uid).as200
+        case 1 => ModelRestored(uid).as200
         case _ => NoModel(uid).as404
     }
 

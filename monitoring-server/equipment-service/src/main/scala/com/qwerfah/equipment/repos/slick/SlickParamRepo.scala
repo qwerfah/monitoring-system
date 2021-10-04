@@ -12,7 +12,8 @@ class SlickParamRepo(implicit val context: EquipmentContext)
   extends ParamRepo[DBIO] {
     import context.profile.api._
 
-    override def get: DBIO[Seq[Param]] = context.params.result
+    override def get: DBIO[Seq[Param]] =
+        context.params.filter(!_.isDeleted).result
 
     override def getById(id: Int): DBIO[Option[Param]] =
         context.params

@@ -13,7 +13,8 @@ class SlickEquipmentInstanceRepo(implicit val context: EquipmentContext)
   extends EquipmentInstanceRepo[DBIO] {
     import context.profile.api._
 
-    override def get: DBIO[Seq[EquipmentInstance]] = context.instances.result
+    override def get: DBIO[Seq[EquipmentInstance]] =
+        context.instances.filter(!_.isDeleted).result
 
     override def getById(id: Int): DBIO[Option[EquipmentInstance]] =
         context.instances

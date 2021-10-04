@@ -18,4 +18,5 @@ trait ParamService[F[_]] {
       param: UpdateParamRequest
     ): F[ServiceResponse[ResponseMessage]]
     def remove(uid: Uid): F[ServiceResponse[ResponseMessage]]
+    def restore(uid: Uid): F[ServiceResponse[ResponseMessage]]
 }

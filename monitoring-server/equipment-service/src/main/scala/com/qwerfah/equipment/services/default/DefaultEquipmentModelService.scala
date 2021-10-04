@@ -16,7 +16,9 @@ import com.qwerfah.common.exceptions._
 import com.qwerfah.common.util.Conversions._
 
 class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
-  repo: EquipmentModelRepo[DB],
+  modelRepo: EquipmentModelRepo[DB],
+  instnaceRepo: EquipmentInstanceRepo[DB],
+  paramRepo: ParamRepo[DB],
   dbManager: DbManager[F, DB]
 ) extends EquipmentModelService[F] {
     import Mappings._
@@ -30,10 +32,10 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
         }
 
     override def getAll: F[ServiceResponse[Seq[ModelResponse]]] =
-        dbManager.execute(repo.get) map { _.asResponse.as200 }
+        dbManager.execute(modelRepo.get) map { _.asResponse.as200 }
 
     override def get(uid: Uid): F[ServiceResponse[ModelResponse]] =
-        dbManager.execute(repo.getByUid(uid)) map {
+        dbManager.execute(modelRepo.getByUid(uid)) map {
             case Some(model) => model.asResponse.as200
             case None        => NoModel(uid).as404
         }
@@ -41,20 +43,38 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
     override def add(
       request: ModelRequest
     ): F[ServiceResponse[ModelResponse]] =
-        dbManager.execute(repo.add(request.asModel)) map { _.asResponse.as201 }
+        dbManager.execute(modelRepo.add(request.asModel)) map {
+            _.asResponse.as201
+        }
 
     override def update(
       uid: Uid,
       request: ModelRequest
     ): F[ServiceResponse[ResponseMessage]] =
-        dbManager.execute(repo.update(request.asModel.copy(uid = uid))) map {
+        dbManager.execute(
+          modelRepo.update(request.asModel.copy(uid = uid))
+        ) map {
             case 1 => ModelUpdated(uid).as200
             case _ => NoModel(uid).as404
         }
 
     override def remove(uid: Uid): F[ServiceResponse[ResponseMessage]] =
-        dbManager.execute(repo.removeByUid(uid)) map {
+        for {
+            result <- dbManager.execute(modelRepo.removeByUid(uid))
+            _ <- dbManager.execute(instnaceRepo.removeByModelUid(uid))
+            _ <- dbManager.execute(paramRepo.removeByModelUid(uid))
+        } yield result match {
             case 1 => ModelRemoved(uid).as200
             case _ => NoModel(uid).as404
         }
+
+    override def restore(uid: Uid): F[ServiceResponse[ResponseMessage]] = for {
+        result <- dbManager.execute(modelRepo.restoreByUid(uid))
+        _ <- dbManager.execute(instnaceRepo.restoreByModelUid(uid))
+        _ <- dbManager.execute(paramRepo.restoreByModelUid(uid))
+    } yield result match {
+        case 1 => ModelRemoved(uid).as200
+        case _ => NoModel(uid).as404
+    }
+
 }

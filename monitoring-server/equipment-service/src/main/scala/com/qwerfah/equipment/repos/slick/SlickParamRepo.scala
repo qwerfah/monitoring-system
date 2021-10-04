@@ -72,6 +72,18 @@ class SlickParamRepo(implicit val context: EquipmentContext)
         } yield affected
     }
 
+    override def removeByModelUid(modelUid: Uid): DBIO[Int] = {
+        val targetRows =
+            context.params.filter(p => !p.isDeleted && p.modelUid === modelUid)
+        for {
+            values <- targetRows.result
+            updateActions = DBIO.sequence(
+              values.map(p => targetRows.update(p.copy(isDeleted = true)))
+            )
+            affected <- updateActions.map { _.sum }
+        } yield affected
+    }
+
     override def restoreByUid(uid: Uid): DBIO[Int] = {
         val targetRows =
             context.params.filter(p => p.isDeleted && p.uid === uid)
@@ -81,6 +93,18 @@ class SlickParamRepo(implicit val context: EquipmentContext)
                 targetRows.update(b.copy(isDeleted = false))
             )
             affected <- updateActionOption.getOrElse(DBIO.successful(0))
+        } yield affected
+    }
+
+    override def restoreByModelUid(modelUid: Uid): DBIO[Int] = {
+        val targetRows =
+            context.params.filter(p => p.isDeleted && p.modelUid === modelUid)
+        for {
+            values <- targetRows.result
+            updateActions = DBIO.sequence(
+              values.map(p => targetRows.update(p.copy(isDeleted = false)))
+            )
+            affected <- updateActions.map { _.sum }
         } yield affected
     }
 }

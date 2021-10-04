@@ -14,4 +14,5 @@ trait EquipmentModelService[F[_]] {
       model: ModelRequest
     ): F[ServiceResponse[ResponseMessage]]
     def remove(uid: Uid): F[ServiceResponse[ResponseMessage]]
+    def restore(uid: Uid): F[ServiceResponse[ResponseMessage]]
 }

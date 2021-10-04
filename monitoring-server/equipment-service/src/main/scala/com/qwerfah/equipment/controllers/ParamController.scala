@@ -64,10 +64,17 @@ object ParamController extends Controller {
         authorize(header, serviceRoles, _ => paramService.remove(uid))
     }
 
+    private val restoreParam = patch(
+      "params" :: path[Uid] :: "restore" :: headerOption("Authorization")
+    ) { (uid: Uid, header: Option[String]) =>
+        authorize(header, serviceRoles, _ => paramService.restore(uid))
+    }
+
     val api = "api" :: getParams
         .:+:(getParam)
         .:+:(addParam)
         .:+:(updateParam)
         .:+:(deleteParam)
+        .:+:(restoreParam)
         .handle(errorHandler)
 }

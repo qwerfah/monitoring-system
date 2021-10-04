@@ -84,11 +84,18 @@ object EquipmentInstanceController extends Controller {
         authorize(header, serviceRoles, _ => instanceService.remove(uid))
     }
 
+    private val restoreInstance = patch(
+      "instances" :: path[Uid] :: "restore" :: headerOption("Authorization")
+    ) { (uid: Uid, header: Option[String]) =>
+        authorize(header, serviceRoles, _ => instanceService.restore(uid))
+    }
+
     val api = "api" :: getInstances
         .:+:(getInstance)
         .:+:(getInstanceParams)
         .:+:(addInstance)
         .:+:(updateInstance)
         .:+:(deleteInstance)
+        .:+:(restoreInstance)
         .handle(errorHandler)
 }

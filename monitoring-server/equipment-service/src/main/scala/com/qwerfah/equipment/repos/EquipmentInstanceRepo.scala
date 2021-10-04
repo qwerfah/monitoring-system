@@ -71,13 +71,31 @@ trait EquipmentInstanceRepo[DB[_]] {
       */
     def removeByUid(uid: Uid): DB[Int]
 
-    /** Restore parameter that wasn't deleted permanently.
+    /** Remove equipment instances of specified equipment model. Soft delete -
+      * not actually remove but only set isDeleted flag.
+      * @param id
+      *   External instance uid.
+      * @return
+      *   Number of storage records affected (1 if successfull, otherwise 0).
+      */
+    def removeByModelUid(modelUid: Uid): DB[Int]
+
+    /** Restore equipment instance that wasn't deleted permanently.
       * @param uid
-      *   External parameter identifier.
+      *   External equipment instance identifier.
       * @return
       *   Number of records in storage affected (1 if successfull, otherwise 0).
       */
     def restoreByUid(uid: Uid): DB[Int]
+
+    /** Restore equipment instances of specified equipment model that weren't
+      * deleted permanently.
+      * @param uid
+      *   External equipment instance identifier.
+      * @return
+      *   Number of records in storage affected (1 if successfull, otherwise 0).
+      */
+    def restoreByModelUid(modelUid: Uid): DB[Int]
 }
 
 /** Defines apply method to get implicitily defined equipment instance

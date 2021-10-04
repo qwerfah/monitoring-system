@@ -78,6 +78,12 @@ object EquipmentModelController extends Controller {
         authorize(header, serviceRoles, _ => modelService.remove(uid))
     }
 
+    private val restoreModel = patch(
+      "models" :: path[Uid] :: "restore" :: headerOption("Authorization")
+    ) { (uid: Uid, header: Option[String]) =>
+        authorize(header, serviceRoles, _ => modelService.restore(uid))
+    }
+
     val api = "api" :: getModels
         .:+:(getModel)
         .:+:(getModelInstances)
@@ -85,5 +91,6 @@ object EquipmentModelController extends Controller {
         .:+:(addModel)
         .:+:(updateModel)
         .:+:(deleteModel)
+        .:+:(restoreModel)
         .handle(errorHandler)
 }

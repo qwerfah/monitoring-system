@@ -65,4 +65,10 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
             case 1 => InstanceRemoved(uid).as200
             case _ => NoInstance(uid).as404
         }
+
+    override def restore(uid: Uid): F[ServiceResponse[ResponseMessage]] =
+        dbManager.execute(instanceRepo.restoreByUid(uid)) map {
+            case 1 => InstanceRemoved(uid).as200
+            case _ => NoInstance(uid).as404
+        }
 }

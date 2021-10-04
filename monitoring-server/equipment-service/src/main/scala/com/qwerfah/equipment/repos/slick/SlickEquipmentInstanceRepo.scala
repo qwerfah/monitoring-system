@@ -76,6 +76,19 @@ class SlickEquipmentInstanceRepo(implicit val context: EquipmentContext)
         } yield affected
     }
 
+    override def removeByModelUid(modelUid: Uid): DBIO[Int] = {
+        val targetRows = context.instances.filter(i =>
+            !i.isDeleted && i.modelUid === modelUid
+        )
+        for {
+            values <- targetRows.result
+            updateActions = DBIO.sequence(
+              values.map(i => targetRows.update(i.copy(isDeleted = true)))
+            )
+            affected <- updateActions.map { _.sum }
+        } yield affected
+    }
+
     override def restoreByUid(uid: Uid): DBIO[Int] = {
         val targetRows =
             context.instances.filter(i => i.isDeleted && i.uid === uid)
@@ -87,4 +100,18 @@ class SlickEquipmentInstanceRepo(implicit val context: EquipmentContext)
             affected <- updateActionOption.getOrElse(DBIO.successful(0))
         } yield affected
     }
+
+    override def restoreByModelUid(modelUid: Uid): DBIO[Int] = {
+        val targetRows = context.instances.filter(i =>
+            i.isDeleted && i.modelUid === modelUid
+        )
+        for {
+            values <- targetRows.result
+            updateActions = DBIO.sequence(
+              values.map(i => targetRows.update(i.copy(isDeleted = false)))
+            )
+            affected <- updateActions.map { _.sum }
+        } yield affected
+    }
+
 }

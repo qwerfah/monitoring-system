@@ -25,6 +25,7 @@ export class EquipmentModelInfoComponent implements OnInit {
 
   ngOnInit() {
     this.modelUid = this.route.snapshot.params['uid'];
+    
     this.model$ = of(
       new EquipmentModel(
         uuid(),

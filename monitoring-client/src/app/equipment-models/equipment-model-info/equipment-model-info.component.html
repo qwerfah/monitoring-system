@@ -1,14 +1,14 @@
 <div class="flex flex-col h-full w-full bg-white rounded-lg p-10 space-y-4" *ngIf="model$ | async as model">
-  <div class="flex flex-col w-full pl-4 pt-2 items-center border-b-2 border-indigo-700">
+  <div class="flex flex-col w-full pl-4 pt-2 items-center border-b-2 border-blue-500">
     <h2>Модель оборудования: {{ model.name }}</h2>
   </div>
   <div class="flex flex-row pt-4 w-full h-1/6 rounded-lg pl-4 pt-2 overflow-y-auto">
     <p>Описание: {{ model.description }}</p>
   </div>
-  <div class="flex flex-col w-full pl-4 pt-2 items-center border-b-2 border-indigo-700">
+  <div class="flex flex-col w-full pl-4 pt-2 items-center border-b-2 border-blue-500">
     <h2 class="bold">Технические параметры</h2>
   </div>
-  <div class="flex bg-white w-full h-2/6 overflow-y-auto place-content-center" *ngIf="params$ | async as params">
+  <div class="flex bg-white w-full overflow-y-auto place-content-center" *ngIf="params$ | async as params">
     <table class="table-fixed w-full">
       <thead>
         <tr>
@@ -44,10 +44,10 @@
       </tbody>
     </table>
   </div>
-  <div class="flex flex-col w-full border-b-2 border-indigo-700 pl-4 pt-2 items-center">
+  <div class="flex flex-col w-full border-b-2 border-blue-500 pl-4 pt-2 items-center">
     <h2>Развернутые экземпляры</h2>
   </div>
-  <div class="flex bg-white w-full h-2/6 overflow-y-auto place-content-center" *ngIf="instances$ | async as instances">
+  <div class="flex bg-white w-full overflow-y-auto place-content-center" *ngIf="instances$ | async as instances">
     <table class="table-fixed w-full">
       <thead>
         <tr>
@@ -68,7 +68,11 @@
 
         <ng-container *ngIf="instances | notEmpty">
           <ng-container *ngFor="let instance of instances; index as i">
-            <tr id="heading{{ i }}" class="hover:bg-indigo-700 hover:text-white w-full h-12">
+            <tr
+              id="heading{{ i }}"
+              class="hover:bg-indigo-700 hover:text-white w-full h-12"
+              routerLink="/instances/{{ instance.uid }}"
+            >
               <td class="pl-3 text-center">
                 {{ i + 1 }}
               </td>

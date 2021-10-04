@@ -9,5 +9,6 @@ case class EquipmentInstance(
   modelUid: Uid,
   name: String,
   description: Option[String],
-  status: EquipmentStatus
+  status: EquipmentStatus,
+  isDeleted: Boolean
 )

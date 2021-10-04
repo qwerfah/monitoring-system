@@ -53,7 +53,8 @@ trait EquipmentInstanceRepo[DB[_]] {
       */
     def update(instance: EquipmentInstance): DB[Int]
 
-    /** Remove equipment instance by its internal id.
+    /** Remove equipment instance by its internal id. Soft delete - not actually
+      * remove but only set isDeleted flag.
       * @param id
       *   Internal instance id.
       * @return
@@ -61,13 +62,22 @@ trait EquipmentInstanceRepo[DB[_]] {
       */
     def removeById(id: Int): DB[Int]
 
-    /** Remove equipment instance by its external uid.
+    /** Remove equipment instance by its external uid. Soft delete - not
+      * actually remove but only set isDeleted flag.
       * @param id
       *   External instance uid.
       * @return
       *   Number of storage records affected (1 if successfull, otherwise 0).
       */
     def removeByUid(uid: Uid): DB[Int]
+
+    /** Restore parameter that wasn't deleted permanently.
+      * @param uid
+      *   External parameter identifier.
+      * @return
+      *   Number of records in storage affected (1 if successfull, otherwise 0).
+      */
+    def restoreByUid(uid: Uid): DB[Int]
 }
 
 /** Defines apply method to get implicitily defined equipment instance

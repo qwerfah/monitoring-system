@@ -12,8 +12,13 @@ object Mappings {
       *   Equipment model request.
       */
     implicit class RequestToModelMapping(request: ModelRequest) {
-        def asModel =
-            EquipmentModel(None, randomUid, request.name, request.description)
+        def asModel = EquipmentModel(
+          None,
+          randomUid,
+          request.name,
+          request.description,
+          false
+        )
     }
 
     /** Equipment model to equipment model response mapping.
@@ -50,7 +55,8 @@ object Mappings {
               request.modelUid,
               request.name,
               request.description,
-              request.status
+              request.status,
+              false
             )
     }
 
@@ -68,7 +74,8 @@ object Mappings {
               randomUid,
               request.name,
               request.description,
-              request.status
+              request.status,
+              false
             )
     }
 
@@ -113,7 +120,8 @@ object Mappings {
           randomUid,
           request.modelUid,
           request.name,
-          request.measurmentUnits
+          request.measurmentUnits,
+          false
         )
     }
 
@@ -124,7 +132,8 @@ object Mappings {
               randomUid,
               randomUid,
               request.name,
-              request.measurmentUnits
+              request.measurmentUnits,
+              false
             )
     }
 

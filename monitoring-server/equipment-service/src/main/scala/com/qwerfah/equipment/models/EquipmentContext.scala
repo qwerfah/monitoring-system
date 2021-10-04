@@ -47,11 +47,15 @@ class EquipmentContext(implicit jdbcProfile: JdbcProfile, config: Config)
         /** Model description (optional). */
         def description = column[Option[String]]("DESCRIPTION")
 
+        /** Shows if soft delete applied to the record in table. */
+        def isDeleted = column[Boolean]("IS_DELETED")
+
         def * = (
           id.?,
           uid,
           name,
-          description
+          description,
+          isDeleted
         ).<>(EquipmentModel.tupled, EquipmentModel.unapply)
     }
 
@@ -76,12 +80,16 @@ class EquipmentContext(implicit jdbcProfile: JdbcProfile, config: Config)
         /** Model param measurment units (optional). */
         def measurmentUnits = column[Option[String]]("MEASURMENT_UNITS")
 
+        /** Shows if soft delete applied to the record in table. */
+        def isDeleted = column[Boolean]("IS_DELETED")
+
         def * = (
           id.?,
           uid,
           modelUid,
           name,
-          measurmentUnits
+          measurmentUnits,
+          isDeleted
         ).<>(Param.tupled, Param.unapply)
 
         def model = foreignKey("MODEL_FK", modelUid, models)(_.uid)
@@ -125,13 +133,17 @@ class EquipmentContext(implicit jdbcProfile: JdbcProfile, config: Config)
         /** Equipment instance status. */
         def status = column[EquipmentStatus]("STATUS")
 
+        /** Shows if soft delete applied to the record in table. */
+        def isDeleted = column[Boolean]("IS_DELETED")
+
         def * = (
           id.?,
           uid,
           modelUid,
           name,
           description,
-          status
+          status,
+          isDeleted
         ).<>(EquipmentInstance.tupled, EquipmentInstance.unapply)
 
         def model = foreignKey("MODEL_FK", modelUid, models)(_.uid)
@@ -183,26 +195,29 @@ class EquipmentContext(implicit jdbcProfile: JdbcProfile, config: Config)
         Some(1),
         modelUids(0),
         "Model_1",
-        Some("Description of Model_1")
+        Some("Description of Model_1"),
+        false
       ),
       EquipmentModel(
         Some(2),
         modelUids(1),
         "Model_2",
-        Some("Description of Model_2")
+        Some("Description of Model_2"),
+        false
       ),
       EquipmentModel(
         Some(3),
         modelUids(2),
         "Model_3",
-        Some("Description of Model_3")
+        Some("Description of Model_3"),
+        false
       )
     )
 
     private val initialParams = Seq(
-      Param(Some(1), randomUid, modelUids(0), "Param_1", Some("m")),
-      Param(Some(2), randomUid, modelUids(1), "Param_2", Some("kg")),
-      Param(Some(3), randomUid, modelUids(2), "Param_3", Some("sec"))
+      Param(Some(1), randomUid, modelUids(0), "Param_1", Some("m"), false),
+      Param(Some(2), randomUid, modelUids(1), "Param_2", Some("kg"), false),
+      Param(Some(3), randomUid, modelUids(2), "Param_3", Some("sec"), false)
     )
 
     private val initialInstances = Seq(
@@ -212,7 +227,8 @@ class EquipmentContext(implicit jdbcProfile: JdbcProfile, config: Config)
         modelUids(0),
         "Instance_1",
         Some("Description of Instance_1"),
-        EquipmentStatus.Active
+        EquipmentStatus.Active,
+        false
       ),
       EquipmentInstance(
         Some(2),
@@ -220,7 +236,8 @@ class EquipmentContext(implicit jdbcProfile: JdbcProfile, config: Config)
         modelUids(1),
         "Instance_2",
         Some("Description of Instance_2"),
-        EquipmentStatus.Active
+        EquipmentStatus.Active,
+        false
       ),
       EquipmentInstance(
         Some(3),
@@ -228,7 +245,8 @@ class EquipmentContext(implicit jdbcProfile: JdbcProfile, config: Config)
         modelUids(2),
         "Instance_3",
         Some("Description of Instance_3"),
-        EquipmentStatus.Active
+        EquipmentStatus.Active,
+        false
       )
     )
 

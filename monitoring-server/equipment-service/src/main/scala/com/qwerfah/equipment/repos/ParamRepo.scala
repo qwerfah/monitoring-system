@@ -53,7 +53,8 @@ trait ParamRepo[DB[_]] {
       */
     def update(param: Param): DB[Int]
 
-    /** Remove model parameter by its internal id.
+    /** Remove model parameter by its internal id. Soft delete - not actually
+      * remove but only set isDeleted flag.
       * @param id
       *   Internal parameter id.
       * @return
@@ -61,13 +62,22 @@ trait ParamRepo[DB[_]] {
       */
     def removeById(id: Int): DB[Int]
 
-    /** Remove model parameter by its external uid.
+    /** Remove model parameter by its external uid. Soft delete - not actually
+      * remove but only set isDeleted flag.
       * @param uid
       *   External parameter uid.
       * @return
       *   Number of records in storage affected (1 if successfull, otherwise 0).
       */
     def removeByUid(uid: Uid): DB[Int]
+
+    /** Restore parameter that wasn't deleted permanently.
+      * @param uid
+      *   External parameter identifier.
+      * @return
+      *   Number of records in storage affected (1 if successfull, otherwise 0).
+      */
+    def restoreByUid(uid: Uid): DB[Int]
 }
 
 /** Defines apply method to get implicitily defined model parameters repository

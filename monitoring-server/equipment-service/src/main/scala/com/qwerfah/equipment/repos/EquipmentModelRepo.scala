@@ -45,7 +45,8 @@ trait EquipmentModelRepo[DB[_]] {
       */
     def update(model: EquipmentModel): DB[Int]
 
-    /** Remove model by its internal id.
+    /** Remove model by its internal id. Soft delete - not actually remove but
+      * only set isDeleted flag.
       * @param id
       *   Internal model id.
       * @return
@@ -53,13 +54,22 @@ trait EquipmentModelRepo[DB[_]] {
       */
     def removeById(id: Int): DB[Int]
 
-    /** Remove model by its external uid.
+    /** Remove model by its external uid. Soft delete - not actually remove but
+      * only set isDeleted flag.
       * @param uid
       *   External model uid.
       * @return
       *   Number of storage records affected (1 if successfull, otherwise 0).
       */
     def removeByUid(uid: Uid): DB[Int]
+
+    /** Restore model that wasn't deleted permanently.
+      * @param uid
+      *   External model identifier.
+      * @return
+      *   Number of records in storage affected (1 if successfull, otherwise 0).
+      */
+    def restoreByUid(uid: Uid): DB[Int]
 }
 
 /** Defines apply method to get implicitily defined equipment models repository

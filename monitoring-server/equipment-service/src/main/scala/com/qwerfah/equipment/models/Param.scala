@@ -7,5 +7,6 @@ case class Param(
   uid: Uid,
   modelUid: Uid,
   name: String,
-  measurmentUnits: Option[String]
+  measurmentUnits: Option[String],
+  isDeleted: Boolean
 )

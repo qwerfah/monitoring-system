@@ -1,14 +1,14 @@
 <div class="flex flex-col w-full h-full space-y-1">
-  <div class="flex bg-white shadow-lg rounded-lg place-content-center pt-2">
+  <div class="flex bg-white shadow-lg rounded-lg place-content-center pt-2 w-full">
     <h1>Список зарегистрированных моделей оборудования</h1>
   </div>
-  <div class="flex bg-white w-full h-full rounded-lg overflow-y-auto">
+  <div class="flex bg-white w-full h-full rounded-lg overflow-y-auto place-content-center w-full">
     <table class="table-fixed w-full">
       <thead>
         <tr>
           <th scope="col" class="p-2">№</th>
-          <th scope="col" class="p-2 w-2/5">Наименование</th>
-          <th scope="col" class="p-2 w-3/5">Описание</th>
+          <th scope="col" class="p-2 w-2/12">Наименование</th>
+          <th scope="col" class="p-2 w-9/12">Описание</th>
         </tr>
       </thead>
 
@@ -22,7 +22,11 @@
 
         <ng-container *ngIf="models | notEmpty">
           <ng-container *ngFor="let model of models; index as i">
-            <tr id="heading{{ i }}" class="hover:bg-indigo-700 hover:text-white w-full h-10">
+            <tr
+              id="heading{{ i }}"
+              class="hover:bg-indigo-700 hover:text-white w-full h-12"
+              routerLink="/models/{{ model.uid }}"
+            >
               <td class="pl-3 text-center">
                 {{ i + 1 }}
               </td>

@@ -11,42 +11,191 @@ import { v4 as uuid } from 'uuid';
 })
 export class EquipmentModelsTableComponent implements OnInit {
   models: EquipmentModel[] = [
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
-    new EquipmentModel(uuid(), 'model_1', 'description_1'),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
+    new EquipmentModel(
+      uuid(),
+      'model_1 model_1 model_1',
+      'description_1 description_1 description_1 description_1 description_1'
+    ),
   ];
 
   constructor() {}

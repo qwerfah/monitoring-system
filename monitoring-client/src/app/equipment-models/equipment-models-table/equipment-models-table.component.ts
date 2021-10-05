@@ -10,6 +10,7 @@ import { v4 as uuid } from 'uuid';
   styleUrls: ['./equipment-models-table.component.css'],
 })
 export class EquipmentModelsTableComponent implements OnInit {
+  isAdding: boolean = false;
   models: EquipmentModel[] = [
     new EquipmentModel(
       uuid(),
@@ -201,4 +202,9 @@ export class EquipmentModelsTableComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {}
+
+  addModel() {
+    this.isAdding = true;
+    console.log(this.isAdding);
+  }
 }

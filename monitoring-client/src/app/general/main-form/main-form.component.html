@@ -8,22 +8,30 @@
               <svg
                 *ngIf="!isVisible"
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6 stroke-current text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-arrow-bar-right text-white"
+                viewBox="0 0 16 16"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                <path
+                  fill-rule="evenodd"
+                  d="M6 8a.5.5 0 0 0 .5.5h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L12.293 7.5H6.5A.5.5 0 0 0 6 8zm-2.5 7a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5z"
+                />
               </svg>
               <svg
                 *ngIf="isVisible"
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6 stroke-current text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+                width="16"
+                height="16"
+                fill="currentColor"
+                class="bi bi-arrow-bar-left text-white"
+                viewBox="0 0 16 16"
               >
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                <path
+                  fill-rule="evenodd"
+                  d="M12.5 15a.5.5 0 0 1-.5-.5v-13a.5.5 0 0 1 1 0v13a.5.5 0 0 1-.5.5zM10 8a.5.5 0 0 1-.5.5H3.707l2.147 2.146a.5.5 0 0 1-.708.708l-3-3a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L3.707 7.5H9.5a.5.5 0 0 1 .5.5z"
+                />
               </svg>
             </svg>
           </button>
@@ -42,10 +50,12 @@
           text-left
           tracking-wider
           bg-transparent
-          hover:bg-indigo-700 hover:text-white
+          hover:bg-gradient-to-l hover:from-indigo-500 hover:to-indigo-800 hover:text-white
           py-4
           px-4
           hover:border-transparent
+          focus:outline-none
+          active:bg-gradient-to-l active:from-indigo-700 active:to-indigo-900
           rounded-t-lg
         "
         routerLink="/models"
@@ -57,10 +67,15 @@
           text-left
           tracking-wider
           bg-transparent
-          hover:bg-indigo-700 hover:text-white
+          hover:bg-gradient-to-l
+          from-indigo-500
+          to-indigo-800
+          hover:text-white
           py-4
           px-4
           hover:border-transparent
+          active:bg-gradient-to-l active:from-indigo-700 active:to-indigo-900
+          focus:outline-none
         "
         routerLink="/instances"
       >
@@ -71,10 +86,15 @@
           text-left
           tracking-wider
           bg-transparent
-          hover:bg-indigo-700 hover:text-white
+          hover:bg-gradient-to-l
+          from-indigo-500
+          to-indigo-800
+          hover:text-white
           py-4
           px-4
           hover:border-transparent
+          active:bg-gradient-to-l active:from-indigo-700 active:to-indigo-900
+          focus:outline-none
         "
       >
         Мониторинг
@@ -84,10 +104,15 @@
           text-left
           tracking-wider
           bg-transparent
-          hover:bg-indigo-700 hover:text-white
+          hover:bg-gradient-to-l
+          from-indigo-500
+          to-indigo-800
+          hover:text-white
           py-4
           px-4
           hover:border-transparent
+          active:bg-gradient-to-l active:from-indigo-700 active:to-indigo-900
+          focus:outline-none
         "
       >
         Статистика
@@ -97,10 +122,15 @@
           text-left
           tracking-wider
           bg-transparent
-          hover:bg-indigo-700 hover:text-white
+          hover:bg-gradient-to-l
+          from-indigo-500
+          to-indigo-800
+          hover:text-white
           py-4
           px-4
           hover:border-transparent
+          active:bg-gradient-to-l active:from-indigo-700 active:to-indigo-900
+          focus:outline-none
         "
       >
         Администрирование

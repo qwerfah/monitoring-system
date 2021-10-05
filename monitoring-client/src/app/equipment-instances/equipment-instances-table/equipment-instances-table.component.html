@@ -1,8 +1,8 @@
 <div class="flex flex-col w-full h-full space-y-1">
-  <div class="flex bg-white shadow-lg rounded-lg place-content-center pt-2 w-full">
+  <div class="flex bg-white shadow-lg rounded place-content-center pt-2 w-full">
     <h1>Список развернутых экземпляров оборудования</h1>
   </div>
-  <div class="flex bg-white w-full rounded-lg overflow-y-auto place-content-center w-full">
+  <div class="flex bg-white w-full rounded place-content-center w-full">
     <table class="table-fixed w-full">
       <thead>
         <tr>
@@ -13,7 +13,7 @@
         </tr>
       </thead>
 
-      <tbody class="divide-y-2 divide-gray-100">
+      <tbody class="divide-gray-100 overflow-y-auto">
         <ng-container *ngIf="!(instances | notEmpty)">
           <tr>
             <th scope="row" class="text-center" colspan="11">Нет развернутых экземпляров</th>
@@ -24,8 +24,28 @@
         <ng-container *ngIf="instances | notEmpty">
           <ng-container *ngFor="let instance of instances; index as i">
             <tr
+              *ngIf="i % 2"
               id="heading{{ i }}"
               class="hover:bg-indigo-700 hover:text-white w-full h-12"
+              routerLink="/instances/{{ instance.uid }}"
+            >
+              <td class="pl-3 text-center">
+                {{ i + 1 }}
+              </td>
+              <td class="text-center">
+                {{ instance.name }}
+              </td>
+              <td class="text-center">
+                {{ instance.description }}
+              </td>
+              <td class="text-center">
+                {{ instance.status }}
+              </td>
+            </tr>
+            <tr
+              *ngIf="i % 2"
+              id="heading{{ i }}"
+              class="bg-blue-100 hover:bg-indigo-700 hover:text-white w-full h-12"
               routerLink="/instances/{{ instance.uid }}"
             >
               <td class="pl-3 text-center">

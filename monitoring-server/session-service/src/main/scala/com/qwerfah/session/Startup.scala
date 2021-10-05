@@ -21,14 +21,12 @@ import com.rms.miu.slickcats.DBIOInstances._
 import com.typesafe.config.ConfigFactory
 
 import com.qwerfah.session.models._
+import com.qwerfah.session.services.default.DefaultUserService
 
 import com.qwerfah.common.repos.slick._
-import com.qwerfah.common.repos._
-import com.qwerfah.common.services._
-import com.qwerfah.common.services.default._
 import com.qwerfah.common.repos.local._
 import com.qwerfah.common.services.default._
-import com.qwerfah.common.resources.Credentials
+import com.qwerfah.common.services.default._
 import com.qwerfah.common.db.slick.SlickDbManager
 import com.qwerfah.common.controllers.RequestReportingFilter
 

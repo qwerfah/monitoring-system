@@ -52,7 +52,7 @@ trait UserRepo[DB[_]] {
       */
     def update(user: User): DB[Int]
 
-    /** Remove user by its internal id.
+    /** Remove user by its internal id (soft delete).
       * @param id
       *   Internal user id.
       * @return
@@ -60,11 +60,19 @@ trait UserRepo[DB[_]] {
       */
     def removeById(id: Int): DB[Int]
 
-    /** Remove user by its external uid.
+    /** Remove user by its external uid (soft delete).
       * @param uid
       *   External user uid.
       * @return
       *   Number of records in storage affected (1 if successfull, otherwise 0).
       */
     def removeByUid(uid: Uid): DB[Int]
+
+    /** Restore user by its external uid if it wasn't removed permamently.
+      * @param uid
+      *   External user uid.
+      * @return
+      *   Number of records in storage affected (1 if successfull, otherwise 0).
+      */
+    def restoreByUid(uid: Uid): DB[Int]
 }

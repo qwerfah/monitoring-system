@@ -14,6 +14,7 @@ import io.finch.circe._
 import io.catbird.util._
 
 import com.qwerfah.session.Startup
+import com.qwerfah.session.services.UserService
 
 import com.qwerfah.common.services._
 import com.qwerfah.common.resources._

@@ -50,6 +50,10 @@ final case class UserRemoved(uid: Uid) extends ResponseMessage {
     override val message = s"User with uid $uid removed."
 }
 
+final case class UserRestored(uid: Uid) extends ResponseMessage {
+    override val message = s"User with uid $uid restored."
+}
+
 final case class MonitorParamAdded(uid: Uid) extends ResponseMessage {
     override val message = s"Param tracking for monitor with uid $uid added."
 }

@@ -38,21 +38,24 @@ class SessionContext(implicit jdbcProfile: JdbcProfile, config: Config)
         randomUid,
         "user_1",
         hashString("password_1"),
-        UserRole.SystemAdmin
+        UserRole.SystemAdmin,
+        false
       ),
       User(
         Some(2),
         randomUid,
         "user_2",
         hashString("password_2"),
-        UserRole.EquipmentAdmin
+        UserRole.EquipmentAdmin,
+        false
       ),
       User(
         Some(3),
         randomUid,
         "user_3",
         hashString("password_3"),
-        UserRole.EquipmentUser
+        UserRole.EquipmentUser,
+        false
       )
     )
 
@@ -68,7 +71,8 @@ class SessionContext(implicit jdbcProfile: JdbcProfile, config: Config)
               randomUid,
               cred.login,
               hashString(cred.password),
-              UserRole.Service
+              UserRole.Service,
+              false
             )
 
         DBIO.seq(users ++= initialUsers ++ services)

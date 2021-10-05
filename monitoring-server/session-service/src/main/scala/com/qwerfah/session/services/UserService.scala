@@ -1,4 +1,4 @@
-package com.qwerfah.common.services
+package com.qwerfah.session.services
 
 import com.qwerfah.common.models._
 import com.qwerfah.common.resources._
@@ -41,6 +41,21 @@ trait UserService[F[_]] {
       uid: Uid,
       request: UserRequest
     ): F[ServiceResponse[ResponseMessage]]
-    
+
+    /** Remove user by its uid (soft delete).
+      * @param uid
+      *   User identifier.
+      * @return
+      *   Description of the operation result.
+      */
     def remove(uid: Uid): F[ServiceResponse[ResponseMessage]]
+
+    /** Restore user by its uid if it wasn't removed permanently.
+      * @param uid
+      *   User identifier.
+      * @return
+      *   Description of the operation result.
+      */
+    def restore(uid: Uid): F[ServiceResponse[ResponseMessage]]
+
 }

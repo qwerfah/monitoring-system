@@ -14,7 +14,8 @@ object Mappings {
           MessageDigest
               .getInstance("MD5")
               .digest(request.password.getBytes("UTF-8")),
-          request.role
+          request.role,
+          false
         )
     }
 
@@ -23,10 +24,6 @@ object Mappings {
     }
 
     implicit class UserSeqToResponseSeqMapping(users: Seq[User]) {
-        def asResponse = for { user <- users } yield UserResponse(
-          user.uid,
-          user.login,
-          user.role
-        )
+        def asResponse = for { user <- users } yield user.asResponse
     }
 }

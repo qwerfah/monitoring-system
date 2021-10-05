@@ -20,5 +20,6 @@ final case class User(
   uid: Uid,
   login: String,
   password: Array[Byte],
-  role: UserRole
+  role: UserRole,
+  isDeleted: Boolean
 )

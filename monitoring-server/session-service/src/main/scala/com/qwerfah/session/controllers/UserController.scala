@@ -67,10 +67,18 @@ object UserController extends Controller {
                 authorize(header, serviceRoles, _ => userService.remove(uid))
         }
 
+    private val restoreUser =
+        patch(
+          "users" :: path[Uid] :: "restore" :: headerOption("Authorization")
+        ) { (uid: Uid, header: Option[String]) =>
+            authorize(header, serviceRoles, _ => userService.restore(uid))
+        }
+
     val api = "api" :: getUsers
         .:+:(getUser)
         .:+:(register)
         .:+:(updateUser)
         .:+:(deleteUser)
+        .:+:(restoreUser)
         .handle(errorHandler)
 }

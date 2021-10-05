@@ -147,6 +147,47 @@ object ParamValueController extends Controller {
         )
     }
 
+    /** Endpoint for route DELETE params/values/uid */
+    private val restoreParamValue = patch(
+      "params" :: "values" :: path[Uid] :: "restore" :: headerOption(
+        "Authorization"
+      )
+    ) { (paramUid: Uid, header: Option[String]) =>
+        authorize(
+          header,
+          serviceRoles,
+          _ => paramValueService.restore(paramUid)
+        )
+    }
+
+    /** Endpoint for route DELETE params/uid/values */
+    private val restoreParamValuesForParam = patch(
+      "params" :: path[Uid] :: "values" :: "restore" :: headerOption(
+        "Authorization"
+      )
+    ) { (paramUid: Uid, header: Option[String]) =>
+        authorize(
+          header,
+          serviceRoles,
+          _ => paramValueService.restoreByParamUid(paramUid)
+        )
+    }
+
+    /** Endpoint for route DELETE params/uid/values */
+    private val restoreParamValuesForInstance = patch(
+      "instances" :: path[
+        Uid
+      ] :: "params" :: "values" :: "restore" :: headerOption(
+        "Authorization"
+      )
+    ) { (instanceUid: Uid, header: Option[String]) =>
+        authorize(
+          header,
+          serviceRoles,
+          _ => paramValueService.restoreByInstanceUid(instanceUid)
+        )
+    }
+
     val api = "api" :: getAllParamValues
         .:+:(getParamValue)
         .:+:(getParamValuesForParam)
@@ -157,5 +198,8 @@ object ParamValueController extends Controller {
         .:+:(removeParamValue)
         .:+:(removeParamValuesForParam)
         .:+:(removeParamValuesForInstance)
+        .:+:(restoreParamValue)
+        .:+:(restoreParamValuesForParam)
+        .:+:(restoreParamValuesForInstance)
         .handle(errorHandler)
 }

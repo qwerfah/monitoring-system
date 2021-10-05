@@ -24,5 +24,6 @@ final case class ParamValue(
   paramUid: Uid,
   instanceUid: Uid,
   value: String,
-  time: LocalDateTime
+  time: LocalDateTime,
+  isDeleted: Boolean
 )

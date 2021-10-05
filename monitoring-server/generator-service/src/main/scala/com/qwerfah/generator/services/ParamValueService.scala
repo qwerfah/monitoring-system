@@ -24,4 +24,10 @@ trait ParamValueService[F[_]] {
     def removeByInstanceUid(
       instanceUid: Uid
     ): F[ServiceResponse[ResponseMessage]]
+
+    def restore(uid: Uid): F[ServiceResponse[ResponseMessage]]
+    def restoreByParamUid(paramUid: Uid): F[ServiceResponse[ResponseMessage]]
+    def restoreByInstanceUid(
+      instanceUid: Uid
+    ): F[ServiceResponse[ResponseMessage]]
 }

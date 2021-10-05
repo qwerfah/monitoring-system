@@ -18,4 +18,8 @@ trait ParamValueRepo[DB[_]] {
     def remove(uid: Uid): DB[Int]
     def removeByParamUid(paramUid: Uid): DB[Int]
     def removeByInstanceUid(instanceUid: Uid): DB[Int]
+
+    def restore(uid: Uid): DB[Int]
+    def restoreByParamUid(paramUid: Uid): DB[Int]
+    def restoreByInstanceUid(instanceUid: Uid): DB[Int]
 }

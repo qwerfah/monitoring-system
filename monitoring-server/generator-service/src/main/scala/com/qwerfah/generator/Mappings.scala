@@ -15,7 +15,8 @@ object Mappings {
           request.paramUid,
           request.instanceUid,
           request.value,
-          LocalDateTime.now
+          LocalDateTime.now,
+          false
         )
     }
 
@@ -30,12 +31,6 @@ object Mappings {
     }
 
     implicit class ParamValueSeqToResponseSeqMapping(values: Seq[ParamValue]) {
-        def asResponse = for { value <- values } yield ParamValueResponse(
-          value.uid,
-          value.paramUid,
-          value.instanceUid,
-          value.value,
-          value.time
-        )
+        def asResponse = for { value <- values } yield value.asResponse
     }
 }

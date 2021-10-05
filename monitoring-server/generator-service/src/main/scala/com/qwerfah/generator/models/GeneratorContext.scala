@@ -35,6 +35,7 @@ class GeneratorContext(implicit jdbcProfile: JdbcProfile, config: Config)
         def instanceUid = column[Uid]("INSTANCE_UUID")
         def value = column[String]("VALUE")
         def time = column[LocalDateTime]("TIME")
+        def isDeleted = column[Boolean]("IS_DELETED")
 
         def * = (
           id.?,
@@ -42,7 +43,8 @@ class GeneratorContext(implicit jdbcProfile: JdbcProfile, config: Config)
           paramUid,
           instanceUid,
           value,
-          time
+          time,
+          isDeleted
         ).<>(ParamValue.tupled, ParamValue.unapply)
     }
 
@@ -68,7 +70,8 @@ class GeneratorContext(implicit jdbcProfile: JdbcProfile, config: Config)
         randomUid,
         randomUid,
         "100",
-        LocalDateTime.now
+        LocalDateTime.now,
+        false
       ),
       ParamValue(
         None,
@@ -76,7 +79,8 @@ class GeneratorContext(implicit jdbcProfile: JdbcProfile, config: Config)
         randomUid,
         randomUid,
         "200",
-        LocalDateTime.now
+        LocalDateTime.now,
+        false
       ),
       ParamValue(
         None,
@@ -84,7 +88,8 @@ class GeneratorContext(implicit jdbcProfile: JdbcProfile, config: Config)
         randomUid,
         randomUid,
         "300",
-        LocalDateTime.now
+        LocalDateTime.now,
+        false
       )
     )
 

@@ -142,11 +142,24 @@ final case class ParamValueRemoved(uid: Uid) extends ResponseMessage {
     override val message = s"Parameter value with uid $uid removed."
 }
 
+final case class ParamValueRestored(uid: Uid) extends ResponseMessage {
+    override val message = s"Parameter value with uid $uid restored."
+}
+
 final case class ParamValuesRemoved(uid: Uid) extends ResponseMessage {
     override val message = s"All values for parameter with uid $uid removed."
+}
+
+final case class ParamValuesRestored(uid: Uid) extends ResponseMessage {
+    override val message = s"All values for parameter with uid $uid restored."
 }
 
 final case class InstanceParamValuesRemoved(uid: Uid) extends ResponseMessage {
     override val message =
         s"All parameter values for instance with uid $uid removed."
+}
+
+final case class InstanceParamValuesRestored(uid: Uid) extends ResponseMessage {
+    override val message =
+        s"All parameter values for instance with uid $uid restored."
 }

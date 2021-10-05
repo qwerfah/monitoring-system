@@ -38,5 +38,6 @@ final case class OperationRecord(
   method: HttpMethod,
   status: Int,
   elapsed: Long,
-  time: LocalDateTime
+  time: LocalDateTime,
+  isDeleted: Boolean
 )

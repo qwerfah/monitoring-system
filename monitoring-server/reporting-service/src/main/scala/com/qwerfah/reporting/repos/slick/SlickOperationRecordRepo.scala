@@ -17,10 +17,13 @@ class SlickOperationRecordRepo(implicit val context: ReportingContext)
     import context.profile.api._
 
     override def get: DBIO[Seq[OperationRecord]] =
-        context.operationRecords.result
+        context.operationRecords.filter(!_.isDeleted).result
 
     override def get(uid: Uid): DBIO[Option[OperationRecord]] =
-        context.operationRecords.filter(_.uid === uid).result.headOption
+        context.operationRecords
+            .filter(r => !r.isDeleted && r.uid === uid)
+            .result
+            .headOption
 
     override def get(
       serviceId: Option[String],
@@ -32,6 +35,7 @@ class SlickOperationRecordRepo(implicit val context: ReportingContext)
         import context.methodMapper
 
         context.operationRecords
+            .filter(!_.isDeleted)
             .filterOpt(serviceId) { case (table, id) => table.serviceId === id }
             .filterOpt(method) { case (table, m) => table.method === m }
             .filterOpt(status) { case (table, s) => table.status === s }
@@ -45,9 +49,49 @@ class SlickOperationRecordRepo(implicit val context: ReportingContext)
           _.id
         ) into ((record, id) => record.copy(id = Some(id)))) += record
 
-    override def remove(uid: Uid): DBIO[Int] =
-        context.operationRecords.filter(_.uid === uid).delete
+    override def remove(uid: Uid): DBIO[Int] = {
+        val targetRows =
+            context.operationRecords.filter(r => !r.isDeleted && r.uid === uid)
+        for {
+            booleanOption <- targetRows.result.headOption
+            affected <- booleanOption
+                .map(r => targetRows.update(r.copy(isDeleted = true)))
+                .getOrElse(DBIO.successful(0))
+        } yield affected
+    }
 
-    override def remove(serviceId: String): DBIO[Int] =
-        context.operationRecords.filter(_.serviceId === serviceId).delete
+    override def remove(serviceId: String): DBIO[Int] = {
+        val targetRows = context.operationRecords.filter(r =>
+            !r.isDeleted && r.serviceId === serviceId
+        )
+        for {
+            values <- targetRows.result
+            affected <- DBIO.sequence(
+              values.map(r => targetRows.update(r.copy(isDeleted = true)))
+            ) map { _.sum }
+        } yield affected
+    }
+
+    override def restore(uid: Uid): DBIO[Int] = {
+        val targetRows =
+            context.operationRecords.filter(r => r.isDeleted && r.uid === uid)
+        for {
+            booleanOption <- targetRows.result.headOption
+            affected <- booleanOption
+                .map(r => targetRows.update(r.copy(isDeleted = false)))
+                .getOrElse(DBIO.successful(0))
+        } yield affected
+    }
+
+    override def restore(serviceId: String): DBIO[Int] = {
+        val targetRows = context.operationRecords.filter(r =>
+            r.isDeleted && r.serviceId === serviceId
+        )
+        for {
+            values <- targetRows.result
+            affected <- DBIO.sequence(
+              values.map(r => targetRows.update(r.copy(isDeleted = false)))
+            ) map { _.sum }
+        } yield affected
+    }
 }

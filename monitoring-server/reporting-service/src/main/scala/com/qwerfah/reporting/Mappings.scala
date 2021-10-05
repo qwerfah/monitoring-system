@@ -17,7 +17,8 @@ object Mappings {
               request.method,
               request.status,
               request.elapsed,
-              request.time
+              request.time,
+              false
             )
     }
 
@@ -37,16 +38,6 @@ object Mappings {
     implicit class RecordSeqToResponseSeqMapping(
       records: Seq[OperationRecord]
     ) {
-        def asResponse =
-            for { record <- records } yield RecordResponse(
-              record.uid,
-              record.userName,
-              record.serviceId,
-              record.route,
-              record.method,
-              record.status,
-              record.elapsed,
-              record.time
-            )
+        def asResponse = for { record <- records } yield record.asResponse
     }
 }

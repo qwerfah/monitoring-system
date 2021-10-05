@@ -63,4 +63,18 @@ class DefaultOperationRecordService[F[_]: Monad, DB[_]: Monad](implicit
             case 1 => RecordsRemoved(serviceId).as200
             case _ => NoOperationRecords(serviceId).as404
         }
+
+    override def restore(uid: Uid): F[ServiceResponse[ResponseMessage]] =
+        dbManager.execute(recordRepo.restore(uid)) map {
+            case 1 => RecordRestored(uid).as200
+            case _ => NoOperationRecord(uid).as404
+        }
+
+    override def restore(
+      serviceId: String
+    ): F[ServiceResponse[ResponseMessage]] =
+        dbManager.execute(recordRepo.restore(serviceId)) map {
+            case 1 => RecordsRestored(serviceId).as200
+            case _ => NoOperationRecords(serviceId).as404
+        }
 }

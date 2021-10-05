@@ -16,7 +16,12 @@ trait OperationRecordRepo[DB[_]] {
       fromDate: Option[LocalDateTime],
       toDate: Option[LocalDateTime]
     ): DB[Seq[OperationRecord]]
+
     def add(record: OperationRecord): DB[OperationRecord]
+
     def remove(uid: Uid): DB[Int]
     def remove(serviceId: String): DB[Int]
+
+    def restore(uid: Uid): DB[Int]
+    def restore(serviceId: String): DB[Int]
 }

@@ -104,10 +104,30 @@ object OperationRecordController extends Controller {
         authorize(header, serviceRoles, _ => recordService.remove(serviceId))
     }
 
+    private val restoreRecord = patch(
+      "reports" :: "records" :: path[Uid] :: "restore" :: headerOption[String](
+        "Authorization"
+      )
+    ) { (uid: Uid, header: Option[String]) =>
+        authorize(header, serviceRoles, _ => recordService.restore(uid))
+    }
+
+    private val restoreServiceRecords = patch(
+      "reports" :: path[String] :: "records" :: "restore" :: headerOption[
+        String
+      ](
+        "Authorization"
+      )
+    ) { (serviceId: String, header: Option[String]) =>
+        authorize(header, serviceRoles, _ => recordService.restore(serviceId))
+    }
+
     val api = getRecords
         .:+:(getRecord)
         .:+:(getRecordsByParams)
         .:+:(removeRecord)
         .:+:(removeServiceRecords)
+        .:+:(restoreRecord)
+        .:+:(restoreServiceRecords)
         .handle(errorHandler)
 }

@@ -43,6 +43,7 @@ class ReportingContext(implicit jdbcProfile: JdbcProfile, config: Config)
         def status = column[Int]("STATUS_CODE")
         def elapsed = column[Long]("ELAPSED")
         def time = column[LocalDateTime]("DESCRIPTION")
+        def isDeleted = column[Boolean]("IS_DELETED")
 
         def * = (
           id.?,
@@ -53,7 +54,8 @@ class ReportingContext(implicit jdbcProfile: JdbcProfile, config: Config)
           method,
           status,
           elapsed,
-          time
+          time,
+          isDeleted
         ).<>(OperationRecord.tupled, OperationRecord.unapply)
     }
 
@@ -81,7 +83,8 @@ class ReportingContext(implicit jdbcProfile: JdbcProfile, config: Config)
         HttpMethod.Post,
         200,
         123,
-        LocalDateTime.now
+        LocalDateTime.now,
+        false
       ),
       OperationRecord(
         None,
@@ -92,7 +95,8 @@ class ReportingContext(implicit jdbcProfile: JdbcProfile, config: Config)
         HttpMethod.Get,
         404,
         3421,
-        LocalDateTime.now
+        LocalDateTime.now,
+        false
       ),
       OperationRecord(
         None,
@@ -103,7 +107,8 @@ class ReportingContext(implicit jdbcProfile: JdbcProfile, config: Config)
         HttpMethod.Post,
         400,
         221,
-        LocalDateTime.now
+        LocalDateTime.now,
+        false
       ),
       OperationRecord(
         None,
@@ -114,7 +119,8 @@ class ReportingContext(implicit jdbcProfile: JdbcProfile, config: Config)
         HttpMethod.Post,
         401,
         55,
-        LocalDateTime.now
+        LocalDateTime.now,
+        false
       ),
       OperationRecord(
         None,
@@ -125,7 +131,8 @@ class ReportingContext(implicit jdbcProfile: JdbcProfile, config: Config)
         HttpMethod.Post,
         200,
         31,
-        LocalDateTime.now
+        LocalDateTime.now,
+        false
       )
     )
 

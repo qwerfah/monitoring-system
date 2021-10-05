@@ -107,12 +107,21 @@ final case class InstanceMonitorsRestored(uid: Uid) extends ResponseMessage {
 }
 
 final case class RecordRemoved(uid: Uid) extends ResponseMessage {
-    override val message = s"Service operation record with uid $uid updated."
+    override val message = s"Service operation record with uid $uid removed."
+}
+
+final case class RecordRestored(uid: Uid) extends ResponseMessage {
+    override val message = s"Service operation record with uid $uid restored."
 }
 
 final case class RecordsRemoved(serviceId: String) extends ResponseMessage {
     override val message =
         s"All records about $serviceId service operations removed."
+}
+
+final case class RecordsRestored(serviceId: String) extends ResponseMessage {
+    override val message =
+        s"All records about $serviceId service operations restored."
 }
 
 final case class FileRemoved(uid: Uid) extends ResponseMessage {

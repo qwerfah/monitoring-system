@@ -52,7 +52,7 @@ trait OperationRecordService[F[_]] {
       */
     def add(record: RecordRequest): F[ServiceResponse[RecordResponse]]
 
-    /** Remove operation record from storage by its uid.
+    /** Remove operation record from storage by its uid (soft delete).
       * @param uid
       *   Operation record uid.
       * @return
@@ -60,12 +60,30 @@ trait OperationRecordService[F[_]] {
       */
     def remove(uid: Uid): F[ServiceResponse[ResponseMessage]]
 
-    /** Remove all records of operations that was performed by specified
-      * service.
+    /** Remove all records of operations that was performed by specified service
+      * (soft delete).
       * @param serviceId
       *   Service identifier.
       * @return
       *   Message describing result of the operation.
       */
     def remove(serviceId: String): F[ServiceResponse[ResponseMessage]]
+
+    /** Restore operation record from storage by its uid if it wasn't removed
+      * permanently.
+      * @param uid
+      *   Operation record uid.
+      * @return
+      *   Message describing result of the operation.
+      */
+    def restore(uid: Uid): F[ServiceResponse[ResponseMessage]]
+
+    /** Restore all records of operations that was performed by specified
+      * service if it wasn't removed permanently.
+      * @param serviceId
+      *   Service identifier.
+      * @return
+      *   Message describing result of the operation.
+      */
+    def restore(serviceId: String): F[ServiceResponse[ResponseMessage]]
 }

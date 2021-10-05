@@ -74,7 +74,6 @@ object Startup {
           equipmentClient
         )
     implicit val defaultTokenService = new DefaultTokenService[Future, DBIO]
-    implicit val defaultUserService = new DefaultUserService[Future, DBIO]
 
     def startup() = Await.result(dbManager.execute(context.setup))
 

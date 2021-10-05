@@ -59,7 +59,6 @@ object Startup {
     implicit val DefaultEquipmentService =
         new DefaultMonitorService[Future, DBIO](defaultEquipmentClient)
     implicit val defaultTokenService = new DefaultTokenService[Future, DBIO]
-    implicit val defaultUserService = new DefaultUserService[Future, DBIO]
 
     implicit val actorSystem = ActorSystem("such-system")
     implicit val rabbitControl = actorSystem.actorOf(Props[RabbitControl]())

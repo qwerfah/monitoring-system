@@ -47,7 +47,6 @@ object Startup {
     implicit val modelRepo = new SlickFileRepo
 
     implicit val defaultTokenService = new DefaultTokenService[Future, DBIO]
-    implicit val defaultUserService = new DefaultUserService[Future, DBIO]
     implicit val defaultFileService = new DefaultFileService[Future, DBIO]
 
     implicit val actorSystem = ActorSystem("such-system")

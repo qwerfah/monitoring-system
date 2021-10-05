@@ -99,7 +99,8 @@ class DocumentationContext(implicit jdbcProfile: JdbcProfile, config: Config)
               randomUid,
               cred.login,
               hashString(cred.password),
-              UserRole.Service
+              UserRole.Service,
+              false
             )
 
         DBIO.seq(users ++= services)

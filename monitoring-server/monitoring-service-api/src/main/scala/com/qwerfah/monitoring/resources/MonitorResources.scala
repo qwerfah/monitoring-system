@@ -22,4 +22,10 @@ final case class MonitorResponse(
 
 final case class MonitorParamRequest(paramUid: Uid)
 
-final case class MonitorParamResponse(monitorUid: Uid, paramUid: Uid)
+final case class MonitorParamResponse(
+  monitorUid: Uid,
+  paramUid: Uid,
+  modelUid: Option[Uid],
+  name: Option[String],
+  measurmentUnits: Option[String]
+)

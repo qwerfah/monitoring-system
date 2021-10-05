@@ -8,4 +8,8 @@ import com.qwerfah.common.Uid
   * @param paramUid
   *   Tracked param identifier.
   */
-final case class MonitorParam(monitorUid: Uid, paramUid: Uid)
+final case class MonitorParam(
+  monitorUid: Uid,
+  paramUid: Uid,
+  isDeleted: Boolean
+)

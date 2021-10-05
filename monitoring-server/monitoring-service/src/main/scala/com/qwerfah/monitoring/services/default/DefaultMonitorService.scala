@@ -29,53 +29,48 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
     import Mappings._
     import Decoders._
 
-    override def get: F[ServiceResponse[Seq[MonitorResponse]]] =
+    override def getMonitors: F[ServiceResponse[Seq[MonitorResponse]]] =
         dbManager.execute(monitorRepo.get) map { _.asResponse.as200 }
 
-    override def get(uid: Uid): F[ServiceResponse[MonitorResponse]] =
+    override def getMonitor(uid: Uid): F[ServiceResponse[MonitorResponse]] =
         dbManager.execute(monitorRepo.get(uid)) map {
             case Some(value) => value.asResponse.as200
             case None        => NoMonitor(uid).as404
         }
 
-    override def getByInstanceUid(
+    override def getInstanceMonitors(
       instanceUid: Uid
     ): F[ServiceResponse[Seq[MonitorResponse]]] =
         dbManager.execute(monitorRepo.getByInstanceUid(instanceUid)) map {
             _.asResponse.as200
         }
 
-    override def getInstances: F[ServiceResponse[Seq[Uid]]] =
+    override def getMonitoringInstances: F[ServiceResponse[Seq[Uid]]] =
         dbManager.execute(monitorRepo.getInstances) map { _.as200 }
 
-    override def getParams(
+    override def getMonitorParams(
       uid: Uid
-    ): F[ServiceResponse[Seq[ParamResponse]]] =
+    ): F[ServiceResponse[Seq[MonitorParamResponse]]] =
         dbManager.execute(monitorParamRepo.getByMonitorUid(uid)) flatMap {
             _.map(p =>
-                client
-                    .sendAndDecode[ParamResponse](
-                      HttpMethod.Get,
-                      s"/params/${p.paramUid}"
-                    )
-            ).sequence map { params =>
-                params.foldLeft(Seq[ParamResponse]()) { (a, b) =>
-                    b match {
-                        case OkResponse(value) => a.appended(value)
-                        case other             => a
-                    }
+                client.sendAndDecode[ParamResponse](
+                  HttpMethod.Get,
+                  s"/params/${p.paramUid}"
+                ) map {
+                    case OkResponse(value) => p.asResponse(value)
+                    case _                 => p.asResponse
                 }
-            } map { _.as200 }
+            ).sequence map { _.as200 }
         }
 
-    override def add(
+    override def addMonitor(
       request: AddMonitorRequest
     ): F[ServiceResponse[MonitorResponse]] =
         dbManager.execute(monitorRepo.add(request.asMonitor)) map {
             _.asResponse.as201
         }
 
-    override def addParam(
+    override def addMonitorParam(
       monitorUid: Uid,
       request: MonitorParamRequest
     ): F[ServiceResponse[ResponseMessage]] = {
@@ -97,7 +92,7 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
         }
     }
 
-    override def update(
+    override def updateMonitor(
       uid: Uid,
       request: UpdateMonitorRequest
     ): F[ServiceResponse[ResponseMessage]] =
@@ -108,20 +103,112 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
             case _ => NoMonitor(uid).as404
         }
 
-    override def remove(uid: Uid): F[ServiceResponse[ResponseMessage]] =
-        dbManager.execute(monitorRepo.removeByUid(uid)) map {
-            case 1 => MonitorRemoved(uid).as200
+    override def removeMonitor(uid: Uid): F[ServiceResponse[ResponseMessage]] =
+        dbManager.execute(monitorRepo.removeByUid(uid)) flatMap {
+            case 1 =>
+                dbManager.execute(
+                  monitorParamRepo.removeByMonitorUid(uid)
+                ) map { _ => MonitorRemoved(uid).as200 }
+            case _ => Monad[F].pure(NoMonitor(uid).as404)
+        }
+
+    override def removeInstanceMonitors(
+      instanceUid: Uid
+    ): F[ServiceResponse[ResponseMessage]] =
+        dbManager.execute(monitorRepo.getByInstanceUid(instanceUid)) flatMap {
+            case monitors if monitors.nonEmpty =>
+                monitors.map { m =>
+                    dbManager.execute(
+                      monitorParamRepo.removeByMonitorUid(m.uid)
+                    )
+                }.sequence flatMap { _ =>
+                    dbManager.execute(
+                      monitorRepo.removeByInstanceUid(instanceUid)
+                    )
+                } map { _ => InstanceMonitorsRemoved(instanceUid).as200 }
+            case _ => Monad[F].pure(NoInstanceMonitors(instanceUid).as404)
+        }
+
+    override def restoreMonitor(uid: Uid): F[ServiceResponse[ResponseMessage]] =
+        for {
+            result <- dbManager.execute(monitorRepo.restoreByUid(uid))
+            _ <- dbManager.execute(monitorParamRepo.restoreByMonitorUid(uid))
+        } yield result match {
+            case 1 => MonitorRestored(uid).as200
             case _ => NoMonitor(uid).as404
         }
 
-    override def removeParam(
+    override def restoreInstanceMonitors(
+      instanceUid: Uid
+    ): F[ServiceResponse[ResponseMessage]] =
+        dbManager.execute(
+          monitorRepo.restoreByInstanceUid(instanceUid)
+        ) flatMap {
+            case i if i > 0 =>
+                dbManager.execute(
+                  monitorRepo.getByInstanceUid(instanceUid)
+                ) flatMap {
+                    _.map { m =>
+                        dbManager.execute(
+                          monitorParamRepo.restoreByMonitorUid(m.uid)
+                        )
+                    }.sequence
+                } map { _ => InstanceMonitorsRestored(instanceUid).as200 }
+            case _ => Monad[F].pure(NoInstanceMonitors(instanceUid).as404)
+        }
+
+    override def removeMonitorParam(
       monitorUid: Uid,
       paramUid: Uid
     ): F[ServiceResponse[ResponseMessage]] =
         dbManager.execute(
           monitorParamRepo.removeByUid(monitorUid, paramUid)
         ) map {
-            case 1 => MonitorParamRemoved(monitorUid).as200
+            case 1 => MonitorParamRemoved(paramUid, monitorUid).as200
             case _ => NoMonitorParam(paramUid, monitorUid).as404
+        }
+
+    override def removeMonitorParamsForMonitor(
+      monitorUid: Uid
+    ): F[ServiceResponse[ResponseMessage]] =
+        dbManager.execute(monitorParamRepo.removeByMonitorUid(monitorUid)) map {
+            case i if i > 0 => MonitorParamsRemoved(monitorUid).as200
+            case _          => NoMonitorParams(monitorUid).as404
+        }
+
+    override def removeMonitorParamsForParam(
+      paramUid: Uid
+    ): F[ServiceResponse[ResponseMessage]] =
+        dbManager.execute(monitorParamRepo.removeByParamUid(paramUid)) map {
+            case i if i > 0 => ParamTrackingsRemoved(paramUid).as200
+            case _          => NoParamTrackings(paramUid).as404
+        }
+
+    override def restoreMonitorParam(
+      monitorUid: Uid,
+      paramUid: Uid
+    ): F[ServiceResponse[ResponseMessage]] = dbManager.execute(
+      monitorParamRepo.restoreByUid(monitorUid, paramUid)
+    ) map {
+        case 1 => MonitorParamRemoved(paramUid, monitorUid).as200
+        case _ => NoMonitorParam(paramUid, monitorUid).as404
+    }
+
+    override def restoreMonitorParamsForMonitor(
+      monitorUid: Uid
+    ): F[ServiceResponse[ResponseMessage]] =
+        dbManager.execute(
+          monitorParamRepo.restoreByMonitorUid(monitorUid)
+        ) map {
+            case i if i > 0 => MonitorParamsRestored(monitorUid).as200
+            case _          => NoMonitorParams(monitorUid).as404
+        }
+
+    override def restoreMonitorParamsForParam(
+      paramUid: Uid
+    ): F[ServiceResponse[ResponseMessage]] =
+        dbManager.execute(monitorParamRepo.restoreByParamUid(paramUid)) map {
+            case i if i > 0 => ParamTrackingsRestored(paramUid).as200
+            case _          => NoParamTrackings(paramUid).as404
         }
 }

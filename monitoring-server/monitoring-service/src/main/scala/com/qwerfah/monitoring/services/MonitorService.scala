@@ -12,7 +12,7 @@ trait MonitorService[F[_]] {
       * @return
       *   Monitors collection or error in case of failure.
       */
-    def get: F[ServiceResponse[Seq[MonitorResponse]]]
+    def getMonitors: F[ServiceResponse[Seq[MonitorResponse]]]
 
     /** Get monitor by its uid.
       * @param uid
@@ -20,7 +20,7 @@ trait MonitorService[F[_]] {
       * @return
       *   Monitor with specified uid or error in case of failure.
       */
-    def get(uid: Uid): F[ServiceResponse[MonitorResponse]]
+    def getMonitor(uid: Uid): F[ServiceResponse[MonitorResponse]]
 
     /** Get all monitors for specified instance.
       * @param instanceUid
@@ -28,7 +28,7 @@ trait MonitorService[F[_]] {
       * @return
       *   Collection of monitors associated with spicified instance.
       */
-    def getByInstanceUid(
+    def getInstanceMonitors(
       instanceUid: Uid
     ): F[ServiceResponse[Seq[MonitorResponse]]]
 
@@ -36,7 +36,7 @@ trait MonitorService[F[_]] {
       * @return
       *   Collection of all traked instances uids
       */
-    def getInstances: F[ServiceResponse[Seq[Uid]]]
+    def getMonitoringInstances: F[ServiceResponse[Seq[Uid]]]
 
     /** Get params tracked by specified monitor.
       * @param uid
@@ -44,7 +44,9 @@ trait MonitorService[F[_]] {
       * @return
       *   Collection of params tracked by specified monitor.
       */
-    def getParams(uid: Uid): F[ServiceResponse[Seq[ParamResponse]]]
+    def getMonitorParams(
+      uid: Uid
+    ): F[ServiceResponse[Seq[MonitorParamResponse]]]
 
     /** Add new monitor.
       * @param request
@@ -52,7 +54,9 @@ trait MonitorService[F[_]] {
       * @return
       *   New monitor instance added to storage.
       */
-    def add(request: AddMonitorRequest): F[ServiceResponse[MonitorResponse]]
+    def addMonitor(
+      request: AddMonitorRequest
+    ): F[ServiceResponse[MonitorResponse]]
 
     /** Add new param tracked by specified monitor.
       * @param param
@@ -60,7 +64,7 @@ trait MonitorService[F[_]] {
       * @return
       *   Message describes successful or failed operation.
       */
-    def addParam(
+    def addMonitorParam(
       monitorUid: Uid,
       param: MonitorParamRequest
     ): F[ServiceResponse[ResponseMessage]]
@@ -73,27 +77,113 @@ trait MonitorService[F[_]] {
       * @return
       *   Message describes successful or failed operation.
       */
-    def update(
+    def updateMonitor(
       uid: Uid,
       request: UpdateMonitorRequest
     ): F[ServiceResponse[ResponseMessage]]
 
-    /** Remove monitor by its uid.
+    /** Remove monitor by its uid (soft delete).
       * @param uid
       *   Monitor uid.
       * @return
       *   Message describes successful or failed operation.
       */
-    def remove(uid: Uid): F[ServiceResponse[ResponseMessage]]
+    def removeMonitor(uid: Uid): F[ServiceResponse[ResponseMessage]]
 
-    /** Remove tracked param from specified monitor.
-      * @param param
-      *   Pair monitor-param uid.
+    /** Remove all monitors for specified equipment instance (soft delete).
+      * @param instanceUid
+      *   Equipment instance identifier.
       * @return
       *   Message describes successful or failed operation.
       */
-    def removeParam(
+    def removeInstanceMonitors(
+      instanceUid: Uid
+    ): F[ServiceResponse[ResponseMessage]]
+
+    /** Restore monitor if it wasn't removed permanently.
+      * @param uid
+      *   Monitor identifier.
+      * @return
+      *   Message describes successful or failed operation.
+      */
+    def restoreMonitor(uid: Uid): F[ServiceResponse[ResponseMessage]]
+
+    /** Restore all equipment instance monitors that wasn't removed permanently.
+      * @param instanceUid
+      *   Equipment instance identifier.
+      * @return
+      *   Message describes successful or failed operation.
+      */
+    def restoreInstanceMonitors(
+      instanceUid: Uid
+    ): F[ServiceResponse[ResponseMessage]]
+
+    /** Remove monitor param by monitor and param ids (soft delete).
+      * @param monitorUid
+      *   Monitor identifier.
+      * @param paramUid
+      *   Parameter identifier.
+      * @return
+      *   Message describes successful or failed operation.
+      */
+    def removeMonitorParam(
       monitorUid: Uid,
+      paramUid: Uid
+    ): F[ServiceResponse[ResponseMessage]]
+
+    /** Remove all tracked params for specified monitor (soft delete).
+      * @param monitorUid
+      *   Monitor identifier.
+      * @return
+      *   Message describes successful or failed operation.
+      */
+    def removeMonitorParamsForMonitor(
+      monitorUid: Uid
+    ): F[ServiceResponse[ResponseMessage]]
+
+    /** Remove all trackers for specifier parameter (soft delete).
+      * @param paramUid
+      *   Parameter identifier.
+      * @return
+      *   Message describes successful or failed operation.
+      */
+    def removeMonitorParamsForParam(
+      paramUid: Uid
+    ): F[ServiceResponse[ResponseMessage]]
+
+    /** Restore monitor param by monitor and param ids if it wasn't removed
+      * permanently.
+      * @param monitorUid
+      *   Monitor identifier.
+      * @param paramUid
+      *   Parameter identifier.
+      * @return
+      *   Message describes successful or failed operation.
+      */
+    def restoreMonitorParam(
+      monitorUid: Uid,
+      paramUid: Uid
+    ): F[ServiceResponse[ResponseMessage]]
+
+    /** Restore all tracked params for specified monitor if it wasn't removed
+      * permanently.
+      * @param monitorUid
+      *   Monitor identifier.
+      * @return
+      *   Message describes successful or failed operation.
+      */
+    def restoreMonitorParamsForMonitor(
+      monitorUid: Uid
+    ): F[ServiceResponse[ResponseMessage]]
+
+    /** Restore all trackers for specifier parameter if it wasn't removed
+      * permanently.
+      * @param paramUid
+      *   Parameter identifier.
+      * @return
+      *   Message describes successful or failed operation.
+      */
+    def restoreMonitorParamsForParam(
       paramUid: Uid
     ): F[ServiceResponse[ResponseMessage]]
 }

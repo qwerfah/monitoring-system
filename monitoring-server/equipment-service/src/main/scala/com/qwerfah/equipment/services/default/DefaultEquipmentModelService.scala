@@ -59,13 +59,13 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
         }
 
     override def remove(uid: Uid): F[ServiceResponse[ResponseMessage]] =
-        for {
-            result <- dbManager.execute(modelRepo.removeByUid(uid))
-            _ <- dbManager.execute(instnaceRepo.removeByModelUid(uid))
-            _ <- dbManager.execute(paramRepo.removeByModelUid(uid))
-        } yield result match {
-            case 1 => ModelRemoved(uid).as200
-            case _ => NoModel(uid).as404
+        dbManager.execute(modelRepo.removeByUid(uid)) flatMap {
+            case 1 =>
+                for {
+                    _ <- dbManager.execute(instnaceRepo.removeByModelUid(uid))
+                    _ <- dbManager.execute(paramRepo.removeByModelUid(uid))
+                } yield ModelRemoved(uid).as200
+            case _ => Monad[F].pure(NoModel(uid).as404)
         }
 
     override def restore(uid: Uid): F[ServiceResponse[ResponseMessage]] = for {

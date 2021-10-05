@@ -1,7 +1,10 @@
 package com.qwerfah.monitoring
 
+import com.qwerfah.equipment.resources.ParamResponse
+
 import com.qwerfah.monitoring.resources._
 import com.qwerfah.monitoring.models._
+
 import com.qwerfah.common.randomUid
 
 object Mappings {
@@ -12,7 +15,8 @@ object Mappings {
               randomUid,
               request.instanceUid,
               request.name,
-              request.description
+              request.description,
+              false
             )
     }
 
@@ -25,7 +29,8 @@ object Mappings {
               randomUid,
               randomUid,
               request.name,
-              request.description
+              request.description,
+              false
             )
     }
 
@@ -40,16 +45,30 @@ object Mappings {
 
     implicit class MonitorSeqToResponseSeqMapping(monitors: Seq[Monitor]) {
         def asResponse =
-            for { monitor <- monitors } yield MonitorResponse(
-              monitor.uid,
-              monitor.instanceUid,
-              monitor.name,
-              monitor.description
-            )
+            for { monitor <- monitors } yield monitor.asResponse
     }
 
     implicit class RequestToMonitorParamMapping(request: MonitorParamRequest) {
         def asParam =
-            MonitorParam(randomUid, request.paramUid)
+            MonitorParam(randomUid, request.paramUid, false)
+    }
+
+    implicit class MonitorParamToResponseMapping(mp: MonitorParam) {
+
+        def asResponse = MonitorParamResponse(
+          mp.monitorUid,
+          mp.paramUid,
+          None,
+          None,
+          None
+        )
+
+        def asResponse(param: ParamResponse) = MonitorParamResponse(
+          mp.monitorUid,
+          mp.paramUid,
+          Some(param.modelUid),
+          Some(param.name),
+          param.measurmentUnits
+        )
     }
 }

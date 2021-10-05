@@ -142,7 +142,7 @@ lazy val monitoringApi = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(common)
+    .dependsOn(common, equipmentApi)
     .disablePlugins(AssemblyPlugin)
 
 lazy val generatorApi = project

@@ -12,6 +12,11 @@ trait MonitorRepo[DB[_]] {
 
     def add(monitor: Monitor): DB[Monitor]
     def update(monitor: Monitor): DB[Int]
+
     def removeById(id: Int): DB[Int]
     def removeByUid(uid: Uid): DB[Int]
+    def removeByInstanceUid(instanceUid: Uid): DB[Int]
+
+    def restoreByUid(uid: Uid): DB[Int]
+    def restoreByInstanceUid(instanceUid: Uid): DB[Int]
 }

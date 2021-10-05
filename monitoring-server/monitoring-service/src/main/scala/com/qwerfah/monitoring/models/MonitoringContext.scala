@@ -32,13 +32,15 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile, config: Config)
         def instanceUid = column[Uid]("INSTANCE_UUID")
         def name = column[String]("NAME")
         def description = column[Option[String]]("DESCRIPTION")
+        def isDeleted = column[Boolean]("IS_DELETED")
 
         def * = (
           id.?,
           uid,
           instanceUid,
           name,
-          description
+          description,
+          isDeleted
         ).<>(Monitor.tupled, Monitor.unapply)
     }
 
@@ -50,9 +52,14 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile, config: Config)
       extends Table[MonitorParam](tag, "MONITOR_PARAMS") {
         def monitorUid = column[Uid]("MONITOR_UUID")
         def paramUid = column[Uid]("PARAM_UUID")
+        def isDeleted = column[Boolean]("IS_DELETED")
 
-        def * =
-            (monitorUid, paramUid).<>(MonitorParam.tupled, MonitorParam.unapply)
+        def pk = primaryKey("pk_a", (monitorUid, paramUid))
+
+        def * = (monitorUid, paramUid, isDeleted).<>(
+          MonitorParam.tupled,
+          MonitorParam.unapply
+        )
 
         def monitor = foreignKey("MONITOR_FK", monitorUid, monitors)(
           _.uid,
@@ -89,28 +96,31 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile, config: Config)
         monitorUids(0),
         randomUid,
         "monitor_1",
-        Some("Description of monitor_1")
+        Some("Description of monitor_1"),
+        false
       ),
       Monitor(
         Some(1),
         monitorUids(1),
         randomUid,
         "monitor_2",
-        Some("Description of monitor_2")
+        Some("Description of monitor_2"),
+        false
       ),
       Monitor(
         Some(2),
         monitorUids(2),
         randomUid,
         "monitor_3",
-        Some("Description of monitor_3")
+        Some("Description of monitor_3"),
+        false
       )
     )
 
     private val initialMonitorParams = Seq(
-      MonitorParam(monitorUids(0), randomUid),
-      MonitorParam(monitorUids(1), randomUid),
-      MonitorParam(monitorUids(2), randomUid)
+      MonitorParam(monitorUids(0), randomUid, false),
+      MonitorParam(monitorUids(1), randomUid, false),
+      MonitorParam(monitorUids(2), randomUid, false)
     )
 
     private def addUsers = {

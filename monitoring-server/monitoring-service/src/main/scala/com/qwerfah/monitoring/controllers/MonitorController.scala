@@ -34,19 +34,27 @@ object MonitorController extends Controller {
 
     private val getMonitors = get("monitors" :: headerOption("Authorization")) {
         header: Option[String] =>
-            authorize(header, serviceRoles, _ => monitorService.get)
+            authorize(header, serviceRoles, _ => monitorService.getMonitors)
     }
 
     private val getMonitor =
         get("monitors" :: path[Uid] :: headerOption("Authorization")) {
             (uid: Uid, header: Option[String]) =>
-                authorize(header, serviceRoles, _ => monitorService.get(uid))
+                authorize(
+                  header,
+                  serviceRoles,
+                  _ => monitorService.getMonitor(uid)
+                )
         }
 
     private val getMonitorParams = get(
       "monitors" :: path[Uid] :: "params" :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        authorize(header, serviceRoles, _ => monitorService.getParams(uid))
+        authorize(
+          header,
+          serviceRoles,
+          _ => monitorService.getMonitorParams(uid)
+        )
     }
 
     private val getInstanceMonitors = get(
@@ -57,7 +65,7 @@ object MonitorController extends Controller {
         authorize(
           header,
           serviceRoles,
-          _ => monitorService.getByInstanceUid(uid)
+          _ => monitorService.getInstanceMonitors(uid)
         )
     }
 
@@ -66,13 +74,17 @@ object MonitorController extends Controller {
         "Authorization"
       )
     ) { header: Option[String] =>
-        authorize(header, serviceRoles, _ => monitorService.getInstances)
+        authorize(
+          header,
+          serviceRoles,
+          _ => monitorService.getMonitoringInstances
+        )
     }
 
     private val addMonitor = post(
       "monitors" :: jsonBody[AddMonitorRequest] :: headerOption("Authorization")
     ) { (request: AddMonitorRequest, header: Option[String]) =>
-        authorize(header, serviceRoles, _ => monitorService.add(request))
+        authorize(header, serviceRoles, _ => monitorService.addMonitor(request))
     }
 
     private val updateMonitor = patch(
@@ -83,7 +95,7 @@ object MonitorController extends Controller {
         authorize(
           header,
           serviceRoles,
-          _ => monitorService.update(uid, request)
+          _ => monitorService.updateMonitor(uid, request)
         )
     }
 
@@ -97,14 +109,46 @@ object MonitorController extends Controller {
         authorize(
           header,
           serviceRoles,
-          _ => monitorService.addParam(uid, request)
+          _ => monitorService.addMonitorParam(uid, request)
         )
     }
 
     private val removeMonitor = delete(
       "monitors" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        authorize(header, serviceRoles, _ => monitorService.remove(uid))
+        authorize(header, serviceRoles, _ => monitorService.removeMonitor(uid))
+    }
+
+    private val removeInstanceMonitors = delete(
+      "instances" :: path[Uid] :: "monitors" :: headerOption("Authorization")
+    ) { (instanceUid: Uid, header: Option[String]) =>
+        authorize(
+          header,
+          serviceRoles,
+          _ => monitorService.removeInstanceMonitors(instanceUid)
+        )
+    }
+
+    private val restoreMonitor = patch(
+      "monitors" :: path[Uid] :: "restore" :: headerOption("Authorization")
+    ) { (uid: Uid, header: Option[String]) =>
+        authorize(
+          header,
+          serviceRoles,
+          _ => monitorService.restoreMonitor(uid)
+        )
+    }
+
+    private val restoreInstanceMonitors = patch(
+      "instances" :: path[Uid] :: "monitors" :: "restore" :: headerOption(
+        "Authorization"
+      )
+    ) { (instanceUid: Uid, header: Option[String]) =>
+        authorize(
+          header,
+          serviceRoles,
+          _ => monitorService.restoreInstanceMonitors(instanceUid)
+        )
     }
 
     private val removeMonitorParam = delete(
@@ -115,7 +159,69 @@ object MonitorController extends Controller {
         authorize(
           header,
           serviceRoles,
-          _ => monitorService.removeParam(monitorUid, paramUid)
+          _ => monitorService.removeMonitorParam(monitorUid, paramUid)
+        )
+    }
+
+    private val removeMonitorParamsForMonitor = delete(
+      "monitors" :: path[Uid] :: "params" :: headerOption(
+        "Authorization"
+      )
+    ) { (monitorUid: Uid, header: Option[String]) =>
+        authorize(
+          header,
+          serviceRoles,
+          _ => monitorService.removeMonitorParamsForMonitor(monitorUid)
+        )
+    }
+
+    private val removeMonitorParamsForParam = delete(
+      "params" :: path[Uid] :: "monitors" :: headerOption(
+        "Authorization"
+      )
+    ) { (paramUid: Uid, header: Option[String]) =>
+        authorize(
+          header,
+          serviceRoles,
+          _ => monitorService.removeMonitorParamsForParam(paramUid)
+        )
+    }
+
+    private val restoreMonitorParam = patch(
+      "monitors" :: path[Uid] :: "params" :: path[
+        Uid
+      ] :: "restore" :: headerOption(
+        "Authorization"
+      )
+    ) { (monitorUid: Uid, paramUid: Uid, header: Option[String]) =>
+        authorize(
+          header,
+          serviceRoles,
+          _ => monitorService.restoreMonitorParam(monitorUid, paramUid)
+        )
+    }
+
+    private val restoreMonitorParamsForMonitor = patch(
+      "monitors" :: path[Uid] :: "params" :: "restore" :: headerOption(
+        "Authorization"
+      )
+    ) { (monitorUid: Uid, header: Option[String]) =>
+        authorize(
+          header,
+          serviceRoles,
+          _ => monitorService.restoreMonitorParamsForMonitor(monitorUid)
+        )
+    }
+
+    private val restoreMonitorParamsForParam = patch(
+      "params" :: path[Uid] :: "monitors" :: "restore" :: headerOption(
+        "Authorization"
+      )
+    ) { (paramUid: Uid, header: Option[String]) =>
+        authorize(
+          header,
+          serviceRoles,
+          _ => monitorService.restoreMonitorParamsForParam(paramUid)
         )
     }
 
@@ -128,6 +234,14 @@ object MonitorController extends Controller {
         .:+:(updateMonitor)
         .:+:(addMonitorParam)
         .:+:(removeMonitor)
+        .:+:(removeInstanceMonitors)
+        .:+:(restoreMonitor)
+        .:+:(restoreInstanceMonitors)
         .:+:(removeMonitorParam)
+        .:+:(removeMonitorParamsForMonitor)
+        .:+:(removeMonitorParamsForParam)
+        .:+:(restoreMonitorParam)
+        .:+:(restoreMonitorParamsForMonitor)
+        .:+:(restoreMonitorParamsForParam)
         .handle(errorHandler)
 }

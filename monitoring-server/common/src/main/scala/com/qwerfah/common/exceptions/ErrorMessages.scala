@@ -49,9 +49,24 @@ final case class NoMonitor(uid: Uid) extends ErrorMessage {
     override def getMessage = s"Monitor with uid $uid not found."
 }
 
+final case class NoInstanceMonitors(instanceUid: Uid) extends ErrorMessage {
+    override def getMessage =
+        s"Monitors for equipment instance with uid $instanceUid $instanceUid not found."
+}
+
 final case class NoMonitorParam(puid: Uid, muid: Uid) extends ErrorMessage {
     override def getMessage =
         s"Param with uid $puid not tracked by monitor with uid $muid."
+}
+
+final case class NoMonitorParams(muid: Uid) extends ErrorMessage {
+    override def getMessage =
+        s"Params tracked by monitor with uid $muid not found."
+}
+
+final case class NoParamTrackings(puid: Uid) extends ErrorMessage {
+    override def getMessage =
+        s"Trackings for param with uid $puid not found."
 }
 
 final case class NoOperationRecord(uid: Uid) extends ErrorMessage {

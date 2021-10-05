@@ -54,8 +54,30 @@ final case class MonitorParamAdded(uid: Uid) extends ResponseMessage {
     override val message = s"Param tracking for monitor with uid $uid added."
 }
 
-final case class MonitorParamRemoved(uid: Uid) extends ResponseMessage {
-    override val message = s"Param tracking for monitor with uid $uid removed."
+final case class MonitorParamRemoved(puid: Uid, muid: Uid)
+  extends ResponseMessage {
+    override val message =
+        s"Tracking for param with uid $puid for monitor with uid $muid removed."
+}
+
+final case class MonitorParamsRemoved(muid: Uid) extends ResponseMessage {
+    override val message =
+        s"All param trackings for for monitor with uid $muid removed."
+}
+
+final case class ParamTrackingsRemoved(puid: Uid) extends ResponseMessage {
+    override val message =
+        s"All trackings for for param with uid $puid removed."
+}
+
+final case class MonitorParamsRestored(muid: Uid) extends ResponseMessage {
+    override val message =
+        s"All param trackings for for monitor with uid $muid restored."
+}
+
+final case class ParamTrackingsRestored(puid: Uid) extends ResponseMessage {
+    override val message =
+        s"All trackings for for param with uid $puid restored."
 }
 
 final case class MonitorUpdated(uid: Uid) extends ResponseMessage {
@@ -64,6 +86,20 @@ final case class MonitorUpdated(uid: Uid) extends ResponseMessage {
 
 final case class MonitorRemoved(uid: Uid) extends ResponseMessage {
     override val message = s"Monitor with uid $uid removed."
+}
+
+final case class MonitorRestored(uid: Uid) extends ResponseMessage {
+    override val message = s"Monitor with uid $uid restored."
+}
+
+final case class InstanceMonitorsRemoved(uid: Uid) extends ResponseMessage {
+    override val message =
+        s"Monitors for equipment instance with uid $uid removed."
+}
+
+final case class InstanceMonitorsRestored(uid: Uid) extends ResponseMessage {
+    override val message =
+        s"Monitors for equipment instance with uid $uid restored."
 }
 
 final case class RecordRemoved(uid: Uid) extends ResponseMessage {

@@ -85,7 +85,18 @@ object Decoders {
                     for {
                         monitorUid <- c.downField("monitorUid").as[Uid]
                         paramUid <- c.downField("paramUid").as[Uid]
-                    } yield MonitorParamResponse(monitorUid, paramUid)
+                        modelUid <- c.downField("modelUid").as[Option[Uid]]
+                        name <- c.downField("name").as[Option[String]]
+                        measurmentUnits <- c
+                            .downField("measurmentUnits")
+                            .as[Option[String]]
+                    } yield MonitorParamResponse(
+                      monitorUid,
+                      paramUid,
+                      modelUid,
+                      name,
+                      measurmentUnits
+                    )
                 case Invalid(errors) =>
                     throw InvalidJsonBodyException(errors)
             }

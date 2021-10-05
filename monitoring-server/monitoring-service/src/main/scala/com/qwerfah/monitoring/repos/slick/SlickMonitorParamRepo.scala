@@ -1,5 +1,7 @@
 package com.qwerfah.monitoring.repos.slick
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 import slick.dbio._
 import slick.jdbc.JdbcProfile
 
@@ -11,43 +13,86 @@ class SlickMonitorParamRepo(implicit val context: MonitoringContext)
   extends MonitorParamRepo[DBIO] {
     import context.profile.api._
 
-    override def get: DBIO[Seq[MonitorParam]] = context.monitorParams.result
-
-    override def get(monitorParam: MonitorParam): DBIO[Option[MonitorParam]] =
-        context.monitorParams
-            .filter(p =>
-                p.paramUid === monitorParam.paramUid &&
-                p.paramUid === monitorParam.monitorUid
-            )
-            .result
-            .headOption
+    override def get: DBIO[Seq[MonitorParam]] =
+        context.monitorParams.filter(!_.isDeleted).result
 
     override def getByMonitorUid(monitorUid: Uid): DBIO[Seq[MonitorParam]] =
-        context.monitorParams.filter(_.monitorUid === monitorUid).result
-
-    override def getByParamUid(paramUid: Uid): DBIO[Seq[MonitorParam]] =
-        context.monitorParams.filter(_.paramUid === paramUid).result
+        context.monitorParams
+            .filter(p => !p.isDeleted && p.monitorUid === monitorUid)
+            .result
 
     override def add(monitorParam: MonitorParam): DBIO[Int] =
         context.monitorParams += monitorParam
 
-    override def removeByParamUid(paramUid: Uid): DBIO[Int] =
-        context.monitorParams.filter(_.paramUid === paramUid).delete
+    override def removeByParamUid(paramUid: Uid): DBIO[Int] = {
+        val targetRows = context.monitorParams.filter(p =>
+            !p.isDeleted && p.paramUid === paramUid
+        )
+        for {
+            values <- targetRows.result
+            affected <- DBIO.sequence(
+              values.map(p => targetRows.update(p.copy(isDeleted = true)))
+            ) map { _.sum }
+        } yield affected
+    }
 
-    override def removeByUid(monitorUid: Uid, paramUid: Uid): DBIO[Int] =
-        context.monitorParams
-            .filter(p =>
-                p.paramUid === paramUid &&
-                p.monitorUid === monitorUid
-            )
-            .delete
+    override def removeByMonitorUid(monitorUid: Uid): DBIO[Int] = {
+        val targetRows = context.monitorParams.filter(p =>
+            !p.isDeleted && p.monitorUid === monitorUid
+        )
+        for {
+            values <- targetRows.result
+            affected <- DBIO.sequence(
+              values.map(p => targetRows.update(p.copy(isDeleted = true)))
+            ) map { _.sum }
+        } yield affected
+    }
 
-    override def remove(monitorParam: MonitorParam): DBIO[Int] =
-        context.monitorParams
-            .filter(p =>
-                p.paramUid === monitorParam.paramUid &&
-                p.monitorUid === monitorParam.monitorUid
-            )
-            .delete
+    override def removeByUid(monitorUid: Uid, paramUid: Uid): DBIO[Int] = {
+        val targetRows = context.monitorParams.filter(p =>
+            !p.isDeleted && p.monitorUid === monitorUid && p.paramUid === paramUid
+        )
+        for {
+            booleanOption <- targetRows.result.headOption
+            affected <- booleanOption
+                .map(p => targetRows.update(p.copy(isDeleted = true)))
+                .getOrElse(DBIO.successful(0))
+        } yield affected
+    }
 
+    override def restoreByParamUid(paramUid: Uid): DBIO[Int] = {
+        val targetRows = context.monitorParams.filter(p =>
+            p.isDeleted && p.paramUid === paramUid
+        )
+        for {
+            values <- targetRows.result
+            affected <- DBIO.sequence(
+              values.map(p => targetRows.update(p.copy(isDeleted = false)))
+            ) map { _.sum }
+        } yield affected
+    }
+
+    override def restoreByMonitorUid(monitorUid: Uid): DBIO[Int] = {
+        val targetRows = context.monitorParams.filter(p =>
+            p.isDeleted && p.monitorUid === monitorUid
+        )
+        for {
+            values <- targetRows.result
+            affected <- DBIO.sequence(
+              values.map(p => targetRows.update(p.copy(isDeleted = false)))
+            ) map { _.sum }
+        } yield affected
+    }
+
+    override def restoreByUid(monitorUid: Uid, paramUid: Uid): DBIO[Int] = {
+        val targetRows = context.monitorParams.filter(p =>
+            p.isDeleted && p.monitorUid === monitorUid && p.paramUid === paramUid
+        )
+        for {
+            booleanOption <- targetRows.result.headOption
+            affected <- booleanOption
+                .map(p => targetRows.update(p.copy(isDeleted = false)))
+                .getOrElse(DBIO.successful(0))
+        } yield affected
+    }
 }

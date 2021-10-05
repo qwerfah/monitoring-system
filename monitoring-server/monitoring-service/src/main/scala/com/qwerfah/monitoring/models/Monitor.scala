@@ -19,5 +19,6 @@ final case class Monitor(
   uid: Uid,
   instanceUid: Uid,
   name: String,
-  description: Option[String]
+  description: Option[String],
+  isDeleted: Boolean
 )

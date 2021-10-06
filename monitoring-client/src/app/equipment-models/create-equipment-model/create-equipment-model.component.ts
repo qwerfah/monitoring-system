@@ -12,7 +12,6 @@ export class CreateEquipmentModelComponent implements OnInit {
 
   modelForm: FormGroup;
   paramsForm: FormArray;
-  paramsCount: number = 3;
 
   constructor(private fb: FormBuilder) {
     this.modelForm = fb.group({

@@ -9,7 +9,6 @@ import { EquipmentModelsModule } from './equipment-models/equipment-models.modul
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatButtonModule } from '@angular/material/button';
 import { StoreModule } from '@ngrx/store';
 import { reducers, metaReducers } from './reducers';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
@@ -22,7 +21,6 @@ import { EquipmentInstancesModule } from './equipment-instances/equipment-instan
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    MatButtonModule,
     GeneralModule,
     AuthorizationModule,
     RegistrationModule,

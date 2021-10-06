@@ -1,5 +1,5 @@
 export enum InstanceStatus {
-  Active = 'Active',
-  Inactive = 'Inactive',
-  Decommissioned = 'Decommissioned',
+  Active = 'Активен',
+  Inactive = 'Неактивен',
+  Decommissioned = 'Выведен из эксплуатации',
 }

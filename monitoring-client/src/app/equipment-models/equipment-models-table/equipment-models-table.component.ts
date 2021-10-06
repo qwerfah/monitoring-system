@@ -203,8 +203,11 @@ export class EquipmentModelsTableComponent implements OnInit {
 
   ngOnInit() {}
 
-  addModel() {
+  openModal() {
     this.isAdding = true;
-    console.log(this.isAdding);
+  }
+
+  addModel(model: EquipmentModel | null) {
+    this.isAdding = false;
   }
 }

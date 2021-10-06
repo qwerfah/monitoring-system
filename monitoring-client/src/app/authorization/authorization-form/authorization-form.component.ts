@@ -13,9 +13,8 @@ import { first } from 'rxjs/operators';
 })
 export class AuthorizationFormComponent implements OnInit {
   credentials: FormGroup;
-  user$: Observable<Credentials>;
 
-  constructor(private fb: FormBuilder, private store: Store<{ user: Credentials }>) {
+  constructor(private fb: FormBuilder) {
     this.credentials = fb.group({
       login: [null, [Validators.required]],
       password: [
@@ -23,8 +22,6 @@ export class AuthorizationFormComponent implements OnInit {
         [Validators.required, Validators.minLength(6), Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$')],
       ],
     });
-
-    this.user$ = store.select('user');
   }
 
   ngOnInit(): void {}
@@ -37,20 +34,8 @@ export class AuthorizationFormComponent implements OnInit {
 
       console.log(`Email: ${this.credentials.controls.login.value}`);
       console.log(`Password: ${this.credentials.controls.password.value}`);
-      this.store.dispatch(login({ creds }));
-      this.user$.pipe(first()).subscribe((data) => console.log(data.login));
     }
   }
 
-  reset(): void {
-    this.store.dispatch(logout());
-    this.user$.pipe(first()).subscribe(
-      (data) => {
-        console.log(data);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
-  }
+  reset(): void {}
 }

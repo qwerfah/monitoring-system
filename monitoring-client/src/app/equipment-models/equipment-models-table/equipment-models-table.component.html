@@ -1,5 +1,5 @@
+<app-create-equipment-model *ngIf="isAdding" (addEvent)="addModel($event)"></app-create-equipment-model>
 <div class="flex flex-col w-full h-full space-y-1 items-center justify-center">
-  <!--<app-create-equipment-model class="fixed shadow-lg"></app-create-equipment-model>-->
   <div class="flex w-full bg-white shadow-lg rounded place-content-center pt-2">
     <h1>Список зарегистрированных моделей оборудования</h1>
   </div>
@@ -9,7 +9,7 @@
         <tr>
           <th scope="col" class="p-2">
             <button
-              (click)="addModel()"
+              (click)="openModal()"
               class="bi bi-plus hover:bg-indigo-600 hover:text-white rounded-md focus:outline-none active:bg-indigo-800"
             >
               <svg

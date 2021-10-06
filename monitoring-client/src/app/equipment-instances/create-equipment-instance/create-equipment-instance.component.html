@@ -145,7 +145,7 @@
                 >
                   Модель - {{ selectedModel.name }}
                 </button>
-                <mat-menu #menu2="matMenu">
+                <mat-menu #menu2="matMenu" class="h-44 w-40 text-center">
                   <button
                     mat-menu-item
                     *ngFor="let model of models$ | async"

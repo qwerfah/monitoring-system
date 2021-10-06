@@ -10,6 +10,8 @@ import { InstanceStatus } from 'src/app/models/instance-status';
   styleUrls: ['./equipment-instances-table.component.css'],
 })
 export class EquipmentInstancesTableComponent implements OnInit {
+  isAdding: boolean = false;
+
   instances: EquipmentInstance[] = [
     new EquipmentInstance(uuid(), uuid(), 'instance1', 'description of instance 1', InstanceStatus.Active),
     new EquipmentInstance(uuid(), uuid(), 'instance2', 'description of instance 2', InstanceStatus.Inactive),
@@ -26,4 +28,12 @@ export class EquipmentInstancesTableComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {}
+
+  openModal() {
+    this.isAdding = true;
+  }
+
+  addInstance(model: EquipmentInstance | null) {
+    this.isAdding = false;
+  }
 }

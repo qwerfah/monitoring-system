@@ -40,6 +40,16 @@ export class CreateEquipmentInstanceComponent implements OnInit {
       new EquipmentModel('', 'model_3', 'description_3'),
       new EquipmentModel('', 'model_4', 'description_4'),
       new EquipmentModel('', 'model_5', 'description_5'),
+      new EquipmentModel('', 'model_1', 'description_1'),
+      new EquipmentModel('', 'model_2', 'description_2'),
+      new EquipmentModel('', 'model_3', 'description_3'),
+      new EquipmentModel('', 'model_4', 'description_4'),
+      new EquipmentModel('', 'model_5', 'description_5'),
+      new EquipmentModel('', 'model_1', 'description_1'),
+      new EquipmentModel('', 'model_2', 'description_2'),
+      new EquipmentModel('', 'model_3', 'description_3'),
+      new EquipmentModel('', 'model_4', 'description_4'),
+      new EquipmentModel('', 'model_5', 'description_5'),
     ]);
 
     this.status = InstanceStatus.Active;

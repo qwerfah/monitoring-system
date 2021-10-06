@@ -1,4 +1,4 @@
-<app-create-equipment-instance></app-create-equipment-instance>
+<app-create-equipment-instance *ngIf="isAdding" (addEvent)="addInstance($event)"></app-create-equipment-instance>
 <div class="flex flex-col w-full h-full space-y-1">
   <div class="flex bg-white shadow-lg rounded place-content-center pt-2 w-full">
     <h2>Список развернутых экземпляров оборудования</h2>
@@ -7,6 +7,26 @@
     <table class="table-fixed w-full text-sm">
       <thead>
         <tr>
+          <th scope="col" class="p-2">
+            <button
+              (click)="openModal()"
+              class="bi bi-plus hover:bg-indigo-600 hover:text-white rounded-md focus:outline-none active:bg-indigo-800"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="30"
+                height="30"
+                fill="currentColor"
+                class="bi bi-plus"
+                type="button"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                />
+              </svg>
+            </button>
+          </th>
           <th scope="col" class="p-2">№</th>
           <th scope="col" class="p-2 w-3/12">Наименование</th>
           <th scope="col" class="p-2 w-6/12">Описание</th>
@@ -30,6 +50,7 @@
               class="hover:bg-indigo-700 hover:text-white w-full h-9"
               routerLink="/instances/{{ instance.uid }}"
             >
+              <td class="pl-3 text-center"></td>
               <td class="pl-3 text-center">
                 {{ i + 1 }}
               </td>
@@ -44,11 +65,12 @@
               </td>
             </tr>
             <tr
-              *ngIf="i % 2"
+              *ngIf="!(i % 2)"
               id="heading{{ i }}"
               class="bg-blue-100 hover:bg-indigo-700 hover:text-white w-full h-9"
               routerLink="/instances/{{ instance.uid }}"
             >
+              <td class="pl-3 text-center"></td>
               <td class="pl-3 text-center">
                 {{ i + 1 }}
               </td>

@@ -4,15 +4,15 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
 import { Credentials } from '../models/credentials';
-import { User } from '../models/user';
+import { User, UserWithToken } from '../models/user';
 import { Token } from '../models/token';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SessionService {
-  private currentUserSubject: BehaviorSubject<User | null>;
-  public currentUser$: Observable<User>;
+  private currentUserSubject: BehaviorSubject<UserWithToken | null>;
+  public currentUser$: Observable<UserWithToken>;
 
   constructor(private http: HttpClient, @Inject('GATEWAY_URI') private gatewayUri: string) {}
 
@@ -20,9 +20,11 @@ export class SessionService {
    * @param creds User credentials.
    * @returns Observable instance with logged in user instance contains new access and refresh tokens.
    */
-  login(creds: Credentials): Observable<User> {
+  login(creds: Credentials): Observable<UserWithToken> {
     return this.http
-      .post<User>(`${this.gatewayUri}/api/session/login`, { params: { login: creds.login, password: creds.password } })
+      .post<UserWithToken>(`${this.gatewayUri}/api/session/login`, {
+        params: { login: creds.login, password: creds.password },
+      })
       .pipe(
         map((user) => {
           if (user && user.token && user.token.access) {
@@ -40,8 +42,8 @@ export class SessionService {
    */
   refresh(): Observable<Token> {
     return this.http
-      .post<Token>('${this.gatewayUri}/api/session/refresh', null, {
-        headers: { Authorization: `Bearer ${this.currentUserSubject.value?.token?.refresh}` },
+      .post<Token>(`${this.gatewayUri}/api/session/refresh`, null, {
+        headers: { Authorization: `Bearer ${this.currentUser.token?.refresh}` },
       })
       .pipe(tap((tokens) => this.updateTokens(tokens)));
   }
@@ -58,17 +60,21 @@ export class SessionService {
    * @returns Observable with registered user data.
    */
   register(user: User): Observable<User> {
-    return this.http.post<User>('${this.gatewayUri/session/register}', user);
+    return this.http.post<User>(`${this.gatewayUri}/session/register`, user);
+  }
+
+  /** Exctract current user or throw error if it is not presented. */
+  get currentUser(): UserWithToken {
+    if (this.currentUserSubject.value == null) throw new ReferenceError('No user');
+    return this.currentUserSubject.value;
   }
 
   /** Update user tokens for user in local storage.
    * @param token New access and refresh tokens.
    */
   private updateTokens(token: Token) {
-    let user = this.currentUserSubject.value;
-    if (user != null) {
-      user.token = token;
-      localStorage.setItem('currentUser', JSON.stringify(user));
-    }
+    let user = this.currentUser;
+    user.token = token;
+    localStorage.setItem('currentUser', JSON.stringify(user));
   }
 }

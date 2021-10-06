@@ -4,7 +4,7 @@ import scala.util.Try
 
 import com.qwerfah.common.models.{Token, Payload}
 import com.qwerfah.common.services.response._
-import com.qwerfah.common.resources.Credentials
+import com.qwerfah.common.resources.{Credentials, UserResponse}
 import com.qwerfah.common.Uid
 
 /** Provide basic jwt tokens service functionality. */
@@ -24,7 +24,7 @@ trait TokenService[F[_]] {
       * @return
       *   User tokens.
       */
-    def login(credentials: Credentials): F[ServiceResponse[Token]]
+    def login(credentials: Credentials): F[ServiceResponse[UserResponse]]
 
     /** Refresh access-refresh token pair using given refresh token.
       * @param token

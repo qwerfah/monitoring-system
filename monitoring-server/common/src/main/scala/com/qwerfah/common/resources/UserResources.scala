@@ -1,6 +1,7 @@
 package com.qwerfah.common.resources
 
 import com.qwerfah.common.Uid
+import com.qwerfah.common.models.Token
 
 /** Register new or update exisiting user request data.
   * @param login
@@ -35,5 +36,6 @@ final case class Credentials(login: String, password: String)
 final case class UserResponse(
   uid: Uid,
   login: String,
-  role: UserRole
+  role: UserRole,
+  token: Option[Token]
 )

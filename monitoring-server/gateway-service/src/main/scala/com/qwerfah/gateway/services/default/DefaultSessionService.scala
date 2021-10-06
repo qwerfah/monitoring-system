@@ -13,7 +13,7 @@ import com.qwerfah.gateway.json.Decoders
 import com.qwerfah.common.services.TokenService
 import com.qwerfah.common.http._
 import com.qwerfah.common.services.response._
-import com.qwerfah.common.resources.Credentials
+import com.qwerfah.common.resources.{Credentials, UserResponse}
 import com.qwerfah.common.models._
 import com.qwerfah.common.Uid
 
@@ -29,7 +29,9 @@ class DefaultSessionService[F[_]: Monad](client: HttpClient[F])
           Some(token)
         )
 
-    override def login(credentials: Credentials): F[ServiceResponse[Token]] =
+    override def login(
+      credentials: Credentials
+    ): F[ServiceResponse[UserResponse]] =
         client.sendAndDecode(
           HttpMethod.Post,
           "/api/session/login",

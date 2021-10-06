@@ -21,9 +21,10 @@ import com.qwerfah.common.repos._
 import com.qwerfah.common.models.{Token, Payload}
 import com.qwerfah.common.db.DbManager
 import com.qwerfah.common.exceptions._
-import com.qwerfah.common.resources.Credentials
+import com.qwerfah.common.resources.{Credentials, UserResponse}
 import com.qwerfah.common.util.Conversions._
 import com.qwerfah.common.{Uid, randomUid, uidFromString}
+import com.qwerfah.common.Mappings
 
 object JwtOptions {
     val key = "secretKey"
@@ -42,6 +43,7 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
   tokenRepo: TokenRepo[DB],
   dbManager: DbManager[F, DB]
 ) extends TokenService[F] {
+    import Mappings._
 
     /** Generate jwt token for specified subject identifier with given
       * expiration time.
@@ -129,14 +131,16 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
 
     override def login(
       credentials: Credentials
-    ): F[ServiceResponse[Token]] = {
+    ): F[ServiceResponse[UserResponse]] = {
         val passwordHash = MessageDigest
             .getInstance("MD5")
             .digest(credentials.password.getBytes("UTF-8"))
 
         dbManager.execute(userRepo.getByLogin(credentials.login)) flatMap {
             case Some(user) if user.password sameElements passwordHash =>
-                generate(Payload(user.uid, user.login, user.role))
+                generate(Payload(user.uid, user.login, user.role)) map {
+                    case OkResponse(token) => user.asResponse(token).as200
+                }
             case _ => Monad[F].pure(InvalidCredentials.as404)
         }
     }

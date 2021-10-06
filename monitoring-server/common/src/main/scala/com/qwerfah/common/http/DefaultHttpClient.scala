@@ -26,7 +26,7 @@ import com.qwerfah.common.services.response._
 import com.qwerfah.common.services.response.SuccessResponse
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.models.Token
-import com.qwerfah.common.resources.Credentials
+import com.qwerfah.common.resources.{Credentials, UserResponse}
 import com.qwerfah.common.util.Conversions._
 import com.twitter.finagle.http.exp.Multipart
 import com.twitter.io.BufInputStream
@@ -63,8 +63,11 @@ class DefaultHttpClient(
 
         service(request) map { response =>
             response.status match {
-                case Status.Ok => decodeJson[Token](response.contentString)
-                case _         => InterserviceAuthFailed(tag).as401
+                case Status.Ok =>
+                    decodeJson[UserResponse](response.contentString) match {
+                        case OkResponse(user) => user.token.get.as200
+                    }
+                case _ => InterserviceAuthFailed(tag).as401
             }
         }
     }

@@ -1,10 +1,10 @@
 <app-create-equipment-instance></app-create-equipment-instance>
 <div class="flex flex-col w-full h-full space-y-1">
   <div class="flex bg-white shadow-lg rounded place-content-center pt-2 w-full">
-    <h1>Список развернутых экземпляров оборудования</h1>
+    <h2>Список развернутых экземпляров оборудования</h2>
   </div>
   <div class="flex bg-white w-full rounded place-content-center w-full">
-    <table class="table-fixed w-full">
+    <table class="table-fixed w-full text-sm">
       <thead>
         <tr>
           <th scope="col" class="p-2">№</th>
@@ -27,7 +27,7 @@
             <tr
               *ngIf="i % 2"
               id="heading{{ i }}"
-              class="hover:bg-indigo-700 hover:text-white w-full h-12"
+              class="hover:bg-indigo-700 hover:text-white w-full h-9"
               routerLink="/instances/{{ instance.uid }}"
             >
               <td class="pl-3 text-center">
@@ -46,7 +46,7 @@
             <tr
               *ngIf="i % 2"
               id="heading{{ i }}"
-              class="bg-blue-100 hover:bg-indigo-700 hover:text-white w-full h-12"
+              class="bg-blue-100 hover:bg-indigo-700 hover:text-white w-full h-9"
               routerLink="/instances/{{ instance.uid }}"
             >
               <td class="pl-3 text-center">

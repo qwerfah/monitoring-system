@@ -35,7 +35,7 @@
               </svg>
             </svg>
           </button>
-          <a class="p-4 text-lg text-white hover:underline" routerLink="/"> СИСТЕМА МОНИТОРИНГА ОБОРУДОВАНИЯ </a>
+          <a class="p-4 text-lg text-white hover:underline bold" routerLink="/"> СИСТЕМА МОНИТОРИНГА ОБОРУДОВАНИЯ </a>
         </div>
         <div class="flex items-center pr-2">
           <button class="text-white text-base border border-white rounded-lg h-10 px-4">Выход</button>
@@ -44,7 +44,7 @@
     </div>
   </nav>
   <div class="flex flex-row px-2 pb-2 pt-16 space-x-1 h-full">
-    <div class="sticky flex w-80 flex-col h-full shadow-lg bg-white rounded-lg" *ngIf="isVisible">
+    <div class="sticky flex w-80 flex-col h-full shadow-lg bg-white rounded" *ngIf="isVisible">
       <button
         class="
           text-left
@@ -56,7 +56,8 @@
           hover:border-transparent
           focus:outline-none
           active:bg-gradient-to-l active:from-indigo-700 active:to-indigo-900
-          rounded-t-lg
+          rounded-t
+          bold
         "
         routerLink="/models"
       >
@@ -76,6 +77,7 @@
           hover:border-transparent
           active:bg-gradient-to-l active:from-indigo-700 active:to-indigo-900
           focus:outline-none
+          bold
         "
         routerLink="/instances"
       >
@@ -95,6 +97,7 @@
           hover:border-transparent
           active:bg-gradient-to-l active:from-indigo-700 active:to-indigo-900
           focus:outline-none
+          bold
         "
       >
         Мониторинг
@@ -113,6 +116,7 @@
           hover:border-transparent
           active:bg-gradient-to-l active:from-indigo-700 active:to-indigo-900
           focus:outline-none
+          bold
         "
       >
         Статистика
@@ -131,6 +135,7 @@
           hover:border-transparent
           active:bg-gradient-to-l active:from-indigo-700 active:to-indigo-900
           focus:outline-none
+          bold
         "
       >
         Администрирование

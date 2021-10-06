@@ -1,5 +1,5 @@
 <app-create-equipment-model *ngIf="isAdding" (addEvent)="addModel($event)"></app-create-equipment-model>
-<div class="flex flex-col w-full h-full space-y-1 items-center justify-center">
+<div class="flex flex-col w-full h-full space-y-1">
   <div class="flex w-full bg-white shadow-lg rounded place-content-center pt-2">
     <h2>Список зарегистрированных моделей оборудования</h2>
   </div>
@@ -28,8 +28,8 @@
             </button>
           </th>
           <th scope="col" class="p-2">№</th>
-          <th scope="col" class="p-2 w-2/12">Наименование</th>
-          <th scope="col" class="p-2 w-9/12">Описание</th>
+          <th scope="col" class="p-2 w-3/12">Наименование</th>
+          <th scope="col" class="p-2 w-8/12">Описание</th>
         </tr>
       </thead>
 
@@ -53,10 +53,10 @@
               <td class="pl-3 text-center">
                 {{ i + 1 }}
               </td>
-              <td class="text-center">
+              <td class="text-center truncate">
                 {{ model.name }}
               </td>
-              <td class="text-center">
+              <td class="text-center truncate">
                 {{ model.description }}
               </td>
             </tr>
@@ -70,10 +70,10 @@
               <td class="pl-3 text-center">
                 {{ i + 1 }}
               </td>
-              <td class="text-center">
+              <td class="text-center truncate">
                 {{ model.name }}
               </td>
-              <td class="text-center">
+              <td class="text-center truncate">
                 {{ model.description }}
               </td>
             </tr>

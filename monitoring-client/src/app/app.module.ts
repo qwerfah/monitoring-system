@@ -14,6 +14,7 @@ import { reducers, metaReducers } from './reducers';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { EquipmentInstancesModule } from './equipment-instances/equipment-instances.module';
+import { MonitoringModule } from './monitoring/monitoring.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -26,6 +27,7 @@ import { EquipmentInstancesModule } from './equipment-instances/equipment-instan
     RegistrationModule,
     EquipmentModelsModule,
     EquipmentInstancesModule,
+    MonitoringModule,
     StoreModule.forRoot({}, {}),
     StoreModule.forRoot(reducers, { metaReducers }),
     !environment.production ? StoreDevtoolsModule.instrument() : [],

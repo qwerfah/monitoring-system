@@ -105,6 +105,7 @@
 
               <div class="flex flex-row space-x-2 place-content-evenly">
                 <button
+                  type="button"
                   mat-button
                   #trigger="matMenuTrigger"
                   [matMenuTriggerFor]="menu1"
@@ -115,6 +116,7 @@
                 </button>
                 <mat-menu #menu1="matMenu">
                   <button
+                    type="button"
                     mat-menu-item
                     (click)="setStatus(InstanceStatus.Active)"
                     class="border rounded h-4 focus:outline-none"
@@ -122,6 +124,7 @@
                     Активен
                   </button>
                   <button
+                    type="button"
                     mat-menu-item
                     (click)="setStatus(InstanceStatus.Inactive)"
                     class="border rounded h-4 focus:outline-none"
@@ -129,6 +132,7 @@
                     Неактивен
                   </button>
                   <button
+                    type="button"
                     mat-menu-item
                     (click)="setStatus(InstanceStatus.Decommissioned)"
                     class="border rounded h-4 focus:outline-none"
@@ -138,7 +142,9 @@
                 </mat-menu>
 
                 <button
+                  type="button"
                   mat-button
+                  #trigger="matMenuTrigger"
                   [matMenuTriggerFor]="menu2"
                   (mouseclick)="openModelsMenu()"
                   class="border rounded h-10 focus:outline-none active:border-indigo-500 text-sm p-2 w-2/3 truncate"
@@ -147,6 +153,7 @@
                 </button>
                 <mat-menu #menu2="matMenu" class="h-44 w-40 text-center">
                   <button
+                    type="button"
                     mat-menu-item
                     *ngFor="let model of models$ | async"
                     (click)="setModel(model)"

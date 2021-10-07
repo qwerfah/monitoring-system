@@ -78,7 +78,7 @@ export class CreateEquipmentInstanceComponent implements OnInit {
     if (this.instanceForm.invalid) {
       this.instanceForm.markAllAsTouched();
     } else {
-      this.addEvent.emit(new EquipmentInstance('', '', 'name', 'desc', InstanceStatus.Active));
+      this.addEvent.emit(new EquipmentInstance('', '', 'name', 'model', 'desc', InstanceStatus.Active));
 
       console.log(`name: ${this.instanceForm.controls.name.value}`);
       console.log(`description: ${this.instanceForm.controls.description.value}`);

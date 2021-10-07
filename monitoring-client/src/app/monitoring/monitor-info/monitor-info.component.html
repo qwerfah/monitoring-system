@@ -52,5 +52,19 @@
         </ng-container>
       </tbody>
     </table>
+    <ngx-charts-bar-horizontal
+      [view]="undefined"
+      [results]="organizationsChartData"
+      [xAxisLabel]="organizationParamName.get(orgF.param.value)"
+      [yAxisLabel]="'Организация'"
+      [legend]="false"
+      [showXAxisLabel]="true"
+      [showYAxisLabel]="true"
+      [xAxis]="true"
+      [yAxis]="true"
+      [gradient]="true"
+      (select)="onSelect($event)"
+    >
+    </ngx-charts-bar-horizontal>
   </div>
 </div>

@@ -1,3 +1,56 @@
-<p>
-  monitor-info works!
-</p>
+<div class="flex flex-col h-full w-full bg-white rounded p-10 space-y-4 text-sm" *ngIf="monitor$ | async as monitor">
+  <div class="flex flex-col w-full pl-4 pt-2 items-center border-b-2 border-blue-500">
+    <h2>Экран мониторинга</h2>
+  </div>
+  <div class="flex flex-row pt-4 w-full h-1/6 rounded-lg pl-4 pt-2 overflow-y-auto">
+    <ol class="list-disc list-inside tracking-wider space-y-1">
+      <li>Идентификатор: {{ monitor.uid }}</li>
+      <li>Идентификатор экземпляра: {{ monitor.instanceUid }}</li>
+      <li>Идентификатор модели: {{ monitor.modelUid }}</li>
+      <li>Наименование: {{ monitor.name }}</li>
+      <li>Экземпляр: {{ monitor.instanceName }}</li>
+      <li>Модель: {{ monitor.modelName }}</li>
+
+      <li>Описание: {{ monitor.description }}</li>
+    </ol>
+  </div>
+  <div class="flex flex-col w-full pl-4 pt-2 items-center border-b-2 border-blue-500">
+    <h2 class="bold">Отслеживаемые параметры оборудования</h2>
+  </div>
+  <div class="flex bg-white w-full overflow-y-auto place-content-center" *ngIf="params$ | async as params">
+    <table class="table-fixed w-full">
+      <thead>
+        <tr>
+          <th scope="col" class="p-2">№</th>
+          <th scope="col" class="p-2 w-6/12">Наименование</th>
+          <th scope="col" class="p-2 w-6/12">Единицы измерения</th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y-2 divide-gray-200">
+        <ng-container *ngIf="!(params | notEmpty)">
+          <tr>
+            <th scope="row" class="text-center" colspan="11">Нет доступных параметров</th>
+            <td></td>
+          </tr>
+        </ng-container>
+
+        <ng-container *ngIf="params | notEmpty">
+          <ng-container *ngFor="let param of params; index as i">
+            <tr id="heading{{ i }}" class="hover:bg-indigo-700 hover:text-white w-full h-9">
+              <td class="pl-3 text-center">
+                {{ i + 1 }}
+              </td>
+              <td class="text-center truncate">
+                {{ param.name }}
+              </td>
+              <td class="text-center truncate">
+                {{ param.measurmentUnits }}
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>

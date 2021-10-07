@@ -1,4 +1,15 @@
-<div class="flex flex-col h-full w-full bg-white rounded p-10 space-y-4 text-sm" *ngIf="monitor$ | async as monitor">
+<ng-template #loadingBlock>
+  <div class="d-flex justify-content-center">
+    <div class="spinner-border m-5" role="status">
+      <span class="sr-only">Загрузка...</span>
+    </div>
+  </div>
+</ng-template>
+
+<div
+  class="flex flex-col h-full w-full bg-white rounded p-10 space-y-4 text-sm overflow-y-auto"
+  *ngIf="monitor$ | async as monitor"
+>
   <div class="flex flex-col w-full pl-4 pt-2 items-center border-b-2 border-blue-500">
     <h2>Экран мониторинга</h2>
   </div>
@@ -17,7 +28,7 @@
   <div class="flex flex-col w-full pl-4 pt-2 items-center border-b-2 border-blue-500">
     <h2 class="bold">Отслеживаемые параметры оборудования</h2>
   </div>
-  <div class="flex bg-white w-full overflow-y-auto place-content-center" *ngIf="params$ | async as params">
+  <div class="flex bg-white w-full overflow-y-auto place-content-center h-56" *ngIf="params$ | async as params">
     <table class="table-fixed w-full">
       <thead>
         <tr>
@@ -52,19 +63,28 @@
         </ng-container>
       </tbody>
     </table>
-    <ngx-charts-bar-horizontal
-      [view]="undefined"
-      [results]="organizationsChartData"
-      [xAxisLabel]="organizationParamName.get(orgF.param.value)"
-      [yAxisLabel]="'Организация'"
-      [legend]="false"
-      [showXAxisLabel]="true"
-      [showYAxisLabel]="true"
-      [xAxis]="true"
-      [yAxis]="true"
-      [gradient]="true"
-      (select)="onSelect($event)"
-    >
-    </ngx-charts-bar-horizontal>
+  </div>
+  <div class="flex flex-col w-full pl-4 pt-6 items-center border-b-2 border-blue-500">
+    <h2 class="bold">Значения отслеживаемых параметров</h2>
+  </div>
+  <div class="flex flex-col space-y-6 w-full h-64">
+    <ng-container *ngIf="paramValues$ | async as paramValues; else loadingBlock">
+      <ng-container *ngFor="let data of chartData"
+        ><ngx-charts-line-chart
+          [results]="[data]"
+          [xAxisLabel]="'Время'"
+          [yAxisLabel]="data.name"
+          [legend]="false"
+          [showXAxisLabel]="true"
+          [showYAxisLabel]="true"
+          [xAxis]="true"
+          [yAxis]="true"
+          [gradient]="true"
+          [timeline]="true"
+          [autoScale]="true"
+        >
+        </ngx-charts-line-chart
+      ></ng-container>
+    </ng-container>
   </div>
 </div>

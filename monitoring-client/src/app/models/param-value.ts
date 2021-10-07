@@ -4,6 +4,6 @@ export class ParamValue {
     public paramUid: string,
     public instanceUid: string,
     public value: string,
-    time: Date
+    public time: Date
   ) {}
 }

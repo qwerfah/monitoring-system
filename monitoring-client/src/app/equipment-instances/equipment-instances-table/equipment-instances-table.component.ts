@@ -13,16 +13,30 @@ export class EquipmentInstancesTableComponent implements OnInit {
   isAdding: boolean = false;
 
   instances: EquipmentInstance[] = [
-    new EquipmentInstance(uuid(), uuid(), 'instance1', 'description of instance 1', InstanceStatus.Active),
-    new EquipmentInstance(uuid(), uuid(), 'instance2', 'description of instance 2', InstanceStatus.Inactive),
-    new EquipmentInstance(uuid(), uuid(), 'instance3', 'description of instance 3', InstanceStatus.Active),
-    new EquipmentInstance(uuid(), uuid(), 'instance4', 'description of instance 4', InstanceStatus.Decommissioned),
-    new EquipmentInstance(uuid(), uuid(), 'instance5', 'description of instance 5', InstanceStatus.Active),
-    new EquipmentInstance(uuid(), uuid(), 'instance1', 'description of instance 1', InstanceStatus.Active),
-    new EquipmentInstance(uuid(), uuid(), 'instance2', 'description of instance 2', InstanceStatus.Inactive),
-    new EquipmentInstance(uuid(), uuid(), 'instance3', 'description of instance 3', InstanceStatus.Active),
-    new EquipmentInstance(uuid(), uuid(), 'instance4', 'description of instance 4', InstanceStatus.Decommissioned),
-    new EquipmentInstance(uuid(), uuid(), 'instance5', 'description of instance 5', InstanceStatus.Active),
+    new EquipmentInstance(uuid(), uuid(), 'instance1', 'model_1', 'description of instance 1', InstanceStatus.Active),
+    new EquipmentInstance(uuid(), uuid(), 'instance2', 'model_2', 'description of instance 2', InstanceStatus.Inactive),
+    new EquipmentInstance(uuid(), uuid(), 'instance3', 'model_3', 'description of instance 3', InstanceStatus.Active),
+    new EquipmentInstance(
+      uuid(),
+      uuid(),
+      'instance4',
+      'model_4',
+      'description of instance 4',
+      InstanceStatus.Decommissioned
+    ),
+    new EquipmentInstance(uuid(), uuid(), 'instance5', 'model_5', 'description of instance 5', InstanceStatus.Active),
+    new EquipmentInstance(uuid(), uuid(), 'instance1', 'model_6', 'description of instance 1', InstanceStatus.Active),
+    new EquipmentInstance(uuid(), uuid(), 'instance2', 'model_7', 'description of instance 2', InstanceStatus.Inactive),
+    new EquipmentInstance(uuid(), uuid(), 'instance3', 'model_8', 'description of instance 3', InstanceStatus.Active),
+    new EquipmentInstance(
+      uuid(),
+      uuid(),
+      'instance4',
+      'model_9',
+      'description of instance 4',
+      InstanceStatus.Decommissioned
+    ),
+    new EquipmentInstance(uuid(), uuid(), 'instance5', 'model_10', 'description of instance 5', InstanceStatus.Active),
   ];
 
   constructor() {}
@@ -33,7 +47,7 @@ export class EquipmentInstancesTableComponent implements OnInit {
     this.isAdding = true;
   }
 
-  addInstance(model: EquipmentInstance | null) {
+  addInstance(instnace: EquipmentInstance | null) {
     this.isAdding = false;
   }
 }

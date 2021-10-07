@@ -10,7 +10,13 @@
           <th scope="col" class="p-2">
             <button
               (click)="openModal()"
-              class="bi bi-plus hover:bg-indigo-600 hover:text-white rounded-md focus:outline-none active:bg-indigo-800"
+              class="
+                bi bi-plus
+                hover:bg-indigo-600 hover:text-white
+                rounded-full
+                focus:outline-none
+                active:bg-indigo-800
+              "
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -27,9 +33,9 @@
               </svg>
             </button>
           </th>
-          <th scope="col" class="p-2">№</th>
-          <th scope="col" class="p-2 w-3/12">Наименование</th>
-          <th scope="col" class="p-2 w-8/12">Описание</th>
+          <th scope="col" class="w-1/12">№</th>
+          <th scope="col" class="w-4/12">Наименование</th>
+          <th scope="col" class="w-7/12">Описание</th>
         </tr>
       </thead>
 
@@ -49,8 +55,8 @@
               class="hover:bg-indigo-700 hover:text-white w-full h-9"
               routerLink="/models/{{ model.uid }}"
             >
-              <td class="pl-3 text-center"></td>
-              <td class="pl-3 text-center">
+              <td class="text-center"></td>
+              <td class="text-center">
                 {{ i + 1 }}
               </td>
               <td class="text-center truncate">
@@ -66,8 +72,8 @@
               class="bg-blue-100 hover:bg-indigo-700 hover:text-white w-full h-9"
               routerLink="/models/{{ model.uid }}"
             >
-              <td class="pl-3 text-center"></td>
-              <td class="pl-3 text-center">
+              <td class="text-center"></td>
+              <td class="text-center">
                 {{ i + 1 }}
               </td>
               <td class="text-center truncate">

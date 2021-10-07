@@ -5,6 +5,7 @@ export class EquipmentInstance {
     public uid: string,
     public modelUid: string,
     public name: string,
+    public modelName: string,
     public description: string | null,
     public status: InstanceStatus
   ) {}

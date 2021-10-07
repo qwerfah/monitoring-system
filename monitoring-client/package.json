@@ -24,6 +24,7 @@
     "@ngneat/tailwind": "^7.0.3",
     "@ngrx/store": "^12.4.0",
     "@ngrx/store-devtools": "^12.4.0",
+    "@swimlane/ngx-charts": "^19.0.1",
     "rxjs": "~6.6.0",
     "tslib": "^2.3.1",
     "tslint-plugin-prettier": "^2.3.0",

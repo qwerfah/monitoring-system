@@ -44,21 +44,17 @@ export class MonitorInfoComponent implements OnInit {
         );
       })
     );
-
-    let paramUid = uuid();
-    let paramUid2 = uuid();
-    let intanceUid = uuid();
   }
 
-  onlyUnique(value: string, index: number, self: string[]): boolean {
+  private onlyUnique(value: string, index: number, self: string[]): boolean {
     return self.indexOf(value) === index;
   }
 
-  getParamUids(params: ParamValue[]): string[] {
+  private getParamUids(params: ParamValue[]): string[] {
     return params.map((param) => param.paramUid).filter(this.onlyUnique);
   }
 
-  getParamValues(paramUid: string, params: ParamValue[]): ParamChartDataType {
+  private getParamValues(paramUid: string, params: ParamValue[]): ParamChartDataType {
     let series: { name: Date; value: number }[] = params
       .filter((param) => param.paramUid == paramUid)
       .sort((a, b) => a.time.getSeconds() - b.time.getSeconds())
@@ -75,19 +71,19 @@ export class MonitorInfoComponent implements OnInit {
     return { name: `${param.name}, ${param.measurmentUnits}`, series: series };
   }
 
-  toDateTime(secs: number): Date {
+  private toDateTime(secs: number): Date {
     let t = new Date(1970, 0, 1);
     t.setSeconds(secs);
     return t;
   }
 
-  getRandomInt(min: number = 0, max: number = 10): number {
+  private getRandomInt(min: number = 0, max: number = 10): number {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min;
   }
 
-  generateParamValues(params: Param[]): ParamValue[] {
+  private generateParamValues(params: Param[]): ParamValue[] {
     let values: ParamValue[] = [];
 
     for (let param of params) {

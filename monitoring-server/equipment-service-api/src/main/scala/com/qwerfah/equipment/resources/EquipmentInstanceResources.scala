@@ -19,6 +19,7 @@ final case class InstanceResponse(
   uid: Uid,
   modelUid: Uid,
   name: String,
+  modelName: String,
   description: Option[String],
   status: EquipmentStatus
 )

@@ -19,22 +19,22 @@ object Main extends TwitterServer {
 
     object GatewaySessionController extends SessionController
 
-    val policy: Cors.Policy = Cors.Policy(
-      allowsOrigin = _ => Some("http://localhost:4200")
-    )
+    val policy: Cors.Policy = Cors.UnsafePermissivePolicy
 
     val server =
         Http.serve(
           config.getString("port"),
-          new Cord.HttpFilter(policy)
-              .andThen(RequestLoggingFilter)
-              .andThen(RequestReportingFilter)
+          new Cors.HttpFilter(policy)
               .andThen(
-                GatewaySessionController.api
-                    .:+:(EquipmentController.api)
-                    .:+:(DocumentationController.api)
-                    .:+:(MonitoringController.api)
-                    .toServiceAs[Application.Json]
+                RequestLoggingFilter
+                    .andThen(RequestReportingFilter)
+                    .andThen(
+                      GatewaySessionController.api
+                          .:+:(EquipmentController.api)
+                          .:+:(DocumentationController.api)
+                          .:+:(MonitoringController.api)
+                          .toServiceAs[Application.Json]
+                    )
               )
         )
     onExit {

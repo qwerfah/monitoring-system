@@ -54,11 +54,13 @@ object EquipmentInstanceController extends Controller {
     }
 
     private val addInstance = post(
-      "instances" :: jsonBody[AddInstanceRequest] :: headerOption(
+      "models" :: path[Uid] :: "instances" :: jsonBody[
+        AddInstanceRequest
+      ] :: headerOption(
         "Authorization"
       )
-    ) { (request: AddInstanceRequest, header: Option[String]) =>
-        authorize(header, serviceRoles, _ => instanceService.add(request))
+    ) { (modelUid: Uid, request: AddInstanceRequest, header: Option[String]) =>
+        authorize(header, serviceRoles, _ => instanceService.add(modelUid, request))
     }
 
     private val updateInstance = patch(

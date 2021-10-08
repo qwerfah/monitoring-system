@@ -110,6 +110,7 @@ object Decoders {
                         uid <- c.downField("uid").as[Uid]
                         modelUid <- c.downField("modelUid").as[Uid]
                         name <- c.downField("name").as[String]
+                        modelName <- c.downField("modelName").as[String]
                         description <- c
                             .downField("description")
                             .as[Option[String]]
@@ -118,6 +119,7 @@ object Decoders {
                       uid,
                       modelUid,
                       name,
+                      modelName,
                       description,
                       status
                     )

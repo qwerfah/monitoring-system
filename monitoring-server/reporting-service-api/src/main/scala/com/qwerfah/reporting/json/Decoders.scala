@@ -8,7 +8,6 @@ import cats.implicits._
 import cats.data.Validated._
 import cats.data.{NonEmptyList, Validated, ValidatedNel}
 
-import com.qwerfah.reporting.resources._
 import com.qwerfah.reporting.json.JsonSchemas._
 
 import com.qwerfah.common.Uid

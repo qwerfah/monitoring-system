@@ -8,7 +8,10 @@ trait EquipmentInstanceService[F[_]] {
     def getAll: F[ServiceResponse[Seq[InstanceResponse]]]
     def get(uid: Uid): F[ServiceResponse[InstanceResponse]]
     def getByModelUid(modelUid: Uid): F[ServiceResponse[Seq[InstanceResponse]]]
-    def add(instance: AddInstanceRequest): F[ServiceResponse[InstanceResponse]]
+    def add(
+      modelUid: Uid,
+      instance: AddInstanceRequest
+    ): F[ServiceResponse[InstanceResponse]]
     def update(
       uid: Uid,
       instance: UpdateInstanceRequest

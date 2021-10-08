@@ -23,7 +23,7 @@ trait EquipmentService[F[_]] {
 
     def getInstance(uid: Uid): F[Response]
 
-    def addInstance(request: AddInstanceRequest): F[Response]
+    def addInstance(modelUid: Uid, request: AddInstanceRequest): F[Response]
 
     def updateInstance(uid: Uid, request: UpdateInstanceRequest): F[Response]
 

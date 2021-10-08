@@ -39,11 +39,14 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
         }
 
     override def add(
+      modelUid: Uid,
       request: AddInstanceRequest
     ): F[ServiceResponse[InstanceResponse]] =
-        dbManager.execute(modelRepo.getByUid(request.modelUid)) flatMap {
+        dbManager.execute(modelRepo.getByUid(modelUid)) flatMap {
             case Some(model) =>
-                dbManager.execute(instanceRepo.add(request.asInstance)) map {
+                dbManager.execute(
+                  instanceRepo.add(request.asInstance.copy(modelUid = modelUid))
+                ) map {
                     _.asResponse.as201
                 }
             case None => Monad[F].pure(NoModel(request.modelUid).as404)

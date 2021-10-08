@@ -80,11 +80,13 @@ object EquipmentController extends Controller {
     }
 
     private def addInstance = post(
-      "instances" :: jsonBody[AddInstanceRequest] :: headerOption(
+      "models" :: path[Uid] :: "instances" :: jsonBody[
+        AddInstanceRequest
+      ] :: headerOption(
         "Authorization"
       )
-    ) { (request: AddInstanceRequest, header: Option[String]) =>
-        equipmentService.addInstance(request)
+    ) { (modelUid: Uid, request: AddInstanceRequest, header: Option[String]) =>
+        equipmentService.addInstance(modelUid, request)
     }
 
     private def updateInstance = patch(

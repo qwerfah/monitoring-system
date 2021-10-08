@@ -7,11 +7,11 @@ import com.qwerfah.common.Uid
 /** Equipment instance repository DSL. */
 trait EquipmentInstanceRepo[DB[_]] {
 
-    /** Get all equipment instances in repository.
+    /** Get all equipment instances in repository along with its model names.
       * @return
-      *   All equipment instances in repository.
+      *   Sequence of pairs instance - model name.
       */
-    def get: DB[Seq[EquipmentInstance]]
+    def get: DB[Seq[(EquipmentInstance, String)]]
 
     /** Get equipment instance by its internal id.
       * @param id
@@ -27,7 +27,7 @@ trait EquipmentInstanceRepo[DB[_]] {
       * @return
       *   Equipment instance with given uid or None if not found.
       */
-    def getByUid(uid: Uid): DB[Option[EquipmentInstance]]
+    def getByUid(uid: Uid): DB[Option[(EquipmentInstance, String)]]
 
     /** GEt all equipment instances associated with specified equipment model.
       * @param modelUid
@@ -35,7 +35,7 @@ trait EquipmentInstanceRepo[DB[_]] {
       * @return
       *   Equipment instances of the given model.
       */
-    def getByModelUid(modelUid: Uid): DB[Seq[EquipmentInstance]]
+    def getByModelUid(modelUid: Uid): DB[Seq[(EquipmentInstance, String)]]
 
     /** Add new instance to db table.
       * @param instance
@@ -43,7 +43,7 @@ trait EquipmentInstanceRepo[DB[_]] {
       * @return
       *   Equipment instance with internal id set by db provider.
       */
-    def add(instance: EquipmentInstance): DB[EquipmentInstance]
+    def add(instance: EquipmentInstance): DB[(EquipmentInstance, String)]
 
     /** Update existing equipment intance.
       * @param instance

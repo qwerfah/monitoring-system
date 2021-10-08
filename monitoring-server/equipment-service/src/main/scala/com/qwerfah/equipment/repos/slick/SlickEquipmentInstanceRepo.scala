@@ -13,8 +13,12 @@ class SlickEquipmentInstanceRepo(implicit val context: EquipmentContext)
   extends EquipmentInstanceRepo[DBIO] {
     import context.profile.api._
 
-    override def get: DBIO[Seq[EquipmentInstance]] =
-        context.instances.filter(!_.isDeleted).result
+    def get: DBIO[Seq[(EquipmentInstance, String)]] = (for {
+        (i, m) <-
+            context.instances.filter(!_.isDeleted) join context.models.filter(
+              !_.isDeleted
+            ) on (_.modelUid === _.uid)
+    } yield (i, m.name)).result
 
     override def getById(id: Int): DBIO[Option[EquipmentInstance]] =
         context.instances
@@ -22,20 +26,41 @@ class SlickEquipmentInstanceRepo(implicit val context: EquipmentContext)
             .result
             .headOption
 
-    override def getByUid(uid: Uid): DBIO[Option[EquipmentInstance]] =
-        context.instances
-            .filter(i => !i.isDeleted && i.uid === uid)
-            .result
-            .headOption
+    override def getByUid(uid: Uid): DBIO[Option[(EquipmentInstance, String)]] =
+        (for {
+            (i, m) <-
+                context.instances.filter(i =>
+                    !i.isDeleted && i.uid === uid
+                ) join context.models.filter(
+                  !_.isDeleted
+                ) on (_.modelUid === _.uid)
+        } yield (i, m.name)).result.headOption
 
-    override def getByModelUid(modelUid: Uid): DBIO[Seq[EquipmentInstance]] =
-        context.instances
-            .filter(i => !i.isDeleted && i.modelUid === modelUid)
-            .result
+    override def getByModelUid(
+      modelUid: Uid
+    ): DBIO[Seq[(EquipmentInstance, String)]] =
+        (for {
+            (i, m) <-
+                context.instances.filter(i =>
+                    !i.isDeleted && i.modelUid === modelUid
+                ) join context.models.filter(
+                  !_.isDeleted
+                ) on (_.modelUid === _.uid)
+        } yield (i, m.name)).result
 
-    override def add(instance: EquipmentInstance): DBIO[EquipmentInstance] =
-        (context.instances returning context.instances.map(_.id)
-            into ((instance, id) => instance.copy(id = Some(id)))) += instance
+    override def add(
+      instance: EquipmentInstance
+    ): DBIO[(EquipmentInstance, String)] =
+        for {
+            result <- ((context.instances returning context.instances.map(_.id)
+                into ((instance, id) =>
+                    instance.copy(id = Some(id))
+                )) += instance)
+            model <- context.models
+                .filter(m => !m.isDeleted && m.uid === result.modelUid)
+                .result
+                .head
+        } yield (result, model.name)
 
     override def update(instance: EquipmentInstance): DBIO[Int] = {
         val targetRows =

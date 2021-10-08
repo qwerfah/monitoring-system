@@ -25,14 +25,7 @@ export class SessionService {
    * @returns Observable instance with logged in user instance contains new access and refresh tokens.
    */
   login(creds: Credentials): Observable<UserWithToken> {
-    const httpOptions = {
-      headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-      }),
-    };
-
-    return this.http.post<UserWithToken>(`${this.gatewayUri}/api/session/login`, creds, httpOptions).pipe(
+    return this.http.post<UserWithToken>(`${this.gatewayUri}/api/session/login`, creds).pipe(
       map((user) => {
         if (user && user.token && user.token.access) {
           localStorage.setItem('currentUser', JSON.stringify(user));

@@ -19,11 +19,10 @@ export class TokenInterceptor implements HttpInterceptor {
    */
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const currentUser = this.sessionService.currentUser;
-    const isLoggedIn = currentUser && currentUser.token.access;
     const isBasePath = request.url.startsWith(this.gatewayUri);
     const isNotRefresh = !request.url.includes(`${this.gatewayUri}/api/session/refresh`);
 
-    if (isLoggedIn && isBasePath && isNotRefresh) {
+    if (currentUser && isBasePath && isNotRefresh) {
       request = this.addAccessToken(request, currentUser.token.access);
     }
 

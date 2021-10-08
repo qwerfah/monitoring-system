@@ -1,9 +1,10 @@
 <app-create-equipment-model *ngIf="isAdding" (addEvent)="addModel($event)"></app-create-equipment-model>
-<div class="flex flex-col w-full h-full space-y-1">
+<app-fullscreen-loader *ngIf="isLoading"></app-fullscreen-loader>
+<div *ngIf="!isLoading" class="flex flex-col w-full h-full space-y-1">
   <div class="flex w-full bg-white shadow-lg rounded place-content-center pt-2">
     <h2>Список зарегистрированных моделей оборудования</h2>
   </div>
-  <div disabled class="flex w-full bg-white rounded overflow-y-auto place-content-center">
+  <div class="flex w-full bg-white rounded overflow-y-auto place-content-center">
     <table class="table-fixed w-full text-sm">
       <thead>
         <tr>
@@ -42,8 +43,7 @@
       <tbody>
         <ng-container *ngIf="!(models | notEmpty)">
           <tr>
-            <th scope="row" class="text-center" colspan="11">Нет доступных моделей оборудования</th>
-            <td></td>
+            <th scope="row" class="text-center pt-20 pb-20" colspan="11">Нет доступных моделей оборудования</th>
           </tr>
         </ng-container>
 

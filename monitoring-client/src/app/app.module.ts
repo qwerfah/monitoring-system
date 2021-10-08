@@ -15,6 +15,8 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { EquipmentInstancesModule } from './equipment-instances/equipment-instances.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { TokenInterceptor } from './helpers/token.interceptor';
 
 @NgModule({
   declarations: [AppComponent],
@@ -36,7 +38,10 @@ import { MonitoringModule } from './monitoring/monitoring.module';
       logOnly: environment.production,
     }),
   ],
-  providers: [{ provide: 'GATEWAY_URI', useValue: environment.gatewayUri }],
+  providers: [
+    { provide: 'GATEWAY_URI', useValue: environment.gatewayUri },
+    { provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

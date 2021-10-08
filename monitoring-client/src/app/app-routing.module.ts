@@ -6,26 +6,6 @@ import { RouterModule, Routes } from '@angular/router';
 // import { MainFormComponent } from './general/main-form/main-form.component';
 
 const routes: Routes = [
-  {
-    path: '',
-    redirectTo: '/',
-    pathMatch: 'full',
-  },
-  {
-    path: 'login',
-    redirectTo: '/login',
-    pathMatch: 'full',
-  },
-  {
-    path: 'register',
-    redirectTo: '/register',
-    pathMatch: 'full',
-  },
-  {
-    path: 'models',
-    redirectTo: '/models',
-    pathMatch: 'full',
-  },
 ];
 
 @NgModule({

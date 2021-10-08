@@ -3,6 +3,7 @@ package com.qwerfah.gateway
 import com.twitter.finagle.{Http, ListeningServer}
 import com.twitter.server.TwitterServer
 import com.twitter.finagle.http.{Request, Response}
+import com.twitter.finagle.http.filter.Cors
 
 import io.finch.Application
 import io.finch.circe._
@@ -18,10 +19,15 @@ object Main extends TwitterServer {
 
     object GatewaySessionController extends SessionController
 
+    val policy: Cors.Policy = Cors.Policy(
+      allowsOrigin = _ => Some("http://localhost:4200")
+    )
+
     val server =
         Http.serve(
           config.getString("port"),
-          RequestLoggingFilter
+          new Cord.HttpFilter(policy)
+              .andThen(RequestLoggingFilter)
               .andThen(RequestReportingFilter)
               .andThen(
                 GatewaySessionController.api

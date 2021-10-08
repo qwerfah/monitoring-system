@@ -4,6 +4,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { EquipmentInstancesTableComponent } from './equipment-instances-table/equipment-instances-table.component';
 import { EquipmentInstanceInfoComponent } from './equipment-instance-info/equipment-instance-info.component';
 import { AuthGuard } from '../helpers/auth.guard';
+import { UserRole } from '../models/user-role';
 
 const routes: Routes = [
   {
@@ -11,7 +12,7 @@ const routes: Routes = [
     component: EquipmentInstancesTableComponent,
     canActivate: [AuthGuard],
     data: {
-      role: 'EquipmentUser',
+      roles: [UserRole.SystemAdmin, UserRole.EquipmentAdmin, UserRole.EquipmentUser],
     },
   },
   {
@@ -19,7 +20,7 @@ const routes: Routes = [
     component: EquipmentInstanceInfoComponent,
     canActivate: [AuthGuard],
     data: {
-      role: 'EquipmentUser',
+      roles: [UserRole.SystemAdmin, UserRole.EquipmentAdmin, UserRole.EquipmentUser],
     },
   },
 ];

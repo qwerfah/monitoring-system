@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { AuthGuard } from '../helpers/auth.guard';
+import { UserRole } from '../models/user-role';
 import { MonitorInfoComponent } from './monitor-info/monitor-info.component';
 import { MonitorsTableComponent } from './monitors-table/monitors-table.component';
 
@@ -11,7 +12,7 @@ const routes: Routes = [
     component: MonitorsTableComponent,
     canActivate: [AuthGuard],
     data: {
-      role: 'EquipmentUser',
+      roles: [UserRole.SystemAdmin, UserRole.EquipmentAdmin, UserRole.EquipmentUser],
     },
   },
   {
@@ -20,7 +21,7 @@ const routes: Routes = [
 
     canActivate: [AuthGuard],
     data: {
-      role: 'EquipmentUser',
+      roles: [UserRole.SystemAdmin, UserRole.EquipmentAdmin, UserRole.EquipmentUser],
     },
   },
 ];

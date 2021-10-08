@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { TimeoutError } from 'rxjs';
 
+import { User } from 'src/app/models/user';
+import { UserRole } from 'src/app/models/user-role';
+import { SessionService } from 'src/app/services/session.service';
+
 @Component({
   selector: 'app-main-form',
   templateUrl: './main-form.component.html',
@@ -8,11 +12,15 @@ import { TimeoutError } from 'rxjs';
 })
 export class MainFormComponent implements OnInit {
   isVisible: boolean = true;
-  isAuthorized: boolean = true;
-  events: string[] = [];
-  opened: boolean = true;
+  currentUser: User | undefined = undefined;
 
-  constructor() {}
+  UserRole = UserRole;
+
+  constructor(private sessionService: SessionService) {
+    sessionService.currentUser$.subscribe((user) => {
+      this.currentUser = user;
+    });
+  }
 
   ngOnInit() {}
 
@@ -20,11 +28,17 @@ export class MainFormComponent implements OnInit {
     console.log((<HTMLButtonElement>event?.srcElement)?.attributes?.getNamedItem('id')?.value);
     this.isVisible =
       (<HTMLElement>event?.srcElement)?.attributes?.getNamedItem('id')?.value == 'sideBarButton' ? true : false;
-    console.log('Clicked outside:', e);
   }
 
   onClicked(e: Event): void {
     this.isVisible = !this.isVisible;
-    console.log('Clicked:', e);
+  }
+
+  /** Check if current logged in user has sufficient rights to access element.
+   * @param roles Array of sufficient user roles.
+   * @returns True if current user role is sufficient, otherwise false.
+   */
+  isAllowed(roles: UserRole[]): boolean {
+    return this.currentUser !== undefined && roles.indexOf(this.currentUser.role) !== -1;
   }
 }

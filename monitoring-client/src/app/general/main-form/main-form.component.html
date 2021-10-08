@@ -1,4 +1,4 @@
-<div *ngIf="isAuthorized" class="bg-gray-200 h-screen w-screen bg-gradient-to-r from-blue-400 to-indigo-700">
+<div *ngIf="currentUser" class="bg-gray-200 h-screen w-screen bg-gradient-to-r from-blue-400 to-indigo-700">
   <nav class="fixed bg-indigo-800 w-full bg-gradient-to-r from-blue-400 to-indigo-700">
     <div class="mx-auto px-2">
       <div class="flex items-center justify-between">
@@ -104,6 +104,7 @@
         Мониторинг
       </button>
       <button
+        *ngIf="isAllowed([UserRole.EquipmentAdmin, UserRole.SystemAdmin])"
         class="
           text-left
           tracking-wider
@@ -123,6 +124,7 @@
         Статистика
       </button>
       <button
+        *ngIf="isAllowed([UserRole.SystemAdmin])"
         class="
           text-left
           tracking-wider
@@ -148,4 +150,4 @@
     </div>
   </div>
 </div>
-<router-outlet *ngIf="!isAuthorized"></router-outlet>
+<router-outlet *ngIf="!currentUser"></router-outlet>

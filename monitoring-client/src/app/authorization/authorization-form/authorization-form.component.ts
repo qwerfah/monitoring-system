@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs';
-import { Store } from '@ngrx/store';
-import { login, logout } from '../authorization.actions';
+
 import { Credentials } from '../../models/credentials';
+import { SessionService } from 'src/app/services/session.service';
 import { first } from 'rxjs/operators';
+import { HttpErrorResponse, HttpResponseBase } from '@angular/common/http';
 
 @Component({
   selector: 'authorization-form',
@@ -13,28 +16,64 @@ import { first } from 'rxjs/operators';
 })
 export class AuthorizationFormComponent implements OnInit {
   credentials: FormGroup;
+  returnUrl: string;
+  isLoading: Boolean = false;
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private sessionService: SessionService,
+    private snackBar: MatSnackBar
+  ) {
     this.credentials = fb.group({
       login: [null, [Validators.required]],
       password: [
         null,
-        [Validators.required, Validators.minLength(6), Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$')],
+        //[Validators.required, Validators.minLength(6), Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$')],
+        [Validators.required],
       ],
     });
+
+    if (this.sessionService.currentUser) {
+      this.router.navigate(['/']);
+    }
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+  }
+
+  isUnavailableResponse(response: HttpResponseBase): response is HttpErrorResponse {
+    console.log(response.status);
+    return response.status === 0;
+  }
 
   submit(): void {
     if (this.credentials.invalid) {
       this.credentials.markAllAsTouched();
-    } else {
-      let creds = new Credentials(this.credentials.controls.login.value, this.credentials.controls.password.value);
-
-      console.log(`Email: ${this.credentials.controls.login.value}`);
-      console.log(`Password: ${this.credentials.controls.password.value}`);
+      return;
     }
+
+    this.isLoading = true;
+    let creds = new Credentials(this.credentials.controls.login.value, this.credentials.controls.password.value);
+
+    console.log(`Email: ${this.credentials.controls.login.value}`);
+    console.log(`Password: ${this.credentials.controls.password.value}`);
+
+    this.sessionService.login(creds).subscribe(
+      (user) => {
+        this.router.navigate([this.returnUrl]);
+      },
+      (error: HttpErrorResponse) => {
+        this.isLoading = false;
+        switch (error.status) {
+          case 0: {
+            this.snackBar.open('Ошибка авторизации: отсутсвтует соединение с сервером', 'Ок');
+          }
+        }
+      }
+    );
   }
 
   reset(): void {}

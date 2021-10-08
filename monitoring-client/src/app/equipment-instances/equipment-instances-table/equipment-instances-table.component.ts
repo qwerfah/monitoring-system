@@ -3,6 +3,9 @@ import { v4 as uuid } from 'uuid';
 
 import { EquipmentInstance } from 'src/app/models/equipment-instance';
 import { InstanceStatus } from 'src/app/models/instance-status';
+import { EquipmentService } from 'src/app/services/equipment.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-equipment-instances-table',
@@ -11,35 +14,36 @@ import { InstanceStatus } from 'src/app/models/instance-status';
 })
 export class EquipmentInstancesTableComponent implements OnInit {
   isAdding: boolean = false;
+  isLoading: boolean = true;
 
-  instances: EquipmentInstance[] = [
-    new EquipmentInstance(uuid(), uuid(), 'instance1', 'model_1', 'description of instance 1', InstanceStatus.Active),
-    new EquipmentInstance(uuid(), uuid(), 'instance2', 'model_2', 'description of instance 2', InstanceStatus.Inactive),
-    new EquipmentInstance(uuid(), uuid(), 'instance3', 'model_3', 'description of instance 3', InstanceStatus.Active),
-    new EquipmentInstance(
-      uuid(),
-      uuid(),
-      'instance4',
-      'model_4',
-      'description of instance 4',
-      InstanceStatus.Decommissioned
-    ),
-    new EquipmentInstance(uuid(), uuid(), 'instance5', 'model_5', 'description of instance 5', InstanceStatus.Active),
-    new EquipmentInstance(uuid(), uuid(), 'instance1', 'model_6', 'description of instance 1', InstanceStatus.Active),
-    new EquipmentInstance(uuid(), uuid(), 'instance2', 'model_7', 'description of instance 2', InstanceStatus.Inactive),
-    new EquipmentInstance(uuid(), uuid(), 'instance3', 'model_8', 'description of instance 3', InstanceStatus.Active),
-    new EquipmentInstance(
-      uuid(),
-      uuid(),
-      'instance4',
-      'model_9',
-      'description of instance 4',
-      InstanceStatus.Decommissioned
-    ),
-    new EquipmentInstance(uuid(), uuid(), 'instance5', 'model_10', 'description of instance 5', InstanceStatus.Active),
-  ];
+  instances: EquipmentInstance[];
 
-  constructor() {}
+  constructor(private equipmentService: EquipmentService, private snackBar: MatSnackBar) {
+    equipmentService.getInstances().subscribe(
+      (instances) => {
+        this.instances = instances;
+      },
+      (err: HttpErrorResponse) => {
+        switch (err.status) {
+          case 0: {
+            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
+            break;
+          }
+          case 502: {
+            this.snackBar.open('Ошибка: сервис оборудования недоступен', 'Ок');
+            break;
+          }
+          case 404: {
+            this.snackBar.open('Ошибка: данные не найдены', 'Ок');
+          }
+        }
+        this.isLoading = false;
+      },
+      () => {
+        this.isLoading = false;
+      }
+    );
+  }
 
   ngOnInit() {}
 

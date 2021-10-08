@@ -1,4 +1,5 @@
-<div class="flex flex-col h-full w-full bg-white rounded p-10 space-y-4 text-sm" *ngIf="instance$ | async as instance">
+<app-fullscreen-loader *ngIf="isLoading"></app-fullscreen-loader>
+<div class="flex flex-col h-full w-full bg-white rounded p-10 space-y-4 text-sm" *ngIf="instance">
   <div class="flex flex-col w-full pl-4 pt-2 items-center border-b-2 border-blue-500">
     <h2>Экземпляр оборудования</h2>
   </div>
@@ -15,7 +16,7 @@
   <div class="flex flex-col w-full pl-4 pt-2 items-center border-b-2 border-blue-500">
     <h2 class="bold">Технические параметры</h2>
   </div>
-  <div class="flex bg-white w-full overflow-y-auto place-content-center" *ngIf="params$ | async as params">
+  <div class="flex bg-white w-full overflow-y-auto place-content-center" *ngIf="params">
     <table class="table-fixed w-full">
       <thead>
         <tr>

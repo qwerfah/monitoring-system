@@ -18,70 +18,70 @@ export class EquipmentService {
   constructor(private http: HttpClient, @Inject('GATEWAY_URI') private gatewayUri: string) {}
 
   getModels(): Observable<EquipmentModel[]> {
-    return this.http.get<EquipmentModel[]>(`${this.gatewayUri}api/equipment/models`);
+    return this.http.get<EquipmentModel[]>(`${this.gatewayUri}/api/equipment/models`);
   }
 
   getModel(modelUid: string): Observable<EquipmentModel> {
-    return this.http.get<EquipmentModel>(`${this.gatewayUri}api/equipment/models/${modelUid}`);
+    return this.http.get<EquipmentModel>(`${this.gatewayUri}/api/equipment/models/${modelUid}`);
   }
 
   addModel(request: EquipmentModelRequest): Observable<EquipmentModel> {
-    return this.http.post<EquipmentModel>(`${this.gatewayUri}api/equipment/models`, request);
+    return this.http.post<EquipmentModel>(`${this.gatewayUri}/api/equipment/models`, request);
   }
 
   updateModel(modelUid: string, request: EquipmentModelRequest): Observable<Message> {
-    return this.http.patch<EquipmentModel>(`${this.gatewayUri}api/equipment/models/${modelUid}`, request);
+    return this.http.patch<EquipmentModel>(`${this.gatewayUri}/api/equipment/models/${modelUid}`, request);
   }
 
   removeModel(modelUid: string): Observable<Message> {
-    return this.http.delete<Message>(`${this.gatewayUri}api/equipment/models/${modelUid}`);
+    return this.http.delete<Message>(`${this.gatewayUri}/api/equipment/models/${modelUid}`);
   }
 
   getInstances(): Observable<EquipmentInstance[]> {
-    return this.http.get<EquipmentInstance[]>(`${this.gatewayUri}api/equipment/instances`);
+    return this.http.get<EquipmentInstance[]>(`${this.gatewayUri}/api/equipment/instances`);
   }
 
   getModelInstances(modelUid: string): Observable<EquipmentInstance[]> {
-    return this.http.get<EquipmentInstance[]>(`${this.gatewayUri}api/equipment/models/${modelUid}/instances`);
+    return this.http.get<EquipmentInstance[]>(`${this.gatewayUri}/api/equipment/models/${modelUid}/instances`);
   }
 
   getInstance(instanceUid: string): Observable<EquipmentInstance> {
-    return this.http.get<EquipmentInstance>(`${this.gatewayUri}api/equipment/instances/${instanceUid}`);
+    return this.http.get<EquipmentInstance>(`${this.gatewayUri}/api/equipment/instances/${instanceUid}`);
   }
 
   addInstance(modelUid: string, request: EquipmentInstanceRequest): Observable<EquipmentInstance> {
-    return this.http.post<EquipmentInstance>(`${this.gatewayUri}api/equipment/models/${modelUid}/instances`, request);
+    return this.http.post<EquipmentInstance>(`${this.gatewayUri}/api/equipment/models/${modelUid}/instances`, request);
   }
 
   updateInstance(instanceUid: string, request: EquipmentInstanceRequest): Observable<Message> {
-    return this.http.patch<Message>(`${this.gatewayUri}api/equipment/instances/${instanceUid}`, request);
+    return this.http.patch<Message>(`${this.gatewayUri}/api/equipment/instances/${instanceUid}`, request);
   }
 
   removeInstance(instanceUid: string): Observable<Message> {
-    return this.http.delete<Message>(`${this.gatewayUri}api/equipment/instances/${instanceUid}`);
+    return this.http.delete<Message>(`${this.gatewayUri}/api/equipment/instances/${instanceUid}`);
   }
 
   getModelParams(modelUid: string): Observable<Param[]> {
-    return this.http.get<Param[]>(`${this.gatewayUri}api/equipment/models/${modelUid}/params`);
+    return this.http.get<Param[]>(`${this.gatewayUri}/api/equipment/models/${modelUid}/params`);
   }
 
   getInstanceParams(instanaceUid: string): Observable<Param[]> {
-    return this.http.get<Param[]>(`${this.gatewayUri}api/equipment/instances/${instanaceUid}/params`);
+    return this.http.get<Param[]>(`${this.gatewayUri}/api/equipment/instances/${instanaceUid}/params`);
   }
 
   getParam(paramUid: string): Observable<Param> {
-    return this.http.get<Param>(`${this.gatewayUri}api/equipment/params/${paramUid}`);
+    return this.http.get<Param>(`${this.gatewayUri}/api/equipment/params/${paramUid}`);
   }
 
   addParam(modelUid: string, request: ParamRequest): Observable<Param> {
-    return this.http.post<Param>(`${this.gatewayUri}api/equipment/models/${modelUid}/params`, request);
+    return this.http.post<Param>(`${this.gatewayUri}/api/equipment/models/${modelUid}/params`, request);
   }
 
   updateParam(paramUid: string, request: ParamRequest): Observable<Message> {
-    return this.http.patch<Message>(`${this.gatewayUri}api/equipment/params/${paramUid}`, request);
+    return this.http.patch<Message>(`${this.gatewayUri}/api/equipment/params/${paramUid}`, request);
   }
 
   removeParam(paramUid: string): Observable<Message> {
-    return this.http.delete<Message>(`${this.gatewayUri}api/equipment/params/${paramUid}`);
+    return this.http.delete<Message>(`${this.gatewayUri}/api/equipment/params/${paramUid}`);
   }
 }

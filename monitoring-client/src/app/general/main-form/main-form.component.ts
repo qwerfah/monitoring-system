@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { TimeoutError } from 'rxjs';
 
 import { User } from 'src/app/models/user';
@@ -16,7 +17,7 @@ export class MainFormComponent implements OnInit {
 
   UserRole = UserRole;
 
-  constructor(private sessionService: SessionService) {
+  constructor(private sessionService: SessionService, private router: Router) {
     sessionService.currentUser$.subscribe((user) => {
       this.currentUser = user;
     });
@@ -40,5 +41,10 @@ export class MainFormComponent implements OnInit {
    */
   isAllowed(roles: UserRole[]): boolean {
     return this.currentUser !== undefined && roles.indexOf(this.currentUser.role) !== -1;
+  }
+
+  logout(): void {
+    this.sessionService.logout();
+    this.router.navigate(['/login']);
   }
 }

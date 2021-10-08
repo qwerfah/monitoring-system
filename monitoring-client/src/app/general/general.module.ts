@@ -13,9 +13,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 
 import { GenealRoutingModule } from './general-routing.module';
 import { MainPageComponent } from './main-page/main-page.component';
+import { FullscreenLoaderComponent } from './fullscreen-loader/fullscreen-loader.component';
 
 @NgModule({
-  declarations: [MainFormComponent, MainPageComponent],
+  declarations: [MainFormComponent, MainPageComponent, FullscreenLoaderComponent],
   imports: [
     CommonModule,
     BrowserAnimationsModule,
@@ -27,6 +28,6 @@ import { MainPageComponent } from './main-page/main-page.component';
     MatToolbarModule,
     GenealRoutingModule,
   ],
-  exports: [MainFormComponent],
+  exports: [MainFormComponent, MainPageComponent, FullscreenLoaderComponent],
 })
 export class GeneralModule {}

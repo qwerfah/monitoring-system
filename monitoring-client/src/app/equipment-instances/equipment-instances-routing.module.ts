@@ -3,15 +3,24 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { EquipmentInstancesTableComponent } from './equipment-instances-table/equipment-instances-table.component';
 import { EquipmentInstanceInfoComponent } from './equipment-instance-info/equipment-instance-info.component';
+import { AuthGuard } from '../helpers/auth.guard';
 
 const routes: Routes = [
   {
     path: 'instances',
     component: EquipmentInstancesTableComponent,
+    canActivate: [AuthGuard],
+    data: {
+      role: 'EquipmentUser',
+    },
   },
   {
     path: 'instances/:uid',
     component: EquipmentInstanceInfoComponent,
+    canActivate: [AuthGuard],
+    data: {
+      role: 'EquipmentUser',
+    },
   },
 ];
 

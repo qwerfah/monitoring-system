@@ -9,22 +9,18 @@ const routes: Routes = [
   {
     path: 'models',
     component: EquipmentModelsTableComponent,
-    /*
     canActivate: [AuthGuard],
     data: {
       role: 'EquipmentUser',
     },
-    */
   },
   {
     path: 'models/:uid',
     component: EquipmentModelInfoComponent,
-    /*
     canActivate: [AuthGuard],
     data: {
       role: 'EquipmentUser',
     },
-    */
   },
 ];
 

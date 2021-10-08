@@ -9,22 +9,19 @@ const routes: Routes = [
   {
     path: 'monitors',
     component: MonitorsTableComponent,
-    /*
     canActivate: [AuthGuard],
     data: {
       role: 'EquipmentUser',
     },
-    */
   },
   {
     path: 'monitors/:uid',
     component: MonitorInfoComponent,
-    /*
+
     canActivate: [AuthGuard],
     data: {
       role: 'EquipmentUser',
     },
-    */
   },
 ];
 

@@ -63,6 +63,7 @@ export class AuthorizationFormComponent implements OnInit {
 
     this.sessionService.login(creds).subscribe(
       (user) => {
+        this.isLoading = false;
         this.router.navigate([this.returnUrl]);
       },
       (error: HttpErrorResponse) => {
@@ -70,6 +71,14 @@ export class AuthorizationFormComponent implements OnInit {
         switch (error.status) {
           case 0: {
             this.snackBar.open('Ошибка авторизации: отсутсвтует соединение с сервером', 'Ок');
+            break;
+          }
+          case 502: {
+            this.snackBar.open('Ошибка авторизации: сервис авторизации недоступен', 'Ок');
+            break;
+          }
+          case 404: {
+            this.snackBar.open('Ошибка авторизации: неверные учетные данные', 'Ок');
           }
         }
       }

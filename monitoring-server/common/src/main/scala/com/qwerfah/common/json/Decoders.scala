@@ -8,6 +8,7 @@ import com.qwerfah.common.exceptions._
 import com.qwerfah.common.Uid
 import com.qwerfah.common.resources._
 import com.qwerfah.common.models.{Payload, Token}
+import com.qwerfah.common.services.response.ResponseMessage
 
 object Decoders {
     import JsonSchemas._
@@ -76,6 +77,18 @@ object Decoders {
                         login <- c.downField("login").as[String]
                         role <- c.downField("role").as[UserRole]
                     } yield Payload(uid, login, role)
+                case Invalid(errors) =>
+                    throw InvalidJsonBodyException(errors)
+            }
+        }
+
+    implicit val decodeResponseMessage: Decoder[ResponseMessage] =
+        (c: HCursor) => {
+            responseMessageSchema.validate(c.value) match {
+                case Valid(()) =>
+                    for {
+                        msg <- c.downField("message").as[String]
+                    } yield new ResponseMessage { override val message = msg }
                 case Invalid(errors) =>
                     throw InvalidJsonBodyException(errors)
             }

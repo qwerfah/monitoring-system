@@ -77,7 +77,7 @@ lazy val equipment = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(common, equipmentApi)
+    .dependsOn(common, equipmentApi, monitoringApi)
 
 lazy val documentation = project
     .in(file("documentation-service"))
@@ -142,7 +142,7 @@ lazy val monitoringApi = project
       settings,
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(common, equipmentApi)
+    .dependsOn(common)
     .disablePlugins(AssemblyPlugin)
 
 lazy val generatorApi = project

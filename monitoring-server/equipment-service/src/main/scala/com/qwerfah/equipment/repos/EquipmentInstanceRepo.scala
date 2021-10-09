@@ -11,7 +11,7 @@ trait EquipmentInstanceRepo[DB[_]] {
       * @return
       *   Sequence of pairs instance - model name.
       */
-    def get: DB[Seq[(EquipmentInstance, String)]]
+    def getWithModelName: DB[Seq[(EquipmentInstance, String)]]
 
     /** Get equipment instance by its internal id.
       * @param id
@@ -21,21 +21,44 @@ trait EquipmentInstanceRepo[DB[_]] {
       */
     def getById(id: Int): DB[Option[EquipmentInstance]]
 
-    /** Get equipment instance by its external uid.
+    /** Get equipment instance by its external id.
+      * @param uid
+      *   External equipment instance id.
+      * @return
+      *   Equipment instance with given id or None if not found.
+      */
+    def getByUid(uid: Uid): DB[Option[EquipmentInstance]]
+
+    /** Get equipment instance by its external uid along with associated model
+      * name.
       * @param id
       *   External equipment instance uid.
       * @return
       *   Equipment instance with given uid or None if not found.
       */
-    def getByUid(uid: Uid): DB[Option[(EquipmentInstance, String)]]
+    def getByUidWithModelName(uid: Uid): DB[Option[(EquipmentInstance, String)]]
 
-    /** GEt all equipment instances associated with specified equipment model.
+    /** GEt all equipment instances associated with specified equipment model
+      * along with associated model name.
       * @param modelUid
       *   Equipment model uid.
       * @return
       *   Equipment instances of the given model.
       */
-    def getByModelUid(modelUid: Uid): DB[Seq[(EquipmentInstance, String)]]
+    def getByModelUidWithModelName(
+      modelUid: Uid
+    ): DB[Seq[(EquipmentInstance, String)]]
+
+    /** Get equipment instance with specified uid along with associated
+      * equipment model.
+      * @param instanceUid
+      *   External equipment instance uid.
+      * @return
+      *   Equipment instance uid along with associated equipment model.
+      */
+    def getByUidWithModel(
+      instanceUid: Uid
+    ): DB[Option[(EquipmentInstance, EquipmentModel)]]
 
     /** Add new instance to db table.
       * @param instance

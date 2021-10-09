@@ -2,7 +2,10 @@ package com.qwerfah.equipment
 
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
-import com.qwerfah.common.randomUid
+
+import com.qwerfah.monitoring.resources.MonitorResponse
+
+import com.qwerfah.common.{Uid, randomUid}
 
 /** Provides implicit mappings for different resources. */
 object Mappings {
@@ -43,10 +46,10 @@ object Mappings {
       *   Equipment instance adding request.
       */
     implicit class AddRequestToInstanceMapping(request: AddInstanceRequest) {
-        def asInstance = EquipmentInstance(
+        def asInstance(modelUid: Uid) = EquipmentInstance(
           None,
           randomUid,
-          request.modelUid,
+          modelUid,
           request.name,
           request.description,
           request.status,
@@ -104,10 +107,10 @@ object Mappings {
     }
 
     implicit class AddRequestToParamMapping(request: AddParamRequest) {
-        def asParam = Param(
+        def asParam(modelUid: Uid) = Param(
           None,
           randomUid,
-          request.modelUid,
+          modelUid,
           request.name,
           request.measurmentUnits,
           false
@@ -136,5 +139,30 @@ object Mappings {
 
     implicit class ParamSeqToResponseSeqMapping(params: Seq[Param]) {
         def asResponse = for { param <- params } yield param.asResponse
+    }
+
+    implicit class MonitorToIstanceMonitorResponseMapping(
+      monitor: MonitorResponse
+    ) {
+        def asResponse(model: EquipmentModel, instance: EquipmentInstance) =
+            InstanceMonitorResponse(
+              monitor.uid,
+              model.uid,
+              instance.uid,
+              monitor.name,
+              model.name,
+              instance.name,
+              monitor.description
+            )
+    }
+
+    implicit class MonitorToIstanceMonitorResponseSeqMapping(
+      monitors: Seq[MonitorResponse]
+    ) {
+        def asResponse(model: EquipmentModel, instance: EquipmentInstance) =
+            for { monitor <- monitors } yield monitor.asResponse(
+              model,
+              instance
+            )
     }
 }

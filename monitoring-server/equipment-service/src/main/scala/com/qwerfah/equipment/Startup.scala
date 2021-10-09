@@ -26,11 +26,14 @@ import com.qwerfah.equipment.repos.slick._
 import com.qwerfah.equipment.repos._
 import com.qwerfah.equipment.services._
 import com.qwerfah.equipment.services.default._
+
 import com.qwerfah.common.db.slick.SlickDbManager
 import com.qwerfah.common.repos.local.LocalTokenRepo
 import com.qwerfah.common.repos.slick.SlickUserRepo
 import com.qwerfah.common.services.default._
 import com.qwerfah.common.controllers.RequestReportingFilter
+import com.qwerfah.common.http.{DefaultHttpClient, ServiceTag}
+import com.qwerfah.common.resources.Credentials
 
 /** Contain implicitly defined dependencies for db profile, db instance, data
   * context and all repositories and instances.
@@ -38,6 +41,24 @@ import com.qwerfah.common.controllers.RequestReportingFilter
 object Startup {
     // Application config
     implicit val config = ConfigFactory.load
+
+    val monitoringClient = new DefaultHttpClient(
+      ServiceTag.Monitoring,
+      Credentials(
+        config.getString("serviceId"),
+        config.getString("secret")
+      ),
+      config.getString("monitoringUrl")
+    )
+
+    val generatorClient = new DefaultHttpClient(
+      ServiceTag.Monitoring,
+      Credentials(
+        config.getString("serviceId"),
+        config.getString("secret")
+      ),
+      config.getString("generatorUrl")
+    )
 
     // Db dependencies
     implicit val pgdb = Database.forConfig("postgres")
@@ -56,7 +77,10 @@ object Startup {
     implicit val defaultModelService =
         new DefaultEquipmentModelService[Future, DBIO]
     implicit val defaultInstanceService =
-        new DefaultEquipmentInstanceService[Future, DBIO]
+        new DefaultEquipmentInstanceService[Future, DBIO](
+          monitoringClient,
+          generatorClient
+        )
     implicit val defaultParamService = new DefaultParamService[Future, DBIO]
     implicit val defaultTokenService = new DefaultTokenService[Future, DBIO]
 

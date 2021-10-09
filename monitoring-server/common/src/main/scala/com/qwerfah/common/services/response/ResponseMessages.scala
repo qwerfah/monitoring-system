@@ -2,7 +2,7 @@ package com.qwerfah.common.services.response
 
 import com.qwerfah.common.Uid
 
-sealed trait ResponseMessage {
+trait ResponseMessage {
     val message: String
 }
 

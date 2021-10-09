@@ -12,7 +12,7 @@ trait ParamService[F[_]] {
     def getByInstanceUid(
       instanceUid: Uid
     ): F[ServiceResponse[Seq[ParamResponse]]]
-    def add(param: AddParamRequest): F[ServiceResponse[ParamResponse]]
+    def add(modelUid: Uid, param: AddParamRequest): F[ServiceResponse[ParamResponse]]
     def update(
       uid: Uid,
       param: UpdateParamRequest

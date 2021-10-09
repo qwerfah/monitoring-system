@@ -53,6 +53,18 @@ object EquipmentInstanceController extends Controller {
         authorize(header, serviceRoles, _ => paramService.getByInstanceUid(uid))
     }
 
+    private val getAllInstanceMonitors = get(
+      "instances" :: "monitors" :: headerOption("Authorization")
+    ) { (header: Option[String]) =>
+        authorize(header, serviceRoles, _ => instanceService.getMonitors)
+    }
+
+    private val getInstanceMonitors = get(
+      "instances" :: path[Uid] :: "monitors" :: headerOption("Authorization")
+    ) { (uid: Uid, header: Option[String]) =>
+        authorize(header, serviceRoles, _ => instanceService.getMonitors(uid))
+    }
+
     private val addInstance = post(
       "models" :: path[Uid] :: "instances" :: jsonBody[
         AddInstanceRequest
@@ -60,7 +72,11 @@ object EquipmentInstanceController extends Controller {
         "Authorization"
       )
     ) { (modelUid: Uid, request: AddInstanceRequest, header: Option[String]) =>
-        authorize(header, serviceRoles, _ => instanceService.add(modelUid, request))
+        authorize(
+          header,
+          serviceRoles,
+          _ => instanceService.add(modelUid, request)
+        )
     }
 
     private val updateInstance = patch(
@@ -95,6 +111,8 @@ object EquipmentInstanceController extends Controller {
     val api = "api" :: getInstances
         .:+:(getInstance)
         .:+:(getInstanceParams)
+        .:+:(getAllInstanceMonitors)
+        .:+:(getInstanceMonitors)
         .:+:(addInstance)
         .:+:(updateInstance)
         .:+:(deleteInstance)

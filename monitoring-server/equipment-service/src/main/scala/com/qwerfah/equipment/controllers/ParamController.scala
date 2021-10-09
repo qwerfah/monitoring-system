@@ -45,9 +45,14 @@ object ParamController extends Controller {
     }
 
     private val addParam = post(
-      "params" :: jsonBody[AddParamRequest] :: headerOption("Authorization")
-    ) { (request: AddParamRequest, header: Option[String]) =>
-        authorize(header, serviceRoles, _ => paramService.add(request))
+      "models" :: path[Uid] ::
+          "params" :: jsonBody[AddParamRequest] :: headerOption("Authorization")
+    ) { (modelUid: Uid, request: AddParamRequest, header: Option[String]) =>
+        authorize(
+          header,
+          serviceRoles,
+          _ => paramService.add(modelUid, request)
+        )
     }
 
     private val updateParam = patch(

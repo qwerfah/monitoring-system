@@ -126,4 +126,19 @@ object JsonSchemas {
         }  
     }"""
     )
+
+    val responseMessageSchema: Schema = Schema.load(
+      json""" {
+        "type": "object",
+        "required": ["message"],
+        "properties": {
+            "message": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 1000,
+                "pattern": "^(?!\\s*$$).+"
+            }
+        }
+    }"""
+    )
 }

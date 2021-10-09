@@ -9,24 +9,37 @@ import com.qwerfah.equipment.services._
 import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Mappings
 
+import com.qwerfah.monitoring.resources.MonitorResponse
+import com.qwerfah.monitoring.json.{Decoders => MonitoringDecoders}
+
 import com.qwerfah.common.Uid
 import com.qwerfah.common.db.DbManager
+import com.qwerfah.common.json.{Decoders => CommonDecoders}
 import com.qwerfah.common.services.response._
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.util.Conversions._
+import com.qwerfah.common.http.{HttpClient, HttpMethod}
+import com.rabbitmq.client.RpcClient.Response
 
-class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
+class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](
+  monitorClient: HttpClient[F],
+  generatorClient: HttpClient[F]
+)(implicit
   modelRepo: EquipmentModelRepo[DB],
   instanceRepo: EquipmentInstanceRepo[DB],
   dbManager: DbManager[F, DB]
 ) extends EquipmentInstanceService[F] {
     import Mappings._
+    import MonitoringDecoders._
+    import CommonDecoders._
 
     override def getAll: F[ServiceResponse[Seq[InstanceResponse]]] =
-        dbManager.execute(instanceRepo.get) map { _.asResponse.as200 }
+        dbManager.execute(instanceRepo.getWithModelName) map {
+            _.asResponse.as200
+        }
 
     override def get(uid: Uid): F[ServiceResponse[InstanceResponse]] =
-        dbManager.execute(instanceRepo.getByUid(uid)) map {
+        dbManager.execute(instanceRepo.getByUidWithModelName(uid)) map {
             case Some(instance) => instance.asResponse.as200
             case None           => NoInstance(uid).as404
         }
@@ -34,8 +47,46 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
     override def getByModelUid(
       modelUid: Uid
     ): F[ServiceResponse[Seq[InstanceResponse]]] =
-        dbManager.execute(instanceRepo.getByModelUid(modelUid)) map {
+        dbManager.execute(
+          instanceRepo.getByModelUidWithModelName(modelUid)
+        ) map {
             _.asResponse.as200
+        }
+
+    override def getMonitors(
+      uid: Uid
+    ): F[ServiceResponse[Seq[InstanceMonitorResponse]]] =
+        dbManager.execute(instanceRepo.getByUidWithModel(uid)) flatMap {
+            case Some((instance, model)) =>
+                monitorClient.sendAndDecode[Seq[MonitorResponse]](
+                  HttpMethod.Get,
+                  s"/api/instances/$uid/monitors"
+                ) map {
+                    case OkResponse(monitors) =>
+                        monitors.asResponse(model, instance).as200
+                    case e: ErrorResponse => e
+                }
+            case None => Monad[F].pure(NoInstance(uid).as404)
+        }
+
+    def getMonitors(): F[ServiceResponse[Seq[InstanceMonitorResponse]]] =
+        monitorClient.sendAndDecode[Seq[MonitorResponse]](
+          HttpMethod.Get,
+          s"/api/monitors"
+        ) flatMap {
+            case OkResponse(monitors) =>
+                monitors
+                    .map(monitor =>
+                        dbManager.execute(
+                          instanceRepo.getByUidWithModel(monitor.instanceUid)
+                        ) map {
+                            case Some((instance, model)) =>
+                                Some(monitor.asResponse(model, instance))
+                            case None => None
+                        }
+                    )
+                    .sequence map { _.filter(_.isDefined).map(_.get).as200 }
+            case e: ErrorResponse => Monad[F].pure(e)
         }
 
     override def add(
@@ -45,11 +96,11 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
         dbManager.execute(modelRepo.getByUid(modelUid)) flatMap {
             case Some(model) =>
                 dbManager.execute(
-                  instanceRepo.add(request.asInstance.copy(modelUid = modelUid))
+                  instanceRepo.add(request.asInstance(modelUid))
                 ) map {
                     _.asResponse.as201
                 }
-            case None => Monad[F].pure(NoModel(request.modelUid).as404)
+            case None => Monad[F].pure(NoModel(modelUid).as404)
         }
 
     override def update(
@@ -64,14 +115,54 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](implicit
         }
 
     override def remove(uid: Uid): F[ServiceResponse[ResponseMessage]] =
-        dbManager.execute(instanceRepo.removeByUid(uid)) map {
-            case 1 => InstanceRemoved(uid).as200
-            case _ => NoInstance(uid).as404
+        generatorClient.sendAndDecode[ResponseMessage](
+          HttpMethod.Delete,
+          s"/api/instances$uid/params/values"
+        ) flatMap {
+            case _: SuccessResponse[ResponseMessage] =>
+                monitorClient.sendAndDecode[ResponseMessage](
+                  HttpMethod.Delete,
+                  s"/api/instances/$uid/monitors"
+                ) flatMap {
+                    case _: SuccessResponse[ResponseMessage] =>
+                        dbManager.execute(instanceRepo.removeByUid(uid)) map {
+                            case 1 => InstanceRemoved(uid).as200
+                            case _ => NoInstance(uid).as404
+                        }
+                    case e: ErrorResponse =>
+                        generatorClient.send(
+                          HttpMethod.Patch,
+                          s"/api/instances/$uid/params/values/restore"
+                        ) map { _ => e }
+                }
+            case e: ErrorResponse => Monad[F].pure(e)
         }
 
     override def restore(uid: Uid): F[ServiceResponse[ResponseMessage]] =
-        dbManager.execute(instanceRepo.restoreByUid(uid)) map {
-            case 1 => InstanceRestored(uid).as200
-            case _ => NoInstance(uid).as404
+        dbManager.execute(instanceRepo.restoreByUid(uid)) flatMap {
+            case 1 =>
+                generatorClient.sendAndDecode[ResponseMessage](
+                  HttpMethod.Patch,
+                  s"/api/instances/$uid/params/values/restore"
+                ) flatMap {
+                    case s: SuccessResponse[ResponseMessage] =>
+                        monitorClient.sendAndDecode[ResponseMessage](
+                          HttpMethod.Patch,
+                          s"/api/instances/$uid/monitors/restore"
+                        ) flatMap {
+                            case s: SuccessResponse[ResponseMessage] =>
+                                Monad[F].pure(InstanceRestored(uid).as200)
+                            case e: ErrorResponse =>
+                                generatorClient.sendAndDecode[ResponseMessage](
+                                  HttpMethod.Delete,
+                                  s"/api/instances$uid/params/values"
+                                ) map { _ => e }
+                        }
+                    case e: ErrorResponse =>
+                        dbManager.execute(instanceRepo.removeByUid(uid)) map {
+                            _ => e
+                        }
+                }
+            case _ => Monad[F].pure(NoInstance(uid).as404)
         }
 }

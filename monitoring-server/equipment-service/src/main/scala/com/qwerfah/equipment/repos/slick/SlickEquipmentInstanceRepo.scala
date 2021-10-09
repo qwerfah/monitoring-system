@@ -13,7 +13,7 @@ class SlickEquipmentInstanceRepo(implicit val context: EquipmentContext)
   extends EquipmentInstanceRepo[DBIO] {
     import context.profile.api._
 
-    def get: DBIO[Seq[(EquipmentInstance, String)]] = (for {
+    def getWithModelName: DBIO[Seq[(EquipmentInstance, String)]] = (for {
         (i, m) <-
             context.instances.filter(!_.isDeleted) join context.models.filter(
               !_.isDeleted
@@ -26,7 +26,15 @@ class SlickEquipmentInstanceRepo(implicit val context: EquipmentContext)
             .result
             .headOption
 
-    override def getByUid(uid: Uid): DBIO[Option[(EquipmentInstance, String)]] =
+    override def getByUid(uid: Uid): DBIO[Option[EquipmentInstance]] =
+        context.instances
+            .filter(i => !i.isDeleted && i.uid === uid)
+            .result
+            .headOption
+
+    override def getByUidWithModelName(
+      uid: Uid
+    ): DBIO[Option[(EquipmentInstance, String)]] =
         (for {
             (i, m) <-
                 context.instances.filter(i =>
@@ -36,7 +44,18 @@ class SlickEquipmentInstanceRepo(implicit val context: EquipmentContext)
                 ) on (_.modelUid === _.uid)
         } yield (i, m.name)).result.headOption
 
-    override def getByModelUid(
+    override def getByUidWithModel(
+      instanceUid: Uid
+    ): DBIO[Option[(EquipmentInstance, EquipmentModel)]] = (for {
+        instance <- context.instances.filter(i =>
+            !i.isDeleted && i.uid === instanceUid
+        )
+        model <- context.models.filter(m =>
+            !m.isDeleted && m.uid === instance.modelUid
+        )
+    } yield (instance, model)).result.headOption
+
+    override def getByModelUidWithModelName(
       modelUid: Uid
     ): DBIO[Seq[(EquipmentInstance, String)]] =
         (for {

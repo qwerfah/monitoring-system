@@ -130,11 +130,13 @@ object EquipmentController extends Controller {
     }
 
     private def addParam = post(
-      "params" :: jsonBody[AddParamRequest] :: headerOption(
+      "models" :: path[Uid] :: "params" :: jsonBody[
+        AddParamRequest
+      ] :: headerOption(
         "Authorization"
       )
-    ) { (request: AddParamRequest, header: Option[String]) =>
-        equipmentService.addParam(request)
+    ) { (modelUid: Uid, request: AddParamRequest, header: Option[String]) =>
+        equipmentService.addParam(modelUid, request)
     }
 
     private def updateParam = patch(

@@ -15,7 +15,7 @@ import io.circe.config.syntax._
 
 import com.qwerfah.common.models._
 import com.qwerfah.common.models.DataContext
-import com.qwerfah.common.{Uid, randomUid, hashString}
+import com.qwerfah.common.{Uid, randomUid, hashString, uidFromString}
 import com.qwerfah.common.resources.{UserRole, Credentials}
 
 class MonitoringContext(implicit jdbcProfile: JdbcProfile, config: Config)
@@ -90,11 +90,23 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile, config: Config)
 
     private val monitorUids = Seq(randomUid, randomUid, randomUid)
 
+    private val paramUids = Seq(
+      uidFromString("050d4139-d59b-4abb-aa33-a6d09f062be2"),
+      uidFromString("9b00e6a2-bb3d-4de0-b513-88137ab287e7"),
+      uidFromString("6c552410-f586-4348-a617-0a175397733d")
+    )
+
+    private val instanceUids = Seq(
+      uidFromString("c9686e98-0a32-4084-b883-7ea2f6334df0"),
+      uidFromString("6c4cd202-e693-4245-8cca-6b2ff430e9b3"),
+      uidFromString("a2fc3c37-3873-43d2-a662-3254632253f4")
+    )
+
     private val initialMonitors = Seq(
       Monitor(
         Some(0),
         monitorUids(0),
-        randomUid,
+        instanceUids(0),
         "monitor_1",
         Some("Description of monitor_1"),
         false
@@ -102,7 +114,7 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile, config: Config)
       Monitor(
         Some(1),
         monitorUids(1),
-        randomUid,
+        instanceUids(1),
         "monitor_2",
         Some("Description of monitor_2"),
         false
@@ -110,7 +122,7 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile, config: Config)
       Monitor(
         Some(2),
         monitorUids(2),
-        randomUid,
+        instanceUids(2),
         "monitor_3",
         Some("Description of monitor_3"),
         false
@@ -118,9 +130,9 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile, config: Config)
     )
 
     private val initialMonitorParams = Seq(
-      MonitorParam(monitorUids(0), randomUid, false),
-      MonitorParam(monitorUids(1), randomUid, false),
-      MonitorParam(monitorUids(2), randomUid, false)
+      MonitorParam(monitorUids(0), paramUids(0), false),
+      MonitorParam(monitorUids(1), paramUids(1), false),
+      MonitorParam(monitorUids(2), paramUids(2), false)
     )
 
     private def addUsers = {

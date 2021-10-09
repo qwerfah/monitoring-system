@@ -43,9 +43,9 @@ class DefaultParamService[F[_]: Monad, DB[_]: Monad](implicit
       instanceUid: Uid
     ): F[ServiceResponse[Seq[ParamResponse]]] =
         dbManager.execute(instanceRepo.getByUid(instanceUid)) flatMap {
-            case Some(value) =>
+            case Some(instance) =>
                 dbManager.execute(
-                  paramRepo.getByModelUid(value._1.modelUid)
+                  paramRepo.getByModelUid(instance.modelUid)
                 ) map {
                     _.asResponse.as200
                 }
@@ -53,14 +53,15 @@ class DefaultParamService[F[_]: Monad, DB[_]: Monad](implicit
         }
 
     override def add(
+      modelUid: Uid,
       request: AddParamRequest
     ): F[ServiceResponse[ParamResponse]] =
-        dbManager.execute(modelRepo.getByUid(request.modelUid)) flatMap {
+        dbManager.execute(modelRepo.getByUid(modelUid)) flatMap {
             case Some(model) =>
-                dbManager.execute(paramRepo.add(request.asParam)) map {
+                dbManager.execute(paramRepo.add(request.asParam(modelUid))) map {
                     _.asResponse.as201
                 }
-            case None => Monad[F].pure(NoModel(request.modelUid).as404)
+            case None => Monad[F].pure(NoModel(modelUid).as404)
         }
 
     override def update(

@@ -20,7 +20,10 @@ object Decoders {
                 for {
                     name <- c.downField("name").as[String]
                     description <- c.downField("description").as[Option[String]]
-                } yield ModelRequest(name, description)
+                    params <- c
+                        .downField("params")
+                        .as[Option[Seq[AddParamRequest]]]
+                } yield ModelRequest(name, description, params)
             case Invalid(errors) =>
                 throw InvalidJsonBodyException(errors)
         }
@@ -31,14 +34,12 @@ object Decoders {
             addInstanceRequestSchema.validate(c.value) match {
                 case Valid(()) =>
                     for {
-                        modelUid <- c.downField("modelUid").as[Uid]
                         name <- c.downField("name").as[String]
                         description <- c
                             .downField("description")
                             .as[Option[String]]
                         status <- c.downField("status").as[EquipmentStatus]
                     } yield AddInstanceRequest(
-                      modelUid,
                       name,
                       description,
                       status
@@ -69,13 +70,11 @@ object Decoders {
             addParamRequestSchema.validate(c.value) match {
                 case Valid(()) =>
                     for {
-                        modelUid <- c.downField("modelUid").as[Uid]
                         name <- c.downField("name").as[String]
                         measurmentUnits <- c
                             .downField("measurmentUnits")
                             .as[Option[String]]
                     } yield AddParamRequest(
-                      modelUid,
                       name,
                       measurmentUnits
                     )

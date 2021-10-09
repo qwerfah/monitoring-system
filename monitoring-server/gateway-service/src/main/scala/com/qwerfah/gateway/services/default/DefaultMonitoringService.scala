@@ -20,21 +20,26 @@ import com.qwerfah.common.http._
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.services.response._
 
-class DefaultMonitoringService[F[_]: Monad](client: HttpClient[F])
-  extends MonitoringService[F] {
+class DefaultMonitoringService[F[_]: Monad](
+  equipmentClient: HttpClient[F],
+  monitoringClient: HttpClient[F]
+) extends MonitoringService[F] {
     import Decoders._
 
     override def getMonitors: F[Response] =
-        client.send(HttpMethod.Get, "/api/monitors")
+        equipmentClient.send(HttpMethod.Get, "/api/instances/monitors")
 
     override def getInstanceMonitors(instanceUid: Uid): F[Response] =
-        client.send(HttpMethod.Get, s"/api/instances/$instanceUid/monitors")
+        equipmentClient.send(
+          HttpMethod.Get,
+          s"/api/instances/$instanceUid/monitors"
+        )
 
     override def getMonitor(uid: Uid): F[Response] =
-        client.send(HttpMethod.Get, s"/api/monitors/$uid")
+        monitoringClient.send(HttpMethod.Get, s"/api/monitors/$uid")
 
     override def addMonitor(request: AddMonitorRequest): F[Response] =
-        client.send(
+        monitoringClient.send(
           HttpMethod.Post,
           "/api/monitors",
           Some(request.asJson.toString)
@@ -43,12 +48,12 @@ class DefaultMonitoringService[F[_]: Monad](client: HttpClient[F])
     override def updateMonitor(
       uid: Uid,
       request: UpdateMonitorRequest
-    ): F[Response] = client.send(
+    ): F[Response] = monitoringClient.send(
       HttpMethod.Patch,
       s"/api/monitors/$uid",
       Some(request.asJson.toString)
     )
 
     override def removeMonitor(uid: Uid): F[Response] =
-        client.send(HttpMethod.Delete, s"/api/monitors/$uid")
+        monitoringClient.send(HttpMethod.Delete, s"/api/monitors/$uid")
 }

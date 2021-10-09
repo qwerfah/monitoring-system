@@ -22,6 +22,28 @@ object JsonSchemas {
                         "minLength": 1,
                         "maxLength": 100,
                         "pattern": "^(?!\\s*$$).+"
+                    },
+                    "params": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "required": ["name"],
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "maxLength": 100,
+                                    "pattern": "^(?!\\s*$$).+"
+                                },
+                                "measurmentUnits": {
+                                    "type": ["string", "null"],
+                                    "minLength": 1,
+                                    "maxLength": 30,
+                                    "pattern": "^(?!\\s*$$).+"
+                                }
+                            }
+                        }
+                        
                     }
                 }
             }
@@ -32,12 +54,8 @@ object JsonSchemas {
       json"""
             {
                 "type": "object",
-                "required": ["modelUid", "name", "status"],
+                "required": ["name", "status"],
                 "properties": {
-                    "modelUid": {
-                        "type": "string",
-                        "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
-                    },
                     "name": {
                         "type": "string",
                         "minLength": 1,
@@ -90,12 +108,8 @@ object JsonSchemas {
       json"""
             {
                 "type": "object",
-                "required": ["modelUid", "name"],
+                "required": ["name"],
                 "properties": {
-                    "modelUid": {
-                        "type": "string",
-                        "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
-                    },
                     "name": {
                         "type": "string",
                         "minLength": 1,

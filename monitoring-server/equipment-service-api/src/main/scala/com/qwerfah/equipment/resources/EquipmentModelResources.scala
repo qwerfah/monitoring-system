@@ -4,7 +4,8 @@ import com.qwerfah.common.Uid
 
 final case class ModelRequest(
   name: String,
-  description: Option[String]
+  description: Option[String],
+  params: Option[Seq[AddParamRequest]]
 )
 
 final case class ModelResponse(

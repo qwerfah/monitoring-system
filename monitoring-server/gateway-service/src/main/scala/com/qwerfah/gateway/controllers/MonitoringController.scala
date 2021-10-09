@@ -35,7 +35,7 @@ object MonitoringController extends Controller {
     }
 
     private def getInstanceMonitors = get(
-      "instnaces" :: path[Uid] :: "monitors" :: headerOption("Authorization")
+      "instances" :: path[Uid] :: "monitors" :: headerOption("Authorization")
     ) { (instanceUid: Uid, header: Option[String]) =>
         monitoringService.getInstanceMonitors(instanceUid)
     }

@@ -37,7 +37,7 @@ trait EquipmentService[F[_]] {
 
     def getParam(uid: Uid): F[Response]
 
-    def addParam(request: AddParamRequest): F[Response]
+    def addParam(modelUid: Uid, request: AddParamRequest): F[Response]
 
     def updateParam(uid: Uid, request: UpdateParamRequest): F[Response]
 

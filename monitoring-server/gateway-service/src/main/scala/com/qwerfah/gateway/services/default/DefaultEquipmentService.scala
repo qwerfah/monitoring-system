@@ -92,10 +92,13 @@ class DefaultEquipmentService[F[_]: Monad](client: HttpClient[F])
     override def getParam(uid: Uid): F[Response] =
         client.send(HttpMethod.Get, s"/api/params/$uid")
 
-    override def addParam(request: AddParamRequest): F[Response] =
+    override def addParam(
+      modelUid: Uid,
+      request: AddParamRequest
+    ): F[Response] =
         client.send(
           HttpMethod.Post,
-          s"/api/params",
+          s"/api/models/${modelUid}/params",
           Some(request.asJson.toString)
         )
 

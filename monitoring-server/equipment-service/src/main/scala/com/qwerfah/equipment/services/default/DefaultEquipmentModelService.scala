@@ -42,10 +42,21 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
 
     override def add(
       request: ModelRequest
-    ): F[ServiceResponse[ModelResponse]] =
-        dbManager.execute(modelRepo.add(request.asModel)) map {
-            _.asResponse.as201
+    ): F[ServiceResponse[ModelResponse]] = {
+        val model = request.asModel
+        val actions = Seq(
+          modelRepo.add(model),
+          dbManager.sequence(
+            request.params
+                .getOrElse(Seq())
+                .map(p => paramRepo.add(p.asParam(model.uid)))
+          ) map { _ => model }
+        )
+
+        dbManager.execute(dbManager.sequence(actions)) map {
+            _.head.asResponse.as201
         }
+    }
 
     override def update(
       uid: Uid,

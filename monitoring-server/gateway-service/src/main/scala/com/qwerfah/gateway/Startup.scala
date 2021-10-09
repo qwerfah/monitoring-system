@@ -87,7 +87,7 @@ object Startup {
           equipmentClient
         )
     implicit val defaultMonitoringService =
-        new DefaultMonitoringService[Future](monitoringClient)
+        new DefaultMonitoringService[Future](equipmentClient, monitoringClient)
 
     implicit val actorSystem = ActorSystem("such-system")
     implicit val rabbitControl = actorSystem.actorOf(Props[RabbitControl]())

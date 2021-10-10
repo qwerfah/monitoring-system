@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TimeoutError } from 'rxjs';
 
-import { User } from 'src/app/models/user';
+import { UserWithToken } from 'src/app/models/user';
 import { UserRole } from 'src/app/models/user-role';
 import { SessionService } from 'src/app/services/session.service';
 
@@ -13,7 +13,7 @@ import { SessionService } from 'src/app/services/session.service';
 })
 export class MainFormComponent implements OnInit {
   isVisible: boolean = true;
-  currentUser: User | undefined = undefined;
+  currentUser: UserWithToken | undefined = undefined;
 
   UserRole = UserRole;
 
@@ -44,7 +44,9 @@ export class MainFormComponent implements OnInit {
   }
 
   logout(): void {
-    this.sessionService.logout();
-    this.router.navigate(['/login']);
+    if (confirm('Вы уверены, что хотите выйти?')) {
+      this.sessionService.logout();
+      this.router.navigate(['/login']);
+    }
   }
 }

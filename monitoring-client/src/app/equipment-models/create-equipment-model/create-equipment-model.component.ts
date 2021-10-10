@@ -1,6 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { EquipmentInstanceRequest } from 'src/app/models/equipment-instance-request';
 import { EquipmentModel } from 'src/app/models/equipment-model';
+import { EquipmentModelRequest } from 'src/app/models/equipment-model-request';
+import { ParamRequest } from 'src/app/models/param-request';
 
 @Component({
   selector: 'app-create-equipment-model',
@@ -8,7 +11,7 @@ import { EquipmentModel } from 'src/app/models/equipment-model';
   styleUrls: ['./create-equipment-model.component.css'],
 })
 export class CreateEquipmentModelComponent implements OnInit {
-  @Output() addEvent = new EventEmitter<EquipmentModel | null>();
+  @Output() addEvent = new EventEmitter<EquipmentModelRequest | null>();
 
   modelForm: FormGroup;
   paramsForm: FormArray;
@@ -28,15 +31,21 @@ export class CreateEquipmentModelComponent implements OnInit {
       this.modelForm.markAllAsTouched();
       this.paramsForm.markAllAsTouched();
     } else {
-      this.addEvent.emit(new EquipmentModel('', 'name', 'desc'));
+      let params: ParamRequest[] = this.paramsForm.controls.map<ParamRequest>(
+        (control) =>
+          new ParamRequest(
+            (control as FormGroup).controls.name.value,
+            (control as FormGroup).controls.measurmentUnits.value
+          )
+      );
 
-      this.paramsForm.controls.map((control) => {
-        console.log((control as FormGroup).controls.name.value);
-        console.log((control as FormGroup).controls.measurmentUnits.value);
-      });
+      let model: EquipmentModelRequest = new EquipmentModelRequest(
+        this.modelForm.controls.name.value,
+        this.modelForm.controls.description.value,
+        params
+      );
 
-      console.log(`name: ${this.modelForm.controls.name.value}`);
-      console.log(`description: ${this.modelForm.controls.description.value}`);
+      this.addEvent.emit(model);
     }
   }
 

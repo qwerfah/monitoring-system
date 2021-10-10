@@ -1,5 +1,6 @@
 <app-create-monitor *ngIf="isAdding" (addEvent)="addMonitor($event)"></app-create-monitor>
-<div class="flex flex-col w-full h-full space-y-1">
+<app-fullscreen-loader *ngIf="isLoading"></app-fullscreen-loader>
+<div *ngIf="!isLoading" class="flex flex-col w-full h-full space-y-1">
   <div class="flex w-full bg-white shadow-lg rounded place-content-center pt-2">
     <h2>Список функционирующих экранов мониторинга</h2>
   </div>
@@ -41,10 +42,10 @@
         </tr>
       </thead>
 
-      <tbody *ngIf="monitors$ | async as monitors">
+      <tbody>
         <ng-container *ngIf="!(monitors | notEmpty)">
           <tr>
-            <th scope="row" class="text-center" colspan="11">Нет доступных моделей оборудования</th>
+            <th scope="row" class="text-center pt-20 pb-20" colspan="11">Нет доступных экранов мониторинга</th>
             <td></td>
           </tr>
         </ng-container>

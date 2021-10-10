@@ -7,6 +7,9 @@ import { Observable } from 'rxjs';
 import { EquipmentService } from 'src/app/services/equipment.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { EquipmentModelRequest } from 'src/app/models/equipment-model-request';
+import { ParamRequest } from 'src/app/models/param-request';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-equipment-models',
@@ -39,9 +42,6 @@ export class EquipmentModelsTableComponent implements OnInit {
           }
         }
         this.isLoading = false;
-      },
-      () => {
-        this.isLoading = false;
       }
     );
   }
@@ -52,7 +52,41 @@ export class EquipmentModelsTableComponent implements OnInit {
     this.isAdding = true;
   }
 
-  addModel(model: EquipmentModel | null) {
+  addModel(model: EquipmentModelRequest | null) {
     this.isAdding = false;
+
+    console.log(model);
+
+    if (model === null) return;
+
+    this.isLoading = true;
+
+    this.equipmentService.addModel(model).subscribe(
+      (model) => {
+        this.snackBar.open('Успех: модель добавлена', 'Ок');
+        this.models.push(model);
+        this.isLoading = false;
+      },
+      (err: HttpErrorResponse) => {
+        switch (err.status) {
+          case 0: {
+            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
+            break;
+          }
+          case 502: {
+            this.snackBar.open('Ошибка: сервис оборудования недоступен', 'Ок');
+            break;
+          }
+          case 500: {
+            this.snackBar.open('Ошибка: внутренняя ошибка сервера', 'Ок');
+            break;
+          }
+          case 400: {
+            this.snackBar.open('Ошибка: некорректные данные запроса', 'Ок');
+          }
+        }
+        this.isLoading = false;
+      }
+    );
   }
 }

@@ -5,8 +5,7 @@ import { RouterModule, Routes } from '@angular/router';
 // import { RegistrationFormComponent } from './registration/registration-form/registration-form.component';
 // import { MainFormComponent } from './general/main-form/main-form.component';
 
-const routes: Routes = [
-];
+const routes: Routes = [{ path: '**', redirectTo: '' }];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],

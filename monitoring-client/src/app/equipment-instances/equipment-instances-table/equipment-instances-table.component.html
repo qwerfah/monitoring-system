@@ -1,6 +1,6 @@
 <app-create-equipment-instance *ngIf="isAdding" (addEvent)="addInstance($event)"></app-create-equipment-instance>
 <app-fullscreen-loader *ngIf="isLoading"></app-fullscreen-loader>
-<div class="flex flex-col w-full h-full space-y-1">
+<div *ngIf="!isLoading" class="flex flex-col w-full h-full space-y-1">
   <div class="flex bg-white shadow-lg rounded place-content-center pt-2 w-full">
     <h2>Список развернутых экземпляров оборудования</h2>
   </div>
@@ -42,10 +42,10 @@
         </tr>
       </thead>
 
-      <tbody class="divide-gray-100 overflow-y-auto">
+      <tbody class="overflow-y-auto">
         <ng-container *ngIf="!(instances | notEmpty)">
           <tr>
-            <th scope="row" class="text-center" colspan="11">Нет развернутых экземпляров</th>
+            <th scope="row" class="text-center pt-20 pb-20" colspan="11">Нет развернутых экземпляров</th>
             <td></td>
           </tr>
         </ng-container>

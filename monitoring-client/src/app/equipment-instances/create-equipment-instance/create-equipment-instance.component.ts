@@ -1,10 +1,13 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, EventEmitter, OnInit, Output, QueryList, ViewChildren } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material/menu';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
 import { EquipmentInstance } from 'src/app/models/equipment-instance';
+import { EquipmentInstanceRequest } from 'src/app/models/equipment-instance-request';
 import { EquipmentModel } from 'src/app/models/equipment-model';
 import { InstanceStatus } from 'src/app/models/instance-status';
 import { EquipmentService } from 'src/app/services/equipment.service';
@@ -15,42 +18,50 @@ import { EquipmentService } from 'src/app/services/equipment.service';
   styleUrls: ['./create-equipment-instance.component.css'],
 })
 export class CreateEquipmentInstanceComponent implements OnInit {
-  @Output() addEvent = new EventEmitter<EquipmentInstance | null>();
+  @Output() addEvent = new EventEmitter<[EquipmentInstanceRequest, string] | null>();
 
   InstanceStatus = InstanceStatus;
+
+  isLoading: boolean = true;
 
   instanceForm: FormGroup;
 
   status: InstanceStatus;
   selectedModel: EquipmentModel;
 
-  models$: Observable<EquipmentModel[]>;
+  models: EquipmentModel[];
 
   @ViewChildren(MatMenuTrigger) trigger: QueryList<MatMenuTrigger>;
 
-  constructor(private fb: FormBuilder, private equipmentService: EquipmentService) {
+  constructor(private fb: FormBuilder, private equipmentService: EquipmentService, private snackBar: MatSnackBar) {
     this.instanceForm = fb.group({
       name: [null, [Validators.required, Validators.minLength(3)]],
       description: [null, [Validators.minLength(0)]],
     });
 
-    this.models$ = of([
-      new EquipmentModel('', 'model_1', 'description_1'),
-      new EquipmentModel('', 'model_2', 'description_2'),
-      new EquipmentModel('', 'model_3', 'description_3'),
-      new EquipmentModel('', 'model_4', 'description_4'),
-      new EquipmentModel('', 'model_5', 'description_5'),
-      new EquipmentModel('', 'model_1', 'description_1'),
-      new EquipmentModel('', 'model_2', 'description_2'),
-      new EquipmentModel('', 'model_3', 'description_3'),
-      new EquipmentModel('', 'model_4', 'description_4'),
-      new EquipmentModel('', 'model_5', 'description_5'),
-      new EquipmentModel('', 'model_1', 'description_1'),
-      new EquipmentModel('', 'model_2', 'description_2'),
-      new EquipmentModel('', 'model_3', 'description_3'),
-      new EquipmentModel('', 'model_4', 'description_4'),
-      new EquipmentModel('', 'model_5', 'description_5'),
-    ]);
+    equipmentService.getModels().subscribe(
+      (models) => {
+        this.models = models;
+        this.isLoading = false;
+      },
+      (err: HttpErrorResponse) => {
+        switch (err.status) {
+          case 0: {
+            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
+            break;
+          }
+          case 502: {
+            this.snackBar.open('Ошибка: сервис оборудования недоступен', 'Ок');
+            break;
+          }
+          case 404: {
+            this.snackBar.open('Ошибка: данные не найдены', 'Ок');
+          }
+        }
+        this.isLoading = false;
+        this.addEvent.emit(null);
+      }
+    );
 
     this.status = InstanceStatus.Active;
     this.selectedModel = new EquipmentModel('', '', '');
@@ -78,10 +89,13 @@ export class CreateEquipmentInstanceComponent implements OnInit {
     if (this.instanceForm.invalid) {
       this.instanceForm.markAllAsTouched();
     } else {
-      this.addEvent.emit(new EquipmentInstance('', '', 'name', 'model', 'desc', InstanceStatus.Active));
+      let instance = new EquipmentInstanceRequest(
+        this.instanceForm.controls.name.value,
+        this.instanceForm.controls.description.value,
+        this.status
+      );
 
-      console.log(`name: ${this.instanceForm.controls.name.value}`);
-      console.log(`description: ${this.instanceForm.controls.description.value}`);
+      this.addEvent.emit([instance, this.selectedModel.uid]);
     }
   }
 

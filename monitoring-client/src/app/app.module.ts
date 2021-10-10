@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { RouterModule } from '@angular/router';
 
 import { GeneralModule } from './general/general.module';
 import { RegistrationModule } from './registration/registration.module';
@@ -22,7 +23,6 @@ import { TokenInterceptor } from './helpers/token.interceptor';
   declarations: [AppComponent],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     BrowserAnimationsModule,
     GeneralModule,
     AuthorizationModule,
@@ -30,13 +30,8 @@ import { TokenInterceptor } from './helpers/token.interceptor';
     EquipmentModelsModule,
     EquipmentInstancesModule,
     MonitoringModule,
-    StoreModule.forRoot({}, {}),
-    StoreModule.forRoot(reducers, { metaReducers }),
-    !environment.production ? StoreDevtoolsModule.instrument() : [],
-    StoreDevtoolsModule.instrument({
-      maxAge: 25,
-      logOnly: environment.production,
-    }),
+    RouterModule,
+    AppRoutingModule,
   ],
   providers: [
     { provide: 'GATEWAY_URI', useValue: environment.gatewayUri },

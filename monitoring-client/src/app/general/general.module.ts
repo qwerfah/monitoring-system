@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MainFormComponent } from './main-form/main-form.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -21,6 +22,7 @@ import { FullscreenLoaderComponent } from './fullscreen-loader/fullscreen-loader
     CommonModule,
     BrowserAnimationsModule,
     FormsModule,
+    RouterModule,
     MatSidenavModule,
     MatCheckboxModule,
     MatIconModule,

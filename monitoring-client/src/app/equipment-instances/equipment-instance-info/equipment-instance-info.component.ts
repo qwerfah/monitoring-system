@@ -11,6 +11,7 @@ import { Param } from 'src/app/models/param';
 import { InstanceStatus } from 'src/app/models/instance-status';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MonitoringService } from 'src/app/services/monitoring.service';
 
 @Component({
   selector: 'app-equipment-instance-info',
@@ -23,24 +24,22 @@ export class EquipmentInstanceInfoComponent implements OnInit {
   instanceUid: string;
   instance: EquipmentInstance;
   params: Param[];
-  monitors$: Observable<Monitor[]>;
+  monitors: Monitor[];
 
   constructor(
     private route: ActivatedRoute,
     private equipmentService: EquipmentService,
+    private monitoringService: MonitoringService,
     private snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
     this.instanceUid = this.route.snapshot.params['uid'];
 
-    zip(
-      this.equipmentService.getInstance(this.instanceUid),
-      this.equipmentService.getInstanceParams(this.instanceUid)
-    ).subscribe(
-      (result) => {
-        this.instance = result[0];
-        this.params = result[1];
+    this.equipmentService.getInstance(this.instanceUid).subscribe(
+      (instance) => {
+        this.instance = instance;
+        this.isLoading = false;
       },
       (err: HttpErrorResponse) => {
         switch (err.status) {
@@ -57,67 +56,53 @@ export class EquipmentInstanceInfoComponent implements OnInit {
           }
         }
         this.isLoading = false;
+      }
+    );
+
+    this.equipmentService.getInstanceParams(this.instanceUid).subscribe(
+      (params) => {
+        this.params = params;
+        this.isLoading = false;
       },
-      () => {
+      (err: HttpErrorResponse) => {
+        switch (err.status) {
+          case 0: {
+            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
+            break;
+          }
+          case 502: {
+            this.snackBar.open('Ошибка: сервис оборудования недоступен', 'Ок');
+            break;
+          }
+          case 404: {
+            this.snackBar.open('Ошибка: данные не найдены', 'Ок');
+          }
+        }
         this.isLoading = false;
       }
     );
 
-    this.monitors$ = of([
-      new Monitor(
-        uuid(),
-        uuid(),
-        uuid(),
-        'Equipment instance monitor 1',
-        'instance_1',
-        'model_1',
-        'Description of equipment instance monitor 1'
-      ),
-      new Monitor(
-        uuid(),
-        uuid(),
-        uuid(),
-        'Equipment instance monitor 2',
-        'instance_2',
-        'model_5',
-        'Description of equipment instance monitor 2'
-      ),
-      new Monitor(
-        uuid(),
-        uuid(),
-        uuid(),
-        'Equipment instance monitor 3',
-        'instance_3',
-        'model_2',
-        'Description of equipment instance monitor 3'
-      ),
-      new Monitor(
-        uuid(),
-        uuid(),
-        uuid(),
-        'Equipment instance monitor 4',
-        'instance_4',
-        'model_3',
-        'Description of equipment instance monitor 4'
-      ),
-      new Monitor(
-        uuid(),
-        uuid(),
-        uuid(),
-        'Equipment instance monitor 5',
-        'instance_5',
-        'model_6',
-        'Description of equipment instance monitor 5'
-      ),
-      new Monitor(
-        uuid(),
-        uuid(),
-        uuid(),
-        'Equipment instance monitor 6',
-        'instance_6',
-        'model_4',
-        'Description of equipment instance monitor 6'
-      ),
-    ]);
+    this.monitoringService.getInstancesMonitors(this.instanceUid).subscribe(
+      (monitors) => {
+        this.monitors = monitors;
+        this.isLoading = false;
+      },
+      (err: HttpErrorResponse) => {
+        switch (err.status) {
+          case 0: {
+            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
+            break;
+          }
+          case 502: {
+            this.snackBar.open('Ошибка: сервис мониторинга недоступен', 'Ок');
+            break;
+          }
+          case 404: {
+            this.snackBar.open('Ошибка: данные не найдены', 'Ок');
+          }
+        }
+        this.isLoading = false;
+      }
+    );
   }
 }

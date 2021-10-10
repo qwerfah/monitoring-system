@@ -44,11 +44,6 @@ export class AuthorizationFormComponent implements OnInit {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
 
-  isUnavailableResponse(response: HttpResponseBase): response is HttpErrorResponse {
-    console.log(response.status);
-    return response.status === 0;
-  }
-
   submit(): void {
     if (this.credentials.invalid) {
       this.credentials.markAllAsTouched();
@@ -63,7 +58,6 @@ export class AuthorizationFormComponent implements OnInit {
 
     this.sessionService.login(creds).subscribe(
       (user) => {
-        this.isLoading = false;
         this.router.navigate([this.returnUrl]);
       },
       (error: HttpErrorResponse) => {

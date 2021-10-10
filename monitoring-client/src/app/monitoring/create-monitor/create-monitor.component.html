@@ -1,4 +1,11 @@
-<div class="group fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+<app-fullscreen-loader *ngIf="isLoading"></app-fullscreen-loader>
+<div
+  *ngIf="!isLoading"
+  class="group fixed z-10 inset-0 overflow-y-auto"
+  aria-labelledby="modal-title"
+  role="dialog"
+  aria-modal="true"
+>
   <div class="flex items-end justify-center min-h-screen pt-2 px-4 pb-20 text-center sm:block sm:p-0">
     <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
 
@@ -111,13 +118,13 @@
                   (mouseclick)="openModelsMenu()"
                   class="border rounded h-10 focus:outline-none active:border-indigo-500 text-sm p-2 w-1/2 truncate"
                 >
-                  Модель - {{ selectedModel.name }}
+                  Модель - {{ selectedModel?.name ?? '' }}
                 </button>
-                <mat-menu #menu1="matMenu">
+                <mat-menu #menu1="matMenu" class="max-h-48 w-40 text-center">
                   <button
                     type="button"
                     mat-menu-item
-                    *ngFor="let model of models$ | async"
+                    *ngFor="let model of models"
                     (click)="setModel(model)"
                     class="border rounded h-4 focus:outline-none"
                   >
@@ -132,13 +139,13 @@
                   (mouseclick)="openInstancesMenu()"
                   class="border rounded h-10 focus:outline-none active:border-indigo-500 text-sm p-2 w-1/2 truncate"
                 >
-                  Экземпляр - {{ selectedInstance.name }}
+                  Экземпляр - {{ selectedInstance?.name ?? '' }}
                 </button>
-                <mat-menu #menu2="matMenu" class="h-44 w-40 text-center">
+                <mat-menu #menu2="matMenu" class="max-h-44 w-40 text-center">
                   <button
                     type="button"
                     mat-menu-item
-                    *ngFor="let instance of instances$ | async"
+                    *ngFor="let instance of instances"
                     (click)="setInstance(instance)"
                     class="border rounded h-4 focus:outline-none"
                   >
@@ -147,11 +154,32 @@
                 </mat-menu>
               </div>
 
+              <mat-form-field appearance="standard" class="text-sm w-full">
+                <mat-label>Параметры</mat-label>
+                <mat-select [formControl]="paramsControl" multiple class="border-none active:outline-none bg-white">
+                  <mat-option *ngFor="let param of params" [value]="param">{{ param.name }}</mat-option>
+                </mat-select>
+              </mat-form-field>
+
               <div
                 class="text-sm bg-red-200 relative text-red-700 p-1 rounded border border-red-700 text-center"
                 *ngIf="monitorForm.controls.name.invalid && monitorForm.controls.name.touched"
               >
                 Требуется ввести наименование
+              </div>
+
+              <div
+                class="text-sm bg-red-200 relative text-red-700 p-1 rounded border border-red-700 text-center"
+                *ngIf="!selectedModel && isInvalid"
+              >
+                Требуется указать отслеживаемый экземпляр
+              </div>
+
+              <div
+                class="text-sm bg-red-200 relative text-red-700 p-1 rounded border border-red-700 text-center"
+                *ngIf="(!paramsControl.value || paramsControl.value.lendth === 0) && isInvalid"
+              >
+                Требуется указать отслеживаемый экземпляр
               </div>
 
               <div class="form-group flex flex-row-reverse">

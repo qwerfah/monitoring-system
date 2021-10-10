@@ -40,9 +40,6 @@ export class MonitorsTableComponent implements OnInit {
           }
         }
         this.isLoading = false;
-      },
-      () => {
-        this.isLoading = false;
       }
     );
   }
@@ -53,7 +50,34 @@ export class MonitorsTableComponent implements OnInit {
     this.isAdding = true;
   }
 
-  addMonitor(monitor: MonitorRequest | null) {
+  addMonitor(monitor: [string, MonitorRequest] | null) {
     this.isAdding = false;
+
+    if (monitor === null) return;
+
+    this.isLoading = true;
+    this.monitoringService.addMonitor(monitor[0], monitor[1]).subscribe(
+      (monitor) => {
+        this.snackBar.open('Успех: экран мониторинга создан', 'Ок');
+        this.isLoading = false;
+        this.monitors.push(monitor);
+      },
+      (err: HttpErrorResponse) => {
+        switch (err.status) {
+          case 0: {
+            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
+            break;
+          }
+          case 502: {
+            this.snackBar.open('Ошибка: сервис мониторинга недоступен', 'Ок');
+            break;
+          }
+          case 404: {
+            this.snackBar.open('Ошибка: данные не найдены', 'Ок');
+          }
+        }
+        this.isLoading = false;
+      }
+    );
   }
 }

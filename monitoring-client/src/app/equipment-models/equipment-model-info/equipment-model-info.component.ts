@@ -12,6 +12,8 @@ import { InstanceStatus } from 'src/app/models/instance-status';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { mergeAll } from 'rxjs/operators';
+import { FileMeta } from 'src/app/models/file-meta';
+import { DocumentationService } from 'src/app/services/documentation.service';
 
 @Component({
   selector: 'app-equipment-model-info',
@@ -21,13 +23,16 @@ import { mergeAll } from 'rxjs/operators';
 export class EquipmentModelInfoComponent implements OnInit {
   isLoading: boolean = true;
   modelUid: string;
+
   model: EquipmentModel;
+  files: FileMeta[];
   params: Param[];
   instances: EquipmentInstance[];
 
   constructor(
     private route: ActivatedRoute,
     private equipmentService: EquipmentService,
+    private documentationService: DocumentationService,
     private snackBar: MatSnackBar
   ) {}
 
@@ -43,6 +48,7 @@ export class EquipmentModelInfoComponent implements OnInit {
         this.model = result[0];
         this.params = result[1];
         this.instances = result[2];
+        this.isLoading = false;
       },
       (err: HttpErrorResponse) => {
         switch (err.status) {
@@ -55,14 +61,87 @@ export class EquipmentModelInfoComponent implements OnInit {
             break;
           }
           case 404: {
-            this.snackBar.open('Ошибка: данные не найдены', 'Ок');
+            this.snackBar.open('Ошибка: модель не найдена', 'Ок');
           }
         }
         this.isLoading = false;
+      }
+    );
+
+    this.documentationService.getFilesMeta(this.modelUid).subscribe(
+      (files) => {
+        this.files = files;
+        this.isLoading = false;
       },
-      () => {
+      (err: HttpErrorResponse) => {
+        switch (err.status) {
+          case 0: {
+            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
+            break;
+          }
+          case 502: {
+            this.snackBar.open('Ошибка: сервис документации недоступен', 'Ок');
+            break;
+          }
+          case 404: {
+            this.snackBar.open('Ошибка: модель не найдена', 'Ок');
+          }
+        }
         this.isLoading = false;
       }
     );
+  }
+
+  downloadFile(file: FileMeta) {
+    this.documentationService.getFile(file.uid).subscribe((blob) => {
+      // It is necessary to create a new blob object with mime-type explicitly set
+      // otherwise only Chrome works like it should
+      var newBlob = new Blob([blob], { type: file.contentType });
+
+      const data = window.URL.createObjectURL(newBlob);
+
+      var link = document.createElement('a');
+      link.href = data;
+      link.download = file.filename;
+      // this is necessary as link.click() does not work on the latest firefox
+      link.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true, view: window }));
+
+      setTimeout(function () {
+        // For Firefox it is necessary to delay revoking the ObjectURL
+        window.URL.revokeObjectURL(data);
+        link.remove();
+      }, 100);
+    });
+  }
+
+  uploadFile(event) {
+    let fileList: FileList = event.target.files;
+    if (fileList.length > 0) {
+      let file: File = fileList[0];
+      this.isLoading = true;
+      this.documentationService.uploadFile(this.modelUid, file).subscribe(
+        (file) => {
+          this.isLoading = false;
+          this.files.push(file);
+          this.snackBar.open('Успех: файл загружен', 'Ок');
+        },
+        (err: HttpErrorResponse) => {
+          switch (err.status) {
+            case 0: {
+              this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
+              break;
+            }
+            case 502: {
+              this.snackBar.open('Ошибка: сервис документации недоступен', 'Ок');
+              break;
+            }
+            case 404: {
+              this.snackBar.open('Ошибка: модель не найдена', 'Ок');
+            }
+          }
+          this.isLoading = false;
+        }
+      );
+    }
   }
 }

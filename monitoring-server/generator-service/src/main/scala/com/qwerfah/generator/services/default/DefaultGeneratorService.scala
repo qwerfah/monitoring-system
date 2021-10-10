@@ -57,7 +57,8 @@ class DefaultGeneratorService[F[_]: Monad, DB[_]: Monad](
     private def addParamValues(
       params: Seq[ParamResponse],
       instanceUid: Uid
-    ): F[ServiceResponse[ResponseMessage]] =
+    ): F[ServiceResponse[ResponseMessage]] = {
+        val rand = new scala.util.Random
         dbManager.execute(dbManager.sequence(params map { param =>
             paramValueRepo.add(
               ParamValue(
@@ -65,12 +66,13 @@ class DefaultGeneratorService[F[_]: Monad, DB[_]: Monad](
                 randomUid,
                 param.uid,
                 instanceUid,
-                "",
+                rand.between(0, 300).toString,
                 LocalDateTime.now,
                 false
               )
             )
         })) map { _ => ParamValuesAdded.as201 }
+    }
 
     def generate: F[ServiceResponse[ResponseMessage]] = addParamValues
 }

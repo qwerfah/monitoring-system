@@ -34,7 +34,15 @@ trait UserRepo[DB[_]] {
       * @return
       *   User with specified login or None if not found.
       */
-    def getByLogin(login: String): DB[Option[User]]
+    def getUserByLogin(login: String): DB[Option[User]]
+
+    /** Get service user record by its unique login.
+      * @param id
+      *   Unique user login.
+      * @return
+      *   Service user record with specified login or None if not found.
+      */
+    def getServiceByLogin(login: String): DB[Option[User]]
 
     /** Add new user to storage.
       * @param user

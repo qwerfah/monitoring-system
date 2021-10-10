@@ -3,14 +3,19 @@ package com.qwerfah.equipment.services.default
 import cats.Monad
 import cats.implicits._
 
+import io.circe._
+import io.circe.generic.auto._
+import io.circe.parser._
+import io.circe.syntax._
+
 import com.qwerfah.equipment.repos._
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.services._
 import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Mappings
 
-import com.qwerfah.monitoring.resources.MonitorResponse
 import com.qwerfah.monitoring.json.{Decoders => MonitoringDecoders}
+import com.qwerfah.monitoring.resources.{AddMonitorRequest, MonitorResponse}
 
 import com.qwerfah.common.Uid
 import com.qwerfah.common.db.DbManager
@@ -26,6 +31,7 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](
   generatorClient: HttpClient[F]
 )(implicit
   modelRepo: EquipmentModelRepo[DB],
+  paramRepo: ParamRepo[DB],
   instanceRepo: EquipmentInstanceRepo[DB],
   dbManager: DbManager[F, DB]
 ) extends EquipmentInstanceService[F] {
@@ -69,7 +75,7 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](
             case None => Monad[F].pure(NoInstance(uid).as404)
         }
 
-    def getMonitors(): F[ServiceResponse[Seq[InstanceMonitorResponse]]] =
+    override def getMonitors(): F[ServiceResponse[Seq[InstanceMonitorResponse]]] =
         monitorClient.sendAndDecode[Seq[MonitorResponse]](
           HttpMethod.Get,
           s"/api/monitors"
@@ -101,6 +107,38 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](
                     _.asResponse.as201
                 }
             case None => Monad[F].pure(NoModel(modelUid).as404)
+        }
+
+    override def addMonitor(
+      instanceUid: Uid,
+      request: AddMonitorRequest
+    ): F[ServiceResponse[InstanceMonitorResponse]] =
+        dbManager.execute(instanceRepo.getByUidWithModel(instanceUid)) flatMap {
+            case Some((instance, model)) =>
+                request.params
+                    .map(uid =>
+                        dbManager.execute(paramRepo.getByUid(uid)) map {
+                            (uid, _)
+                        }
+                    )
+                    .sequence flatMap { res =>
+                    res.collect { case (uid, None) => (uid, None) } match {
+                        case errors if errors.isEmpty =>
+                            monitorClient.sendAndDecode[MonitorResponse](
+                              HttpMethod.Post,
+                              s"/api/instances/$instanceUid/monitors",
+                              Some(request.asJson.toString)
+                            ) map {
+                                case s: SuccessResponse[MonitorResponse] =>
+                                    s.result.asResponse(model, instance).as201
+                                case e: ErrorResponse => e
+                            }
+                        case errors =>
+                            Monad[F].pure(NoParams(errors.map(e => e._1)).as404)
+                    }
+                }
+
+            case None => Monad[F].pure(NoInstance(instanceUid).as404)
         }
 
     override def update(

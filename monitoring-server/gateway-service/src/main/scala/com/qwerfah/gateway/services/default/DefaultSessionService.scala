@@ -16,6 +16,8 @@ import com.qwerfah.common.services.response._
 import com.qwerfah.common.resources.{Credentials, UserResponse}
 import com.qwerfah.common.models._
 import com.qwerfah.common.Uid
+import com.qwerfah.common.exceptions.InsufficientRole
+import com.qwerfah.common.util.Conversions._
 
 class DefaultSessionService[F[_]: Monad](client: HttpClient[F])
   extends TokenService[F] {
@@ -29,7 +31,7 @@ class DefaultSessionService[F[_]: Monad](client: HttpClient[F])
           Some(token)
         )
 
-    override def login(
+    override def userLogin(
       credentials: Credentials
     ): F[ServiceResponse[UserResponse]] =
         client.sendAndDecode(
@@ -37,6 +39,10 @@ class DefaultSessionService[F[_]: Monad](client: HttpClient[F])
           "/api/session/login",
           Some(credentials.asJson.toString)
         )
+
+    override def serviceLogin(
+      credentials: Credentials
+    ): F[ServiceResponse[Token]] = Monad[F].pure(InsufficientRole.as403)
 
     override def refresh(token: String): F[ServiceResponse[Token]] =
         client.sendAndDecode(

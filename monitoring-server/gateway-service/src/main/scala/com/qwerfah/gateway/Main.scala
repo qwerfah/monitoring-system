@@ -39,7 +39,6 @@ object Main extends TwitterServer {
         )
     onExit {
         server.close()
-
         actorSystem.terminate()
     }
 

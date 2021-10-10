@@ -61,7 +61,9 @@ object FileController extends Controller {
                 ) map {
                     case OkResponse(file) =>
                         Ok(Buf.ByteArray(file.content.toIndexedSeq: _*))
-                            .withHeader("Content-Type" -> file.contentType)
+                            .withHeader(
+                              "Content-Type" -> "application/octet-stream"
+                            )
                     case other => other.asOutputError
                 }
         }

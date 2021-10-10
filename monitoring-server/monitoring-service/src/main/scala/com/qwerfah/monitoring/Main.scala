@@ -33,6 +33,7 @@ object Main extends TwitterServer {
         )
     onExit {
         server.close()
+        pgdb.close()
         actorSystem.terminate()
     }
 

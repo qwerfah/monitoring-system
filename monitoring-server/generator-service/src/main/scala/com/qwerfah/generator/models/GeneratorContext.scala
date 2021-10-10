@@ -63,35 +63,7 @@ class GeneratorContext(implicit jdbcProfile: JdbcProfile, config: Config)
       }
     )
 
-    private val initialParamValues = Seq(
-      ParamValue(
-        None,
-        randomUid,
-        randomUid,
-        randomUid,
-        "100",
-        LocalDateTime.now,
-        false
-      ),
-      ParamValue(
-        None,
-        randomUid,
-        randomUid,
-        randomUid,
-        "200",
-        LocalDateTime.now,
-        false
-      ),
-      ParamValue(
-        None,
-        randomUid,
-        randomUid,
-        randomUid,
-        "300",
-        LocalDateTime.now,
-        false
-      )
-    )
+    private val initialParamValues = Seq()
 
     private def addUsers = {
         val services = collection.mutable.ListBuffer[User]()

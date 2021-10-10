@@ -83,8 +83,8 @@ object Startup {
         new DefaultEquipmentService[Future](equipmentClient)
     implicit val defaultDocumentationService =
         new DefaultDocumentationService[Future](
-          documentationClient,
-          equipmentClient
+          equipmentClient,
+          documentationClient
         )
     implicit val defaultMonitoringService =
         new DefaultMonitoringService[Future](equipmentClient, monitoringClient)

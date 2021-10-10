@@ -21,6 +21,9 @@ import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Startup
 import com.qwerfah.equipment.json.Decoders
+
+import com.qwerfah.monitoring.resources.AddMonitorRequest
+
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.Uid
 import com.qwerfah.common.services._
@@ -79,6 +82,25 @@ object EquipmentInstanceController extends Controller {
         )
     }
 
+    private val addMonitor = post(
+      "instances" :: path[Uid] :: "monitors" :: jsonBody[
+        AddMonitorRequest
+      ] :: headerOption(
+        "Authorization"
+      )
+    ) {
+        (
+          instanceUid: Uid,
+          request: AddMonitorRequest,
+          header: Option[String]
+        ) =>
+            authorize(
+              header,
+              serviceRoles,
+              _ => instanceService.addMonitor(instanceUid, request)
+            )
+    }
+
     private val updateInstance = patch(
       "instances" :: path[Uid] :: jsonBody[
         UpdateInstanceRequest
@@ -114,6 +136,7 @@ object EquipmentInstanceController extends Controller {
         .:+:(getAllInstanceMonitors)
         .:+:(getInstanceMonitors)
         .:+:(addInstance)
+        .:+:(addMonitor)
         .:+:(updateInstance)
         .:+:(deleteInstance)
         .:+:(restoreInstance)

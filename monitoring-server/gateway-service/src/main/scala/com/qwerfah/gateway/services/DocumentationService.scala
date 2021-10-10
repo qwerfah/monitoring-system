@@ -47,12 +47,4 @@ trait DocumentationService[F[_]] {
       *   Response from documentation service.
       */
     def removeFile(uid: Uid): F[Response]
-
-    /** Remove all files for specified equipment model.
-      * @param modelUid
-      *   Equipment model identifier.
-      * @return
-      *   Response from documentation service.
-      */
-    def removeModelFiles(modelUid: Uid): F[Response]
 }

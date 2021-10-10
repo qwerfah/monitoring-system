@@ -13,6 +13,8 @@ import io.finch.catsEffect._
 
 import io.circe.generic.auto._
 
+import io.catbird.util._
+
 import com.qwerfah.gateway.Startup
 import com.qwerfah.gateway.services.MonitoringService
 
@@ -31,25 +33,63 @@ object MonitoringController extends Controller {
     private def monitoringService = implicitly[MonitoringService[Future]]
 
     private def getMonitors = get("monitors" :: headerOption("Authorization")) {
-        header: Option[String] => monitoringService.getMonitors
+        header: Option[String] =>
+            authorizeRaw(header, readRoles, _ => monitoringService.getMonitors)
     }
 
     private def getInstanceMonitors = get(
       "instances" :: path[Uid] :: "monitors" :: headerOption("Authorization")
     ) { (instanceUid: Uid, header: Option[String]) =>
-        monitoringService.getInstanceMonitors(instanceUid)
+        authorizeRaw(
+          header,
+          readRoles,
+          _ => monitoringService.getInstanceMonitors(instanceUid)
+        )
     }
 
     private def getMonitor = get(
       "monitors" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        monitoringService.getMonitor(uid)
+        authorizeRaw(header, readRoles, _ => monitoringService.getMonitor(uid))
+    }
+
+    private def getMonitorParams = get(
+      "monitors" :: path[Uid] :: "params" :: headerOption("Authorization")
+    ) { (uid: Uid, header: Option[String]) =>
+        authorizeRaw(
+          header,
+          readRoles,
+          _ => monitoringService.getMonitorParams(uid)
+        )
+    }
+
+    private def getMonitorParamValues = get(
+      "monitors" :: path[Uid] :: "params" :: "values" :: headerOption(
+        "Authorization"
+      )
+    ) { (uid: Uid, header: Option[String]) =>
+        authorizeRaw(
+          header,
+          readRoles,
+          _ => monitoringService.getMonitorParamValues(uid)
+        )
     }
 
     private def addMonitor = post(
-      "monitors" :: jsonBody[AddMonitorRequest] :: headerOption("Authorization")
-    ) { (request: AddMonitorRequest, header: Option[String]) =>
-        monitoringService.addMonitor(request)
+      "instances" :: path[Uid] :: "monitors" :: jsonBody[
+        AddMonitorRequest
+      ] :: headerOption("Authorization")
+    ) {
+        (
+          instanceUid: Uid,
+          request: AddMonitorRequest,
+          header: Option[String]
+        ) =>
+            authorizeRaw(
+              header,
+              writeRoles,
+              _ => monitoringService.addMonitor(instanceUid, request)
+            )
     }
 
     private def updateMonitor = patch(
@@ -57,18 +97,28 @@ object MonitoringController extends Controller {
         "Authorization"
       )
     ) { (uid: Uid, request: UpdateMonitorRequest, header: Option[String]) =>
-        monitoringService.updateMonitor(uid, request)
+        authorizeRaw(
+          header,
+          writeRoles,
+          _ => monitoringService.updateMonitor(uid, request)
+        )
     }
 
     private def removeMonitor = delete(
       "monitors" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        monitoringService.removeMonitor(uid)
+        authorizeRaw(
+          header,
+          writeRoles,
+          _ => monitoringService.removeMonitor(uid)
+        )
     }
 
     val api = "api" :: "monitoring" :: getMonitors
         .:+:(getInstanceMonitors)
         .:+:(getMonitor)
+        .:+:(getMonitorParams)
+        .:+:(getMonitorParamValues)
         .:+:(addMonitor)
         .:+:(updateMonitor)
         .:+:(removeMonitor)

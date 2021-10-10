@@ -1,7 +1,14 @@
 package com.qwerfah.equipment.services.default
 
+import com.twitter.finagle.http.{Request, Response, Method, Status}
+
 import cats.Monad
 import cats.implicits._
+
+import io.circe._
+import io.circe.generic.auto._
+import io.circe.parser._
+import io.circe.syntax._
 
 import com.qwerfah.equipment.repos._
 import com.qwerfah.equipment.models._
@@ -9,27 +16,28 @@ import com.qwerfah.equipment.services._
 import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Mappings
 
+import com.qwerfah.documentation.resources.FileMetaResponse
+import com.qwerfah.documentation.json.{Decoders => DocumentationDecoders}
+
 import com.qwerfah.common.Uid
 import com.qwerfah.common.db.DbManager
 import com.qwerfah.common.services.response._
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.util.Conversions._
+import com.qwerfah.common.http.HttpClient
+import com.qwerfah.common.http.HttpMethod
 
-class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
+class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](
+  documentationClient: HttpClient[F]
+)(implicit
   modelRepo: EquipmentModelRepo[DB],
   instnaceRepo: EquipmentInstanceRepo[DB],
   paramRepo: ParamRepo[DB],
-  dbManager: DbManager[F, DB]
+  dbManager: DbManager[F, DB],
+  instanceService: EquipmentInstanceService[F]
 ) extends EquipmentModelService[F] {
     import Mappings._
-
-    private def validateGuid(uid: Uid): Boolean =
-        try {
-            java.util.UUID.fromString(uid.toString)
-            true
-        } catch {
-            case _: IllegalArgumentException => false
-        }
+    import DocumentationDecoders._
 
     override def getAll: F[ServiceResponse[Seq[ModelResponse]]] =
         dbManager.execute(modelRepo.get) map { _.asResponse.as200 }
@@ -38,6 +46,16 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
         dbManager.execute(modelRepo.getByUid(uid)) map {
             case Some(model) => model.asResponse.as200
             case None        => NoModel(uid).as404
+        }
+
+    override def getFiles(uid: Uid): F[ServiceResponse[FileMetaResponse]] =
+        dbManager.execute(modelRepo.getByUid(uid)) flatMap {
+            case Some(model) =>
+                documentationClient.sendAndDecode[FileMetaResponse](
+                  HttpMethod.Get,
+                  s"/api/models/$uid/files"
+                )
+            case None => Monad[F].pure(NoModel(uid).as404)
         }
 
     override def add(
@@ -53,10 +71,25 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](implicit
           ) map { _ => model }
         )
 
-        dbManager.execute(dbManager.sequence(actions)) map {
+        dbManager.executeTransactionally(dbManager.sequence(actions)) map {
             _.head.asResponse.as201
         }
     }
+
+    override def addFile(uid: Uid, request: Request): F[Response] =
+        dbManager.execute(modelRepo.getByUid(uid)) flatMap {
+            case Some(model) => {
+                request.uri_=(s"/api/models/$uid/files")
+                request.method_=(Method.Post)
+                documentationClient.send(request)
+            }
+            case None => {
+                val response = Response(Status.NotFound)
+                response.setContentType("application/json")
+                response.setContentString(NoModel(uid).asJson.toString)
+                Monad[F].pure(response)
+            }
+        }
 
     override def update(
       uid: Uid,

@@ -38,7 +38,17 @@ trait EquipmentInstanceRepo[DB[_]] {
       */
     def getByUidWithModelName(uid: Uid): DB[Option[(EquipmentInstance, String)]]
 
-    /** GEt all equipment instances associated with specified equipment model
+    /** Get all equipment instances associated with specified equipment model.
+      * @param modelUid
+      *   Equipment model uid.
+      * @return
+      *   Equipment instances of the given model.
+      */
+    def getByModelUid(
+      modelUid: Uid
+    ): DB[Seq[EquipmentInstance]]
+
+    /** Get all equipment instances associated with specified equipment model
       * along with associated model name.
       * @param modelUid
       *   Equipment model uid.

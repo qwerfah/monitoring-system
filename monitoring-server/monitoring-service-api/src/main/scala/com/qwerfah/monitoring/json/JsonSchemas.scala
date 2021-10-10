@@ -9,12 +9,8 @@ object JsonSchemas {
       json"""
             {
                 "type": "object",
-                "required": ["instanceUid", "name"],
+                "required": ["name", "params"],
                 "properties": {
-                    "instanceUid": {
-                        "type": "string",
-                        "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
-                    },
                     "name": {
                         "type": "string",
                         "minLength": 1,
@@ -26,6 +22,13 @@ object JsonSchemas {
                         "minLength": 1,
                         "maxLength": 300,
                         "pattern": "^(?!\\s*$$).+"
+                    },
+                    "params": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
+                        }
                     }
                 }
             }

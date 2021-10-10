@@ -30,6 +30,7 @@ import com.qwerfah.common.resources.{Credentials, UserResponse}
 import com.qwerfah.common.util.Conversions._
 import com.twitter.finagle.http.exp.Multipart
 import com.twitter.io.BufInputStream
+import com.twitter.finagle.param.Stats
 
 /** Default http client implementation based on finagle client and twitter
   * future. Contain also access-refresh token pair for authorization in
@@ -48,7 +49,7 @@ class DefaultHttpClient(
   dest: String
 ) extends HttpClient[Future] {
     var token: Option[Token] = None
-    val loginUrl = "/api/session/login"
+    val loginUrl = "/api/session/service/login"
     val refreshUrl = "/api/session/refresh"
 
     /** Attempt to authorize in destination service using provided credentials.
@@ -64,8 +65,9 @@ class DefaultHttpClient(
         service(request) map { response =>
             response.status match {
                 case Status.Ok =>
-                    decodeJson[UserResponse](response.contentString) match {
-                        case OkResponse(user) => user.token.get.as200
+                    decodeJson[Token](response.contentString) match {
+                        case s: SuccessResponse[Token] => s.result.as200
+                        case e: ErrorResponse          => e
                     }
                 case _ => InterserviceAuthFailed(tag).as401
             }
@@ -136,7 +138,8 @@ class DefaultHttpClient(
     private def matchStatus[A](
       response: Response
     )(implicit decoder: Decoder[A]) = response.status match {
-        case Status.Ok => decodeJson(response.contentString)
+        case status if status == Status.Ok || status == Status.Created =>
+            decodeJson(response.contentString)
         case Status.Unauthorized =>
             if (token.isEmpty) InterserviceAuthFailed(tag).as401
             else InvalidToken.as401

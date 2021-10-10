@@ -3,9 +3,9 @@ package com.qwerfah.monitoring.resources
 import com.qwerfah.common.Uid
 
 final case class AddMonitorRequest(
-  instanceUid: Uid,
   name: String,
-  description: Option[String]
+  description: Option[String],
+  params: Seq[Uid]
 )
 
 final case class UpdateMonitorRequest(
@@ -21,11 +21,3 @@ final case class MonitorResponse(
 )
 
 final case class MonitorParamRequest(paramUid: Uid)
-
-final case class MonitorParamResponse(
-  monitorUid: Uid,
-  paramUid: Uid,
-  modelUid: Option[Uid],
-  name: Option[String],
-  measurmentUnits: Option[String]
-)

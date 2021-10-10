@@ -6,6 +6,7 @@ import com.twitter.finagle.{Http, ListeningServer}
 import com.twitter.server.TwitterServer
 import com.twitter.finagle.http.{Request, Response, Status}
 import com.twitter.util.{Future, FuturePool}
+import com.twitter.finagle.http.exp.Multipart
 
 import io.finch.catsEffect._
 import io.finch._
@@ -58,10 +59,35 @@ object EquipmentModelController extends Controller {
         authorize(header, serviceRoles, _ => paramService.getByModelUid(uid))
     }
 
+    private val getModelFiles = get(
+      "models" :: path[Uid] :: "files" :: headerOption("Authorization")
+    ) { (uid: Uid, header: Option[String]) =>
+        authorize(header, serviceRoles, _ => modelService.getFiles(uid))
+    }
+
     private val addModel = post(
       "models" :: jsonBody[ModelRequest] :: headerOption("Authorization")
     ) { (request: ModelRequest, header: Option[String]) =>
         authorize(header, serviceRoles, _ => modelService.add(request))
+    }
+
+    private val addModelFile = post(
+      root ::
+          "models" :: path[Uid] :: "files" :: headerOption(
+            "Authorization"
+          ) :: multipartFileUploadOption("file")
+    ) {
+        (
+          request: Request,
+          modelUid: Uid,
+          header: Option[String],
+          _: Option[Multipart.FileUpload]
+        ) =>
+            authorizeRaw(
+              header,
+              serviceRoles,
+              _ => modelService.addFile(modelUid, request)
+            )
     }
 
     private val updateModel = patch(
@@ -88,7 +114,9 @@ object EquipmentModelController extends Controller {
         .:+:(getModel)
         .:+:(getModelInstances)
         .:+:(getModelParams)
+        .:+:(getModelFiles)
         .:+:(addModel)
+        .:+:(addModelFile)
         .:+:(updateModel)
         .:+:(deleteModel)
         .:+:(restoreModel)

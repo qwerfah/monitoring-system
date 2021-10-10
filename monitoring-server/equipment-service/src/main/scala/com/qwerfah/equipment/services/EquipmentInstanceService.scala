@@ -2,6 +2,8 @@ package com.qwerfah.equipment.services
 
 import com.qwerfah.equipment.resources._
 
+import com.qwerfah.monitoring.resources.AddMonitorRequest
+
 import com.qwerfah.common.services.response._
 import com.qwerfah.common.Uid
 
@@ -15,6 +17,10 @@ trait EquipmentInstanceService[F[_]] {
       modelUid: Uid,
       instance: AddInstanceRequest
     ): F[ServiceResponse[InstanceResponse]]
+    def addMonitor(
+      instanceUid: Uid,
+      request: AddMonitorRequest
+    ): F[ServiceResponse[InstanceMonitorResponse]]
     def update(
       uid: Uid,
       instance: UpdateInstanceRequest

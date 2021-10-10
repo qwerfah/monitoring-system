@@ -13,6 +13,8 @@ import io.finch.catsEffect._
 
 import io.circe.generic.auto._
 
+import io.catbird.util._
+
 import com.qwerfah.gateway.Startup
 import com.qwerfah.gateway.services._
 
@@ -32,19 +34,24 @@ object EquipmentController extends Controller {
 
     private def getModels = get("models" :: headerOption("Authorization")) {
         header: Option[String] =>
-            equipmentService.getModels
+            authorizeRaw(header, readRoles, _ => equipmentService.getModels)
+
     }
 
     private def getModel = get(
       "models" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        equipmentService.getModel(uid)
+        authorizeRaw(header, readRoles, _ => equipmentService.getModel(uid))
     }
 
     private def addModel = post(
       "models" :: jsonBody[ModelRequest] :: headerOption("Authorization")
     ) { (request: ModelRequest, header: Option[String]) =>
-        equipmentService.addModel(request)
+        authorizeRaw(
+          header,
+          writeRoles,
+          _ => equipmentService.addModel(request)
+        )
     }
 
     private def updateModel = patch(
@@ -52,31 +59,39 @@ object EquipmentController extends Controller {
         "Authorization"
       )
     ) { (uid: Uid, request: ModelRequest, header: Option[String]) =>
-        equipmentService.updateModel(uid, request)
+        authorizeRaw(
+          header,
+          writeRoles,
+          _ => equipmentService.updateModel(uid, request)
+        )
     }
 
     private def removeModel = delete(
       "models" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        equipmentService.removeModel(uid)
+        authorizeRaw(header, writeRoles, _ => equipmentService.removeModel(uid))
     }
 
     private def getInstances = get(
       "instances" :: headerOption("Authorization")
     ) { header: Option[String] =>
-        equipmentService.getInstances
+        authorizeRaw(header, readRoles, _ => equipmentService.getInstances)
     }
 
     private def getModelInstances = get(
       "models" :: path[Uid] :: "instances" :: headerOption("Authorization")
     ) { (modelUid: Uid, header: Option[String]) =>
-        equipmentService.getModelInstances(modelUid)
+        authorizeRaw(
+          header,
+          readRoles,
+          _ => equipmentService.getModelInstances(modelUid)
+        )
     }
 
     private def getInstance = get(
       "instances" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        equipmentService.getInstance(uid)
+        authorizeRaw(header, readRoles, _ => equipmentService.getInstance(uid))
     }
 
     private def addInstance = post(
@@ -86,7 +101,11 @@ object EquipmentController extends Controller {
         "Authorization"
       )
     ) { (modelUid: Uid, request: AddInstanceRequest, header: Option[String]) =>
-        equipmentService.addInstance(modelUid, request)
+        authorizeRaw(
+          header,
+          writeRoles,
+          _ => equipmentService.addInstance(modelUid, request)
+        )
     }
 
     private def updateInstance = patch(
@@ -96,37 +115,53 @@ object EquipmentController extends Controller {
         "Authorization"
       )
     ) { (uid: Uid, request: UpdateInstanceRequest, header: Option[String]) =>
-        equipmentService.updateInstance(uid, request)
+        authorizeRaw(
+          header,
+          writeRoles,
+          _ => equipmentService.updateInstance(uid, request)
+        )
     }
 
     private def removeInstance = delete(
       "instances" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        equipmentService.removeInstance(uid)
+        authorizeRaw(
+          header,
+          writeRoles,
+          _ => equipmentService.removeInstance(uid)
+        )
     }
 
     private def getParams = get(
       "params" :: headerOption("Authorization")
     ) { header: Option[String] =>
-        equipmentService.getParams
+        authorizeRaw(header, readRoles, _ => equipmentService.getParams)
     }
 
     private def getModelParams = get(
       "models" :: path[Uid] :: "params" :: headerOption("Authorization")
     ) { (modelUid: Uid, header: Option[String]) =>
-        equipmentService.getModelParams(modelUid)
+        authorizeRaw(
+          header,
+          readRoles,
+          _ => equipmentService.getModelParams(modelUid)
+        )
     }
 
     private def getInstanceParams = get(
       "instances" :: path[Uid] :: "params" :: headerOption("Authorization")
     ) { (instanceUid: Uid, header: Option[String]) =>
-        equipmentService.getInstanceParams(instanceUid)
+        authorizeRaw(
+          header,
+          readRoles,
+          _ => equipmentService.getInstanceParams(instanceUid)
+        )
     }
 
     private def getParam = get(
       "params" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        equipmentService.getParam(uid)
+        authorizeRaw(header, readRoles, _ => equipmentService.getParam(uid))
     }
 
     private def addParam = post(
@@ -136,7 +171,11 @@ object EquipmentController extends Controller {
         "Authorization"
       )
     ) { (modelUid: Uid, request: AddParamRequest, header: Option[String]) =>
-        equipmentService.addParam(modelUid, request)
+        authorizeRaw(
+          header,
+          writeRoles,
+          _ => equipmentService.addParam(modelUid, request)
+        )
     }
 
     private def updateParam = patch(
@@ -146,13 +185,17 @@ object EquipmentController extends Controller {
         "Authorization"
       )
     ) { (uid: Uid, request: UpdateParamRequest, header: Option[String]) =>
-        equipmentService.updateParam(uid, request)
+        authorizeRaw(
+          header,
+          writeRoles,
+          _ => equipmentService.updateParam(uid, request)
+        )
     }
 
     private def removeParam = delete(
       "params" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        equipmentService.removeParam(uid)
+        authorizeRaw(header, writeRoles, _ => equipmentService.removeParam(uid))
     }
 
     def api = "api" :: "equipment" :: getModels

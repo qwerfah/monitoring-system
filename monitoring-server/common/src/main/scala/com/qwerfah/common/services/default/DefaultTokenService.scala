@@ -129,17 +129,35 @@ class DefaultTokenService[F[_]: Monad, DB[_]: Monad](implicit
         }
     }
 
-    override def login(
+    override def userLogin(
       credentials: Credentials
     ): F[ServiceResponse[UserResponse]] = {
         val passwordHash = MessageDigest
             .getInstance("MD5")
             .digest(credentials.password.getBytes("UTF-8"))
 
-        dbManager.execute(userRepo.getByLogin(credentials.login)) flatMap {
+        dbManager.execute(userRepo.getUserByLogin(credentials.login)) flatMap {
             case Some(user) if user.password sameElements passwordHash =>
                 generate(Payload(user.uid, user.login, user.role)) map {
                     case OkResponse(token) => user.asResponse(token).as200
+                }
+            case _ => Monad[F].pure(InvalidCredentials.as404)
+        }
+    }
+
+    override def serviceLogin(
+      credentials: Credentials
+    ): F[ServiceResponse[Token]] = {
+        val passwordHash = MessageDigest
+            .getInstance("MD5")
+            .digest(credentials.password.getBytes("UTF-8"))
+
+        dbManager.execute(
+          userRepo.getServiceByLogin(credentials.login)
+        ) flatMap {
+            case Some(user) if user.password sameElements passwordHash =>
+                generate(Payload(user.uid, user.login, user.role)) map {
+                    case OkResponse(token) => token.as200
                 }
             case _ => Monad[F].pure(InvalidCredentials.as404)
         }

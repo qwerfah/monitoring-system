@@ -46,7 +46,7 @@ object Startup {
     implicit val userRepo = new SlickUserRepo
     implicit val dbManager = new SlickDbManager
 
-    val defaultEquipmentClient =
+    val equipmentClient =
         new DefaultHttpClient(
           ServiceTag.Monitoring,
           Credentials(
@@ -56,8 +56,21 @@ object Startup {
           config.getString("equipmentUrl")
         )
 
+    val generatorClient =
+        new DefaultHttpClient(
+          ServiceTag.Monitoring,
+          Credentials(
+            config.getString("serviceId"),
+            config.getString("secret")
+          ),
+          config.getString("generatorUrl")
+        )
+
     implicit val DefaultEquipmentService =
-        new DefaultMonitorService[Future, DBIO](defaultEquipmentClient)
+        new DefaultMonitorService[Future, DBIO](
+          equipmentClient,
+          generatorClient
+        )
     implicit val defaultTokenService = new DefaultTokenService[Future, DBIO]
 
     implicit val actorSystem = ActorSystem("such-system")

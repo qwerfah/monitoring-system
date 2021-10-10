@@ -24,6 +24,7 @@ import com.qwerfah.common.util.Conversions._
 import com.qwerfah.common.resources.UserRole
 import com.qwerfah.common.services.response._
 import com.qwerfah.common.services.TokenService
+import com.twitter.finagle.stats.Stat
 
 /** Provide basic endpoint controller functionality. */
 trait Controller {
@@ -48,6 +49,7 @@ trait Controller {
         def asOutputError: Output[Nothing] = response match {
             case e: NotFoundResponse      => NotFound(e)
             case e: BadAuthResponse       => Unauthorized(e)
+            case e: ForbiddenResponse     => Forbidden(e)
             case e: BadGatewayResponse    => BadGateway(e)
             case e: InternalErrorResponse => InternalServerError(e)
             case e: UnprocessableResponse => UnprocessableEntity(e)
@@ -61,6 +63,7 @@ trait Controller {
             val response = er match {
                 case e: NotFoundResponse   => Response(Status.NotFound)
                 case e: BadAuthResponse    => Response(Status.Unauthorized)
+                case e: ForbiddenResponse  => Response(Status.Forbidden)
                 case e: BadGatewayResponse => Response(Status.BadGateway)
                 case e: InternalErrorResponse =>
                     Response(Status.InternalServerError)

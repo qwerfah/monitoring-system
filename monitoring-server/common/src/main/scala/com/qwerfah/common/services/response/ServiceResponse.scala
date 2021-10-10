@@ -54,6 +54,14 @@ final case class NotFoundResponse(override val message: String)
 final case class BadAuthResponse(override val message: String)
   extends ErrorResponse(message)
 
+/** Returns when user has no rights to perform operation. Corresponds to 403
+  * status code.
+  * @param message
+  *   Error description.
+  */
+final case class ForbiddenResponse(override val message: String)
+  extends ErrorResponse(message)
+
 /** Returns when the request to the remote server inside of service method
   * invocation ends with 503 status code. Corresponds to 502 status code.
   * @param message

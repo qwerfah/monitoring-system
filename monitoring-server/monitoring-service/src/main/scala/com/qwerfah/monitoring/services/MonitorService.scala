@@ -2,7 +2,11 @@ package com.qwerfah.monitoring.services
 
 import com.qwerfah.monitoring.models._
 import com.qwerfah.monitoring.resources._
+
 import com.qwerfah.equipment.resources._
+
+import com.qwerfah.generator.resources.ParamValueResponse
+
 import com.qwerfah.common.services.response._
 import com.qwerfah.common.Uid
 
@@ -46,7 +50,18 @@ trait MonitorService[F[_]] {
       */
     def getMonitorParams(
       uid: Uid
-    ): F[ServiceResponse[Seq[MonitorParamResponse]]]
+    ): F[ServiceResponse[Seq[ParamResponse]]]
+
+    /** Get all values of all specified monitor params for all time. Request to
+      * remote generator service.
+      * @param uid
+      *   Monitor identifier.
+      * @return
+      *   All values of all specified monitor params for all time
+      */
+    def getMonitorParamValues(
+      uid: Uid
+    ): F[ServiceResponse[Seq[ParamValueResponse]]]
 
     /** Add new monitor.
       * @param request
@@ -55,6 +70,7 @@ trait MonitorService[F[_]] {
       *   New monitor instance added to storage.
       */
     def addMonitor(
+      instanceUid: Uid,
       request: AddMonitorRequest
     ): F[ServiceResponse[MonitorResponse]]
 

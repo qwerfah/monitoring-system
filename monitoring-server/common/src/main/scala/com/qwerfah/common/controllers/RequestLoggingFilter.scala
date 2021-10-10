@@ -31,13 +31,13 @@ abstract class RequestLoggingFilter[REQ <: Request](
 
     def logSuccess(replyTime: Duration, request: REQ, reply: Response) = {
         val line = formatter.format(request, reply, replyTime)
-        log.info(line)
+        log.info(line + reply.contentString)
     }
 
     def logException(duration: Duration, request: REQ, throwable: Throwable) = {
         val response = Response(request.version, InternalServerError)
         val line = formatter.format(request, response, duration)
-        log.info(line)
+        log.info(line + response.contentString)
     }
 }
 

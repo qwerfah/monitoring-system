@@ -38,10 +38,19 @@ class DefaultMonitoringService[F[_]: Monad](
     override def getMonitor(uid: Uid): F[Response] =
         monitoringClient.send(HttpMethod.Get, s"/api/monitors/$uid")
 
-    override def addMonitor(request: AddMonitorRequest): F[Response] =
-        monitoringClient.send(
+    override def getMonitorParams(uid: Uid): F[Response] =
+        monitoringClient.send(HttpMethod.Get, s"/api/monitors/$uid/params")
+
+    override def getMonitorParamValues(uid: Uid): F[Response] = monitoringClient
+        .send(HttpMethod.Get, s"/api/monitors/$uid/params/values")
+
+    override def addMonitor(
+      instanceUid: Uid,
+      request: AddMonitorRequest
+    ): F[Response] =
+        equipmentClient.send(
           HttpMethod.Post,
-          "/api/monitors",
+          s"/api/instances/$instanceUid/monitors",
           Some(request.asJson.toString)
         )
 

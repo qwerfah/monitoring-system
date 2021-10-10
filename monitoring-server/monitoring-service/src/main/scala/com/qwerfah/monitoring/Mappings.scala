@@ -5,15 +5,15 @@ import com.qwerfah.equipment.resources.ParamResponse
 import com.qwerfah.monitoring.resources._
 import com.qwerfah.monitoring.models._
 
-import com.qwerfah.common.randomUid
+import com.qwerfah.common.{Uid, randomUid}
 
 object Mappings {
     implicit class AddRequestToMonitorMapping(request: AddMonitorRequest) {
-        def asMonitor =
+        def asMonitor(instanceUid: Uid) =
             Monitor(
               None,
               randomUid,
-              request.instanceUid,
+              instanceUid,
               request.name,
               request.description,
               false
@@ -51,24 +51,5 @@ object Mappings {
     implicit class RequestToMonitorParamMapping(request: MonitorParamRequest) {
         def asParam =
             MonitorParam(randomUid, request.paramUid, false)
-    }
-
-    implicit class MonitorParamToResponseMapping(mp: MonitorParam) {
-
-        def asResponse = MonitorParamResponse(
-          mp.monitorUid,
-          mp.paramUid,
-          None,
-          None,
-          None
-        )
-
-        def asResponse(param: ParamResponse) = MonitorParamResponse(
-          mp.monitorUid,
-          mp.paramUid,
-          Some(param.modelUid),
-          Some(param.name),
-          param.measurmentUnits
-        )
     }
 }

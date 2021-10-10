@@ -24,7 +24,15 @@ trait TokenService[F[_]] {
       * @return
       *   User tokens.
       */
-    def login(credentials: Credentials): F[ServiceResponse[UserResponse]]
+    def userLogin(credentials: Credentials): F[ServiceResponse[UserResponse]]
+
+    /** Authorize external service with given credentials.
+      * @param credentials
+      *   Service credentials.
+      * @return
+      *   Service tokens.
+      */
+    def serviceLogin(credentials: Credentials): F[ServiceResponse[Token]]
 
     /** Refresh access-refresh token pair using given refresh token.
       * @param token

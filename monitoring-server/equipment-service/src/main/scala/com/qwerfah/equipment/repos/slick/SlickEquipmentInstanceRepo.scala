@@ -55,6 +55,12 @@ class SlickEquipmentInstanceRepo(implicit val context: EquipmentContext)
         )
     } yield (instance, model)).result.headOption
 
+    override def getByModelUid(
+      modelUid: Uid
+    ): DBIO[Seq[EquipmentInstance]] = context.instances
+        .filter(i => !i.isDeleted && i.modelUid === modelUid)
+        .result
+
     override def getByModelUidWithModelName(
       modelUid: Uid
     ): DBIO[Seq[(EquipmentInstance, String)]] =

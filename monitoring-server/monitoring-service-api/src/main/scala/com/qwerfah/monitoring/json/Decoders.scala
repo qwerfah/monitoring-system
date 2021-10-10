@@ -23,12 +23,12 @@ object Decoders {
             addMonitorRequestSchema.validate(c.value) match {
                 case Valid(()) =>
                     for {
-                        instanceUid <- c.downField("instanceUid").as[Uid]
                         name <- c.downField("name").as[String]
                         description <- c
                             .downField("description")
                             .as[Option[String]]
-                    } yield AddMonitorRequest(instanceUid, name, description)
+                            params <- c.downField("params").as[Seq[Uid]]
+                    } yield AddMonitorRequest(name, description, params)
                 case Invalid(errors) =>
                     throw InvalidJsonBodyException(errors)
             }
@@ -73,30 +73,6 @@ object Decoders {
                     for {
                         paramUid <- c.downField("paramUid").as[Uid]
                     } yield MonitorParamRequest(paramUid)
-                case Invalid(errors) =>
-                    throw InvalidJsonBodyException(errors)
-            }
-        }
-
-    implicit val decodeMonitorParamResponse: Decoder[MonitorParamResponse] =
-        (c: HCursor) => {
-            monitorParamResponseSchema.validate(c.value) match {
-                case Valid(()) =>
-                    for {
-                        monitorUid <- c.downField("monitorUid").as[Uid]
-                        paramUid <- c.downField("paramUid").as[Uid]
-                        modelUid <- c.downField("modelUid").as[Option[Uid]]
-                        name <- c.downField("name").as[Option[String]]
-                        measurmentUnits <- c
-                            .downField("measurmentUnits")
-                            .as[Option[String]]
-                    } yield MonitorParamResponse(
-                      monitorUid,
-                      paramUid,
-                      modelUid,
-                      name,
-                      measurmentUnits
-                    )
                 case Invalid(errors) =>
                     throw InvalidJsonBodyException(errors)
             }

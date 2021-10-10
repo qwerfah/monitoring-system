@@ -41,7 +41,7 @@ object DocumentationController extends Controller {
             (modelUid: Uid, header: Option[String]) =>
                 authorizeRaw(
                   header,
-                  serviceRoles,
+                  readRoles,
                   _ => fileService.getModelFiles(modelUid)
                 )
         }
@@ -51,7 +51,7 @@ object DocumentationController extends Controller {
     ) { (uid: Uid, header: Option[String]) =>
         authorizeRaw(
           header,
-          serviceRoles,
+          readRoles,
           _ => fileService.getFile(uid)
         )
     }
@@ -71,7 +71,7 @@ object DocumentationController extends Controller {
             ) =>
                 authorizeRaw(
                   header,
-                  serviceRoles,
+                  writeRoles,
                   _ => fileService.addFile(modelUid, request)
                 )
         }
@@ -81,20 +81,9 @@ object DocumentationController extends Controller {
             (uid: Uid, header: Option[String]) =>
                 authorizeRaw(
                   header,
-                  serviceRoles,
+                  writeRoles,
                   _ => fileService.removeFile(uid)
                 )
-        }
-
-    private val removeModelFiles =
-        delete(
-          "models" :: path[Uid] :: "files" :: headerOption("Authorization")
-        ) { (modelUid: Uid, header: Option[String]) =>
-            authorizeRaw(
-              header,
-              serviceRoles,
-              _ => fileService.removeModelFiles(modelUid)
-            )
         }
 
     val api = "api" :: "documentation" :: getFiles
@@ -102,6 +91,5 @@ object DocumentationController extends Controller {
         .:+:(getModelFiles)
         .:+:(addFile)
         .:+:(removeFile)
-        .:+:(removeModelFiles)
         .handle(errorHandler)
 }

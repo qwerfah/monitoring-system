@@ -16,14 +16,15 @@ abstract class DataContext(jdbcProfile: JdbcProfile) extends SlickEnumSupport {
 
     import profile.api._
 
+    implicit val roleMapper =
+        MappedColumnType.base[UserRole, String](
+          e => e.toString,
+          s => UserRole.withName(s)
+        )
+
     final class UserTable(tag: Tag) extends Table[User](tag, "USERS") {
 
         /** User role enum to string mapper. */
-        implicit val roleMapper =
-            MappedColumnType.base[UserRole, String](
-              e => e.toString,
-              s => UserRole.withName(s)
-            )
 
         def id = column[Int]("ID", O.PrimaryKey, O.AutoInc)
         def uid = column[Uid]("UID", O.Unique)
@@ -43,5 +44,4 @@ abstract class DataContext(jdbcProfile: JdbcProfile) extends SlickEnumSupport {
     }
 
     val users = TableQuery[UserTable]
-
 }

@@ -60,6 +60,15 @@ object Startup {
       config.getString("generatorUrl")
     )
 
+    val documentationClient = new DefaultHttpClient(
+      ServiceTag.Monitoring,
+      Credentials(
+        config.getString("serviceId"),
+        config.getString("secret")
+      ),
+      config.getString("documentationUrl")
+    )
+
     // Db dependencies
     implicit val pgdb = Database.forConfig("postgres")
     implicit val dbProfile = PostgresProfile
@@ -74,13 +83,14 @@ object Startup {
     implicit val dbManager = new SlickDbManager
 
     // Service dependencies
-    implicit val defaultModelService =
-        new DefaultEquipmentModelService[Future, DBIO]
     implicit val defaultInstanceService =
         new DefaultEquipmentInstanceService[Future, DBIO](
           monitoringClient,
           generatorClient
         )
+    implicit val defaultModelService =
+        new DefaultEquipmentModelService[Future, DBIO](documentationClient)
+
     implicit val defaultParamService = new DefaultParamService[Future, DBIO]
     implicit val defaultTokenService = new DefaultTokenService[Future, DBIO]
 

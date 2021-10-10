@@ -33,6 +33,7 @@ object Main extends TwitterServer {
         server.close()
         subscriptionRef.close()
         actorSystem.terminate()
+        pgdb.close()
     }
 
     com.twitter.util.Await.ready(server)

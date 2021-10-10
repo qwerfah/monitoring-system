@@ -41,6 +41,12 @@ final case class NoParam(uid: Uid) extends ErrorMessage {
     override def getMessage = s"Equipment model param with uid $uid not found."
 }
 
+final case class NoParams(uids: Seq[Uid]) extends ErrorMessage {
+    override def getMessage =
+        s"Equipment model param(s) with uid(s) ${uids
+            .fold("")((a, b) => a + ", " + b.toString)} not found."
+}
+
 final case class NoUser(uid: Uid) extends ErrorMessage {
     override def getMessage = s"User with uid $uid not found."
 }

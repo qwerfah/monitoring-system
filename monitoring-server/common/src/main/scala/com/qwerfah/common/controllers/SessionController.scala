@@ -48,7 +48,15 @@ abstract class SessionController(implicit
         post("session" :: "login" :: jsonBody[Credentials]) {
             credentials: Credentials =>
                 for {
-                    result <- tokenService.login(credentials)
+                    result <- tokenService.userLogin(credentials)
+                } yield result.asOutput
+        }
+
+    private val serviceLogin =
+        post("session" :: "service" :: "login" :: jsonBody[Credentials]) {
+            credentials: Credentials =>
+                for {
+                    result <- tokenService.serviceLogin(credentials)
                 } yield result.asOutput
         }
 
@@ -62,5 +70,9 @@ abstract class SessionController(implicit
                 )
         }
 
-    val api = "api" :: login.:+:(refresh).:+:(verify).handle(errorHandler)
+    val api = "api" :: login
+        .:+:(serviceLogin)
+        .:+:(refresh)
+        .:+:(verify)
+        .handle(errorHandler)
 }

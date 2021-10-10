@@ -13,7 +13,7 @@ import com.typesafe.config.{Config, ConfigObject}
 import io.circe.generic.auto._
 import io.circe.config.syntax._
 
-import com.qwerfah.common.{Uid, randomUid, hashString}
+import com.qwerfah.common.{Uid, randomUid, hashString, uidFromString}
 import com.qwerfah.common.models._
 import com.qwerfah.common.resources.{UserRole, Credentials}
 import com.qwerfah.common.models.DataContext
@@ -57,11 +57,17 @@ class DocumentationContext(implicit jdbcProfile: JdbcProfile, config: Config)
       }
     )
 
+    private val modelUids = Seq(
+      uidFromString("c8eaa43e-093c-48ff-b140-090a006cc882"),
+      uidFromString("a2c489fa-5f78-4ff6-9f78-7fa8a5e5a918"),
+      uidFromString("e6910ffd-8fbd-456c-a371-159117df9fbf")
+    )
+
     private val initialFiles = Seq(
       File(
         None,
         randomUid,
-        randomUid,
+        modelUids(0),
         "file_1.txt",
         "text/plain",
         "content_1".getBytes,
@@ -70,7 +76,7 @@ class DocumentationContext(implicit jdbcProfile: JdbcProfile, config: Config)
       File(
         None,
         randomUid,
-        randomUid,
+        modelUids(1),
         "file_2.txt",
         "text/plain",
         "content_2".getBytes,
@@ -79,7 +85,7 @@ class DocumentationContext(implicit jdbcProfile: JdbcProfile, config: Config)
       File(
         None,
         randomUid,
-        randomUid,
+        modelUids(2),
         "file_3.txt",
         "text/plain",
         "content_3".getBytes,

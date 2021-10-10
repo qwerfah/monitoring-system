@@ -14,7 +14,11 @@ trait MonitoringService[F[_]] {
 
     def getMonitor(uid: Uid): F[Response]
 
-    def addMonitor(request: AddMonitorRequest): F[Response]
+    def getMonitorParams(uid: Uid): F[Response]
+
+    def getMonitorParamValues(uid: Uid): F[Response]
+
+    def addMonitor(instanceUid: Uid, request: AddMonitorRequest): F[Response]
 
     def updateMonitor(uid: Uid, request: UpdateMonitorRequest): F[Response]
 

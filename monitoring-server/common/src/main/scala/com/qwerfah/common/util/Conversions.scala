@@ -79,6 +79,7 @@ object Conversions {
       */
     implicit class errorToServiceResponse(msg: ErrorMessage) {
         def as401 = BadAuthResponse(msg.getMessage)
+        def as403 = ForbiddenResponse(msg.getMessage)
         def as404 = NotFoundResponse(msg.getMessage)
         def as409 = ConflictResponse(msg.getMessage)
         def as422 = UnprocessableResponse(msg.getMessage)

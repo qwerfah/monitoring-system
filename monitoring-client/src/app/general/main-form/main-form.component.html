@@ -1,3 +1,4 @@
+<router-outlet *ngIf="!currentUser"></router-outlet>
 <div *ngIf="currentUser" class="bg-gray-200 h-screen w-screen bg-gradient-to-r from-blue-400 to-indigo-700">
   <nav class="fixed bg-indigo-800 w-full bg-gradient-to-r from-blue-400 to-indigo-700">
     <div class="mx-auto px-2">
@@ -61,7 +62,8 @@
           rounded-t
           bold
         "
-        routerLink="/models"
+        [routerLink]="['./models']"
+        routerLinkActive="active"
       >
         Каталог оборудования
       </button>
@@ -81,7 +83,8 @@
           focus:outline-none
           bold
         "
-        routerLink="/instances"
+        [routerLink]="['./instances']"
+        routerLinkActive="active"
       >
         Развернутые экземпляры
       </button>
@@ -101,7 +104,8 @@
           focus:outline-none
           bold
         "
-        routerLink="/monitors"
+        [routerLink]="['./monitors']"
+        routerLinkActive="active"
       >
         Мониторинг
       </button>
@@ -152,4 +156,3 @@
     </div>
   </div>
 </div>
-<router-outlet *ngIf="!currentUser"></router-outlet>

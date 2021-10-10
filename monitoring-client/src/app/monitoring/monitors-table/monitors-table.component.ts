@@ -4,6 +4,9 @@ import { v4 as uuid } from 'uuid';
 
 import { Monitor } from 'src/app/models/monitor';
 import { MonitorRequest } from 'src/app/models/monitor-request';
+import { MonitoringService } from 'src/app/services/monitoring.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-monitors-table',
@@ -12,16 +15,36 @@ import { MonitorRequest } from 'src/app/models/monitor-request';
 })
 export class MonitorsTableComponent implements OnInit {
   isAdding: boolean = false;
-  monitors$: Observable<Monitor[]>;
+  isLoading: boolean = true;
 
-  constructor() {
-    this.monitors$ = of([
-      new Monitor(uuid(), uuid(), uuid(), 'monitor_1', 'instance_1', 'model_1', 'description of monitor_1'),
-      new Monitor(uuid(), uuid(), uuid(), 'monitor_2', 'instance_2', 'model_2', 'description of monitor_2'),
-      new Monitor(uuid(), uuid(), uuid(), 'monitor_3', 'instance_3', 'model_3', 'description of monitor_3'),
-      new Monitor(uuid(), uuid(), uuid(), 'monitor_4', 'instance_4', 'model_4', 'description of monitor_4'),
-      new Monitor(uuid(), uuid(), uuid(), 'monitor_5', 'instance_5', 'model_5', 'description of monitor_5'),
-    ]);
+  monitors: Monitor[];
+
+  constructor(private monitoringService: MonitoringService, private snackBar: MatSnackBar) {
+    this.monitoringService.getMonitors().subscribe(
+      (monitors) => {
+        this.monitors = monitors;
+        this.isLoading = false;
+      },
+      (err: HttpErrorResponse) => {
+        switch (err.status) {
+          case 0: {
+            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
+            break;
+          }
+          case 502: {
+            this.snackBar.open('Ошибка: сервис мониторинга недоступен', 'Ок');
+            break;
+          }
+          case 404: {
+            this.snackBar.open('Ошибка: данные не найдены', 'Ок');
+          }
+        }
+        this.isLoading = false;
+      },
+      () => {
+        this.isLoading = false;
+      }
+    );
   }
 
   ngOnInit() {}

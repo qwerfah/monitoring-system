@@ -56,15 +56,6 @@ export class SessionService {
     this.currentUserSubject.next(undefined);
   }
 
-  /** Register new user using gateway service. Doesn't login
-   * created user and doesn't update current user data in local storage.
-   * @param user New user data.
-   * @returns Observable with registered user data.
-   */
-  register(user: UserRequest): Observable<User> {
-    return this.http.post<User>(`${this.gatewayUri}/session/register`, user);
-  }
-
   /** Exctract current user or throw error if it is not presented. */
   get currentUser(): UserWithToken | undefined {
     return this.currentUserSubject.value;

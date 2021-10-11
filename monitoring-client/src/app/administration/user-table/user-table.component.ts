@@ -17,18 +17,11 @@ export class UserTableComponent implements OnInit {
   isLoading: boolean = true;
   isAdding: boolean = false;
 
-  users: User[];
+  users: User[] = [];
 
   constructor(private userService: UserService, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
-    this.users = [
-      new User(uuid(), 'user_1', UserRole.EquipmentUser),
-      new User(uuid(), 'user_2', UserRole.SystemAdmin),
-      new User(uuid(), 'user_3', UserRole.EquipmentAdmin),
-      new User(uuid(), 'user_4', UserRole.EquipmentUser),
-    ];
-
     this.userService.getUsers().subscribe(
       (users) => {
         this.users = users;
@@ -80,8 +73,8 @@ export class UserTableComponent implements OnInit {
             this.snackBar.open('Ошибка: сервис пользователей недоступен', 'Ок', { duration: 5000 });
             break;
           }
-          case 404: {
-            this.snackBar.open('Ошибка: данные не найдены', 'Ок', { duration: 5000 });
+          case 422: {
+            this.snackBar.open('Ошибка: пользователь с таким логином уже существует', 'Ок', { duration: 5000 });
           }
         }
         this.isLoading = false;
@@ -90,6 +83,31 @@ export class UserTableComponent implements OnInit {
   }
 
   removeUser(userUid: string): void {
-    console.log(userUid);
+    this.userService.removeUser(userUid).subscribe(
+      (msg) => {
+        this.isLoading = false;
+        this.users.splice(
+          this.users.findIndex((u) => u.uid === userUid),
+          1
+        );
+        this.snackBar.open('Успех: пользователь удален', 'Ок', { duration: 5000 });
+      },
+      (err: HttpErrorResponse) => {
+        switch (err.status) {
+          case 0: {
+            this.snackBar.open('Ошибка удаления: отсутсвтует соединение с сервером', 'Ок', { duration: 5000 });
+            break;
+          }
+          case 502: {
+            this.snackBar.open('Ошибка удаления: сервис пользователей недоступен', 'Ок', { duration: 5000 });
+            break;
+          }
+          case 404: {
+            this.snackBar.open('Ошибка удаления: пользователь не найден', 'Ок', { duration: 5000 });
+          }
+        }
+        this.isLoading = false;
+      }
+    );
   }
 }

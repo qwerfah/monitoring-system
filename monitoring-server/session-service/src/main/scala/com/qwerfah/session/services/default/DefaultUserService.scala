@@ -31,8 +31,23 @@ class DefaultUserService[F[_]: Monad, DB[_]: Monad](implicit
     override def register(
       request: UserRequest
     ): F[ServiceResponse[UserResponse]] = for {
-        user <- dbManager.execute(userRepo.add(request.asUser))
-    } yield user.asResponse.as201
+        user <- dbManager.tryExecute(
+          userRepo.add(request.asUser.copy(role = UserRole.EquipmentUser))
+        )
+    } yield user match {
+        case Success(value) => value.asResponse.as201
+        case Failure(_)     => DuplicateUser(request.login).as422
+    }
+
+    override def add(request: UserRequest): F[ServiceResponse[UserResponse]] =
+        for {
+            user <- dbManager.tryExecute(
+              userRepo.add(request.asUser)
+            )
+        } yield user match {
+            case Success(value) => value.asResponse.as201
+            case Failure(_)     => DuplicateUser(request.login).as422
+        }
 
     override def getAll: F[ServiceResponse[Seq[UserResponse]]] =
         for {
@@ -69,10 +84,4 @@ class DefaultUserService[F[_]: Monad, DB[_]: Monad](implicit
             case _ => Monad[F].pure(NoUser(uid).as404)
         }
     }
-
-    def restore(uid: Uid): F[ServiceResponse[ResponseMessage]] =
-        dbManager.execute(userRepo.restoreByUid(uid)) map {
-            case 1 => UserRestored(uid).as200
-            case _ => NoUser(uid).as404
-        }
 }

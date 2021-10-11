@@ -8,13 +8,21 @@ import com.qwerfah.common.Uid
 /** Describe user service funcionality. */
 trait UserService[F[_]] {
 
-    /** Register new user.
+    /** Register new user (only EquipmentUser role accepted).
       * @param request
       *   User data.
       * @return
       *   Registered user data.
       */
     def register(request: UserRequest): F[ServiceResponse[UserResponse]]
+
+    /** Add new user (admin action).
+      * @param request
+      *   User data.
+      * @return
+      *   Registered user data.
+      */
+    def add(request: UserRequest): F[ServiceResponse[UserResponse]]
 
     /** Get all registered users.
       * @return
@@ -42,20 +50,11 @@ trait UserService[F[_]] {
       request: UserRequest
     ): F[ServiceResponse[ResponseMessage]]
 
-    /** Remove user by its uid (soft delete).
+    /** Remove user by its uid.
       * @param uid
       *   User identifier.
       * @return
       *   Description of the operation result.
       */
     def remove(uid: Uid): F[ServiceResponse[ResponseMessage]]
-
-    /** Restore user by its uid if it wasn't removed permanently.
-      * @param uid
-      *   User identifier.
-      * @return
-      *   Description of the operation result.
-      */
-    def restore(uid: Uid): F[ServiceResponse[ResponseMessage]]
-
 }

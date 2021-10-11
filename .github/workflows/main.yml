@@ -12,15 +12,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2.3.4
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          registry: docker.pkg.github.com
-          username: ${{ secrets.DOCKERHUB_USER_NAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-      - name: Build and Publish XYZ Docker image
+
+      - name: Build and Publish Docker images
         run: |
           cd ./monitoring-server
+          echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
           sbt "gateway/docker:publish"
           sbt "session/docker:publish"
           sbt "equipment/docker:publish"

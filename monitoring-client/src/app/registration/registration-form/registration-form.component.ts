@@ -8,7 +8,7 @@ import { delay } from 'rxjs/operators';
 import { User } from 'src/app/models/user';
 import { UserRequest } from 'src/app/models/user-request';
 import { UserRole } from 'src/app/models/user-role';
-import { SessionService } from 'src/app/services/session.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'registration-form',
@@ -24,7 +24,7 @@ export class RegistrationFormComponent implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private sessionService: SessionService,
+    private userService: UserService,
     private snackBar: MatSnackBar
   ) {
     this.userInfo = fb.group({
@@ -54,23 +54,26 @@ export class RegistrationFormComponent implements OnInit {
 
       this.isLoading = true;
 
-      this.sessionService.register(user).subscribe(
+      this.userService.register(user).subscribe(
         (user) => {
+          this.snackBar.open('Успех: пользователь зарегистрирован', 'Ок', { duration: 5000 });
           this.router.navigate(['/login']);
         },
         (error: HttpErrorResponse) => {
           this.isLoading = false;
           switch (error.status) {
             case 0: {
-              this.snackBar.open('Ошибка регистрации: отсутсвтует соединение с сервером', 'Ок');
+              this.snackBar.open('Ошибка регистрации: отсутсвтует соединение с сервером', 'Ок', { duration: 5000 });
               break;
             }
             case 502: {
-              this.snackBar.open('Ошибка регистрации: сервис недоступен', 'Ок');
+              this.snackBar.open('Ошибка регистрации: сервис недоступен', 'Ок', { duration: 5000 });
               break;
             }
             case 422: {
-              this.snackBar.open('Ошибка регистрации: пользователь с данным именем уже существует', 'Ок');
+              this.snackBar.open('Ошибка регистрации: пользователь с данным именем уже существует', 'Ок', {
+                duration: 5000,
+              });
             }
           }
         }

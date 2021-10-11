@@ -12,13 +12,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      # TODO Build projects
-      # TODO deploy
-      # - name: Run API Tests
-      #  id: run-newman
-      #  uses: anthonyvscode/newman-action@v1
-      #  with:
-      #    collection: postman/postman-collection.json
-      #    environment: postman/postman-heroku-environment.json
-      #    delayRequest: 50
-      #    reporters: cli
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          registry: docker.pkg.github.com
+          username: ${{ secrets.DOCKERHUB_USER_NAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Build and Publish XYZ Docker image
+        run: |
+          sbt gateway/docker:publish
+          sbt session/docker:publish
+          sbt equipment/docker:publish
+          sbt documentation/docker:publish
+          sbt monitoring/docker:publish
+          sbt generator/docker:publish
+          sbt reporting/docker:publish

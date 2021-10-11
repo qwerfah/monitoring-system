@@ -33,16 +33,15 @@ lazy val common = project
         "com.github.jwt-scala" %% "jwt-circe" % "9.0.1"
       )
     )
-    .disablePlugins(AssemblyPlugin)
+    .disablePlugins(AssemblyPlugin, JavaAppPackaging, DockerPlugin)
 
 lazy val gateway = project
     .in(file("gateway-service"))
     .settings(
       name := "gateway-service",
       settings,
-      dockerBaseImage := "openjdk",
-      libraryDependencies ++= commonDependencies,
-      dockerExposedPorts ++= Seq(8081, 8081)
+      dockerSettings(8081),
+      libraryDependencies ++= commonDependencies
     )
     .dependsOn(
       common,
@@ -60,9 +59,8 @@ lazy val session = project
     .settings(
       name := "session-service",
       settings,
-      dockerBaseImage := "openjdk",
-      libraryDependencies ++= commonDependencies,
-      dockerExposedPorts ++= Seq(8082, 8082)
+      dockerSettings(8082),
+      libraryDependencies ++= commonDependencies
     )
     .dependsOn(common)
     .enablePlugins(JavaAppPackaging, DockerPlugin)
@@ -72,9 +70,8 @@ lazy val equipment = project
     .settings(
       name := "equipment-service",
       settings,
-      dockerBaseImage := "openjdk",
-      libraryDependencies ++= commonDependencies,
-      dockerExposedPorts ++= Seq(8083, 8083)
+      dockerSettings(8083),
+      libraryDependencies ++= commonDependencies
     )
     .dependsOn(common, equipmentApi, monitoringApi, documentationApi)
     .enablePlugins(JavaAppPackaging, DockerPlugin)
@@ -84,9 +81,8 @@ lazy val documentation = project
     .settings(
       name := "documentation-service",
       settings,
-      dockerBaseImage := "openjdk",
-      libraryDependencies ++= commonDependencies,
-      dockerExposedPorts ++= Seq(8084, 8084)
+      dockerSettings(8084),
+      libraryDependencies ++= commonDependencies
     )
     .dependsOn(common, documentationApi)
     .enablePlugins(JavaAppPackaging, DockerPlugin)
@@ -96,9 +92,8 @@ lazy val monitoring = project
     .settings(
       name := "monitoring-service",
       settings,
-      dockerBaseImage := "openjdk",
-      libraryDependencies ++= commonDependencies,
-      dockerExposedPorts ++= Seq(8085, 8085)
+      dockerSettings(8085),
+      libraryDependencies ++= commonDependencies
     )
     .dependsOn(common, monitoringApi, equipmentApi, generatorApi)
     .enablePlugins(JavaAppPackaging, DockerPlugin)
@@ -108,9 +103,8 @@ lazy val generator = project
     .settings(
       name := "generator-service",
       settings,
-      dockerBaseImage := "openjdk",
-      libraryDependencies ++= commonDependencies,
-      dockerExposedPorts ++= Seq(8086, 8086)
+      dockerSettings(8086),
+      libraryDependencies ++= commonDependencies
     )
     .dependsOn(common, generatorApi, equipmentApi)
     .enablePlugins(JavaAppPackaging, DockerPlugin)
@@ -120,9 +114,8 @@ lazy val reporting = project
     .settings(
       name := "reporting-service",
       settings,
-      dockerBaseImage := "openjdk",
-      libraryDependencies ++= commonDependencies,
-      dockerExposedPorts ++= Seq(8087, 8087)
+      dockerSettings(8087),
+      libraryDependencies ++= commonDependencies
     )
     .dependsOn(common, reportingApi)
     .enablePlugins(JavaAppPackaging, DockerPlugin)
@@ -135,6 +128,7 @@ lazy val gatewayApi = project
       libraryDependencies ++= commonDependencies
     )
     .dependsOn(common)
+    .disablePlugins(AssemblyPlugin, JavaAppPackaging, DockerPlugin)
 
 lazy val equipmentApi = project
     .in(file("equipment-service-api"))
@@ -144,7 +138,7 @@ lazy val equipmentApi = project
       libraryDependencies ++= commonDependencies
     )
     .dependsOn(common)
-    .disablePlugins(AssemblyPlugin)
+    .disablePlugins(AssemblyPlugin, JavaAppPackaging, DockerPlugin)
 
 lazy val documentationApi = project
     .in(file("documentation-service-api"))
@@ -154,7 +148,7 @@ lazy val documentationApi = project
       libraryDependencies ++= commonDependencies
     )
     .dependsOn(common)
-    .disablePlugins(AssemblyPlugin)
+    .disablePlugins(AssemblyPlugin, JavaAppPackaging, DockerPlugin)
 
 lazy val monitoringApi = project
     .in(file("monitoring-service-api"))
@@ -164,7 +158,7 @@ lazy val monitoringApi = project
       libraryDependencies ++= commonDependencies
     )
     .dependsOn(common)
-    .disablePlugins(AssemblyPlugin)
+    .disablePlugins(AssemblyPlugin, JavaAppPackaging, DockerPlugin)
 
 lazy val generatorApi = project
     .in(file("generator-service-api"))
@@ -174,7 +168,7 @@ lazy val generatorApi = project
       libraryDependencies ++= commonDependencies
     )
     .dependsOn(common)
-    .disablePlugins(AssemblyPlugin)
+    .disablePlugins(AssemblyPlugin, JavaAppPackaging, DockerPlugin)
 
 lazy val reportingApi = project
     .in(file("reporting-service-api"))
@@ -184,7 +178,7 @@ lazy val reportingApi = project
       libraryDependencies ++= commonDependencies
     )
     .dependsOn(common)
-    .disablePlugins(AssemblyPlugin)
+    .disablePlugins(AssemblyPlugin, JavaAppPackaging, DockerPlugin)
 
 lazy val commonDependencies = Seq(
   "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.2",
@@ -215,6 +209,12 @@ lazy val commonDependencies = Seq(
 lazy val settings = Seq(
   scalacOptions ++= compilerOptions,
   ThisBuild / resolvers += "jitpack".at("https://jitpack.io")
+)
+
+def dockerSettings(port: Int) = Seq(
+  dockerBaseImage := "openjdk",
+  dockerExposedPorts ++= Seq(port, port),
+  dockerRepository := Some("qwerheh")
 )
 
 lazy val compilerOptions = Seq(

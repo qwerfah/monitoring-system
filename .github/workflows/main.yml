@@ -20,10 +20,10 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       - name: Build and Publish XYZ Docker image
         run: |
-          sbt gateway/docker:publish
-          sbt session/docker:publish
-          sbt equipment/docker:publish
-          sbt documentation/docker:publish
-          sbt monitoring/docker:publish
-          sbt generator/docker:publish
-          sbt reporting/docker:publish
+          sbt "gateway/docker:publish"
+          sbt "session/docker:publish"
+          sbt "equipment/docker:publish"
+          sbt "documentation/docker:publish"
+          sbt "monitoring/docker:publish"
+          sbt "generator/docker:publish"
+          sbt "reporting/docker:publish"

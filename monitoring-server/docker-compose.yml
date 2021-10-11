@@ -1,30 +1,197 @@
-version: "3.9"
+version: "3"
+
 services:
   gateway:
-    build: ./gateway/
-    ports:
-      - "8081:8081"
+    image: qwerheh/gateway-service:1.0
+    restart: always
+    container_name: gateway-service
+    ports: ["8081:8081"]
+    depends_on:
+      [session, equipment, documentation, monitoring, generator, reporting]
+    networks:
+      - service_network
+      - rabbitmq_network
+
   session:
-    build: ./session/
-    ports:
-      - "8082:8082"
+    image: qwerheh/session-service:1.0
+    restart: always
+    container_name: session-service
+    ports: ["8082:8082"]
+    depends_on: [session_db]
+    networks:
+      - session_network
+      - service_network
+      - rabbitmq_network
+    links:
+      - session_db:postgres
+
+  session_db:
+    image: postgres
+    restart: always
+    container_name: session_db
+    ports: ["5002:5432"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: session
+    volumes: [session_volume:/var/lib/postgresql/data]
+    networks:
+      - session_network
+
   equipment:
-    build: ./equipment/
-    ports:
-      - "8083:8083"
+    image: qwerheh/equipment-service:1.0
+    restart: always
+    container_name: equipment-service
+    ports: ["8083:8083"]
+    depends_on: [equipment_db]
+    networks:
+      - equipment_network
+      - service_network
+      - rabbitmq_network
+    links:
+      - equipment_db:postgres
+
+  equipment_db:
+    image: postgres
+    restart: always
+    container_name: equipment_db
+    ports: ["5003:5432"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: equipment
+    volumes: [equipment_volume:/var/lib/postgresql/data]
+    networks:
+      - equipment_network
+
   documentation:
-    build: ./documentation/
-    ports:
-      - "8084:8084"
+    image: qwerheh/documentation-service:1.0
+    restart: always
+    container_name: documentation-service
+    ports: ["8084:8084"]
+    depends_on: [documentation_db]
+    networks:
+      - documentation_network
+      - service_network
+      - rabbitmq_network
+    links:
+      - documentation_db:postgres
+
+  documentation_db:
+    image: postgres
+    restart: always
+    container_name: documentation_db
+    ports: ["5004:5432"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: documentation
+    volumes: [documentation_volume:/var/lib/postgresql/data]
+    networks:
+      - documentation_network
+
   monitoring:
-    build: ./monitoring/
-    ports:
-      - "8085:8085"
+    image: qwerheh/monitoring-service:1.0
+    restart: always
+    container_name: monitoring-service
+    ports: ["8085:8085"]
+    depends_on: [monitoring_db]
+    networks:
+      - monitoring_network
+      - service_network
+      - rabbitmq_network
+    links:
+      - monitoring_db:postgres
+
+  monitoring_db:
+    image: postgres
+    restart: always
+    container_name: monitoring_db
+    ports: ["5005:5432"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: monitoring
+    volumes: [monitoring_volume:/var/lib/postgresql/data]
+    networks:
+      - monitoring_network
+
   generator:
-    build: ./generator/
-    ports:
-      - "8086:8086"
+    image: qwerheh/generator-service:1.0
+    restart: always
+    container_name: generator-service
+    ports: ["8086:8086"]
+    depends_on: [generator_db]
+    networks:
+      - generator_network
+      - service_network
+      - rabbitmq_network
+    links:
+      - generator_db:postgres
+
+  generator_db:
+    image: postgres
+    restart: always
+    container_name: generator_db
+    ports: ["5006:5432"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: generator
+    volumes: [generator_volume:/var/lib/postgresql/data]
+    networks:
+      - generator_network
+
   reporting:
-    build: ./reporting/
-    ports:
-      - "8087:8087"
+    image: qwerheh/reporting-service:1.0
+    restart: always
+    container_name: reporting-service
+    ports: ["8087:8087"]
+    depends_on: [reporting_db]
+    networks:
+      - reporting_network
+      - service_network
+      - rabbitmq_network
+    links:
+      - reporting_db:postgres
+
+  reporting_db:
+    image: postgres
+    restart: always
+    container_name: reporting_db
+    ports: ["5007:5432"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+      POSTGRES_DB: reporting
+    volumes: [reporting_volume:/var/lib/postgresql/data]
+    networks:
+      - reporting_network
+
+  rabbitmq:
+    image: rabbitmq:3.9-management
+    container_name: rabbitmq
+    hostname: my-rabbit
+    ports: ["15672:15672", "5672:5672"]
+    volumes: [rabbitmq_volume:/var/lib/rabbitmq]
+    networks:
+      - rabbitmq_network
+
+volumes:
+  session_volume: {}
+  equipment_volume: {}
+  documentation_volume: {}
+  monitoring_volume: {}
+  generator_volume: {}
+  reporting_volume: {}
+  rabbitmq_volume: {}
+
+networks:
+  service_network: { driver: bridge }
+  session_network: { driver: bridge }
+  equipment_network: { driver: bridge }
+  documentation_network: { driver: bridge }
+  monitoring_network: { driver: bridge }
+  generator_network: { driver: bridge }
+  reporting_network: { driver: bridge }
+  rabbitmq_network: { driver: bridge }

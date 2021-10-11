@@ -18,6 +18,7 @@ import { EquipmentInstancesModule } from './equipment-instances/equipment-instan
 import { MonitoringModule } from './monitoring/monitoring.module';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './helpers/token.interceptor';
+import { ReportingModule } from './reporting/reporting.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -30,6 +31,7 @@ import { TokenInterceptor } from './helpers/token.interceptor';
     EquipmentModelsModule,
     EquipmentInstancesModule,
     MonitoringModule,
+    ReportingModule,
     RouterModule,
     AppRoutingModule,
   ],

@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  gateway:
+    build: ./gateway/
+    ports:
+      - "8081:8081"
+  session:
+    build: ./session/
+    ports:
+      - "8082:8082"
+  equipment:
+    build: ./equipment/
+    ports:
+      - "8083:8083"
+  documentation:
+    build: ./documentation/
+    ports:
+      - "8084:8084"
+  monitoring:
+    build: ./monitoring/
+    ports:
+      - "8085:8085"
+  generator:
+    build: ./generator/
+    ports:
+      - "8086:8086"
+  reporting:
+    build: ./reporting/
+    ports:
+      - "8087:8087"

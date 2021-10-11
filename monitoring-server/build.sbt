@@ -1,4 +1,4 @@
-scalaVersion := "2.12.14"
+scalaVersion := "2.13.6"
 name := "monitoring-server"
 organization := "com.qwerfah"
 version := "1.0"
@@ -40,7 +40,9 @@ lazy val gateway = project
     .settings(
       name := "gateway-service",
       settings,
-      libraryDependencies ++= commonDependencies
+      dockerBaseImage := "openjdk",
+      libraryDependencies ++= commonDependencies,
+      dockerExposedPorts ++= Seq(8081, 8081)
     )
     .dependsOn(
       common,
@@ -51,60 +53,79 @@ lazy val gateway = project
       generatorApi,
       reportingApi
     )
+    .enablePlugins(JavaAppPackaging, DockerPlugin)
 
 lazy val session = project
     .in(file("session-service"))
     .settings(
       name := "session-service",
       settings,
-      libraryDependencies ++= commonDependencies
+      dockerBaseImage := "openjdk",
+      libraryDependencies ++= commonDependencies,
+      dockerExposedPorts ++= Seq(8082, 8082)
     )
     .dependsOn(common)
-
-lazy val reporting = project
-    .in(file("reporting-service"))
-    .settings(
-      name := "reporting-service",
-      settings,
-      libraryDependencies ++= commonDependencies
-    )
-    .dependsOn(common, reportingApi)
+    .enablePlugins(JavaAppPackaging, DockerPlugin)
 
 lazy val equipment = project
     .in(file("equipment-service"))
     .settings(
       name := "equipment-service",
       settings,
-      libraryDependencies ++= commonDependencies
+      dockerBaseImage := "openjdk",
+      libraryDependencies ++= commonDependencies,
+      dockerExposedPorts ++= Seq(8083, 8083)
     )
     .dependsOn(common, equipmentApi, monitoringApi, documentationApi)
+    .enablePlugins(JavaAppPackaging, DockerPlugin)
 
 lazy val documentation = project
     .in(file("documentation-service"))
     .settings(
       name := "documentation-service",
       settings,
-      libraryDependencies ++= commonDependencies
+      dockerBaseImage := "openjdk",
+      libraryDependencies ++= commonDependencies,
+      dockerExposedPorts ++= Seq(8084, 8084)
     )
     .dependsOn(common, documentationApi)
-
-lazy val generator = project
-    .in(file("generator-service"))
-    .settings(
-      name := "generator-service",
-      settings,
-      libraryDependencies ++= commonDependencies
-    )
-    .dependsOn(common, generatorApi, equipmentApi)
+    .enablePlugins(JavaAppPackaging, DockerPlugin)
 
 lazy val monitoring = project
     .in(file("monitoring-service"))
     .settings(
       name := "monitoring-service",
       settings,
-      libraryDependencies ++= commonDependencies
+      dockerBaseImage := "openjdk",
+      libraryDependencies ++= commonDependencies,
+      dockerExposedPorts ++= Seq(8085, 8085)
     )
     .dependsOn(common, monitoringApi, equipmentApi, generatorApi)
+    .enablePlugins(JavaAppPackaging, DockerPlugin)
+
+lazy val generator = project
+    .in(file("generator-service"))
+    .settings(
+      name := "generator-service",
+      settings,
+      dockerBaseImage := "openjdk",
+      libraryDependencies ++= commonDependencies,
+      dockerExposedPorts ++= Seq(8086, 8086)
+    )
+    .dependsOn(common, generatorApi, equipmentApi)
+    .enablePlugins(JavaAppPackaging, DockerPlugin)
+
+lazy val reporting = project
+    .in(file("reporting-service"))
+    .settings(
+      name := "reporting-service",
+      settings,
+      dockerBaseImage := "openjdk",
+      libraryDependencies ++= commonDependencies,
+      dockerExposedPorts ++= Seq(8087, 8087)
+    )
+    .dependsOn(common, reportingApi)
+    .enablePlugins(JavaAppPackaging, DockerPlugin)
 
 lazy val gatewayApi = project
     .in(file("gateway-service-api"))

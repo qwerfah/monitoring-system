@@ -10,15 +10,13 @@ import { EquipmentModelsModule } from './equipment-models/equipment-models.modul
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { StoreModule } from '@ngrx/store';
-import { reducers, metaReducers } from './reducers';
-import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { EquipmentInstancesModule } from './equipment-instances/equipment-instances.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './helpers/token.interceptor';
 import { ReportingModule } from './reporting/reporting.module';
+import { AdministrationModule } from './administration/administration.module';
 
 @NgModule({
   declarations: [AppComponent],
@@ -32,6 +30,7 @@ import { ReportingModule } from './reporting/reporting.module';
     EquipmentInstancesModule,
     MonitoringModule,
     ReportingModule,
+    AdministrationModule,
     RouterModule,
     AppRoutingModule,
   ],

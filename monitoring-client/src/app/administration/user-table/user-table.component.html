@@ -1,0 +1,133 @@
+<app-create-user *ngIf="isAdding" (addEvent)="addUser($event)"></app-create-user>
+<app-fullscreen-loader *ngIf="isLoading"></app-fullscreen-loader>
+<div *ngIf="users" class="flex flex-col w-full h-full space-y-1">
+  <div class="flex w-full bg-white shadow-lg rounded place-content-center pt-2">
+    <h2>Список зарегистрированных пользователей системы</h2>
+  </div>
+  <div class="flex w-full bg-white rounded overflow-y-auto place-content-center">
+    <table class="table-fixed w-full text-sm">
+      <thead>
+        <tr>
+          <th scope="col" class="p-2">
+            <button
+              (click)="openModal()"
+              class="
+                bi bi-plus
+                hover:bg-indigo-600 hover:text-white
+                rounded-full
+                focus:outline-none
+                active:bg-indigo-800
+              "
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="30"
+                height="30"
+                fill="currentColor"
+                class="bi bi-plus"
+                type="button"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                />
+              </svg>
+            </button>
+          </th>
+          <th scope="col" class="w-1/12">№</th>
+          <th scope="col" class="w-3/12">Идентификатор</th>
+          <th scope="col" class="w-3/12">Логин</th>
+          <th scope="col" class="w-3/12">Роль</th>
+          <th scope="col" class="w-1/12"></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <ng-container *ngIf="!(users | notEmpty)">
+          <tr>
+            <th scope="row" class="text-center pt-20 pb-20" colspan="11">Нет зарегистрированных пользователей</th>
+          </tr>
+        </ng-container>
+
+        <ng-container *ngIf="users | notEmpty">
+          <ng-container *ngFor="let user of users; index as i">
+            <tr *ngIf="i % 2" id="heading{{ i }}" class="hover:bg-indigo-700 hover:text-white w-full h-9">
+              <td class="text-center"></td>
+              <td class="text-center">
+                {{ i + 1 }}
+              </td>
+              <td class="text-center truncate">
+                {{ user.uid }}
+              </td>
+              <td class="text-center truncate">
+                {{ user.login }}
+              </td>
+              <td class="text-center truncate">
+                {{ user.role }}
+              </td>
+              <td class="text-center truncate">
+                <button (click)="removeUser(user.uid)" class="focus:outline-none">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-trash"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                    />
+                    <path
+                      fill-rule="evenodd"
+                      d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                    />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+            <tr
+              *ngIf="!(i % 2)"
+              id="heading{{ i }}"
+              class="bg-blue-100 hover:bg-indigo-700 hover:text-white w-full h-9"
+            >
+              <td class="text-center"></td>
+              <td class="text-center">
+                {{ i + 1 }}
+              </td>
+              <td class="text-center truncate">
+                {{ user.uid }}
+              </td>
+              <td class="text-center truncate">
+                {{ user.login }}
+              </td>
+              <td class="text-center truncate">
+                {{ user.role }}
+              </td>
+              <td class="text-center truncate">
+                <button (click)="removeUser(user.uid)" class="focus:outline-none">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-trash"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                    />
+                    <path
+                      fill-rule="evenodd"
+                      d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                    />
+                  </svg>
+                </button>
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>

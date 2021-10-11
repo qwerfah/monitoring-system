@@ -2,14 +2,10 @@ import { Component, OnInit } from '@angular/core';
 
 import { EquipmentModel } from '../../models/equipment-model';
 
-import { v4 as uuid } from 'uuid';
-import { Observable } from 'rxjs';
 import { EquipmentService } from 'src/app/services/equipment.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EquipmentModelRequest } from 'src/app/models/equipment-model-request';
-import { ParamRequest } from 'src/app/models/param-request';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-equipment-models',

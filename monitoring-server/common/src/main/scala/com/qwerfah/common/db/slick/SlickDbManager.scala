@@ -1,5 +1,6 @@
 package com.qwerfah.common.db.slick
 
+import scala.util.Try
 import scala.concurrent.ExecutionContext.Implicits.global
 
 import com.twitter.util.Future
@@ -28,6 +29,9 @@ class SlickDbManager(implicit db: Database, profile: JdbcProfile)
       */
     override def execute[A](action: DBIO[A]): Future[A] =
         db.run(action).asTwitter
+
+    override def tryExecute[A](action: DBIO[A]): Future[Try[A]] =
+        db.run(action.asTry).asTwitter
 
     /** Launch action (that may be sequence of actions) execution
       * transactionally and return Future result placeholder.

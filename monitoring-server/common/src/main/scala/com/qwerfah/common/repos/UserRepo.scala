@@ -75,12 +75,4 @@ trait UserRepo[DB[_]] {
       *   Number of records in storage affected (1 if successfull, otherwise 0).
       */
     def removeByUid(uid: Uid): DB[Int]
-
-    /** Restore user by its external uid if it wasn't removed permamently.
-      * @param uid
-      *   External user uid.
-      * @return
-      *   Number of records in storage affected (1 if successfull, otherwise 0).
-      */
-    def restoreByUid(uid: Uid): DB[Int]
 }

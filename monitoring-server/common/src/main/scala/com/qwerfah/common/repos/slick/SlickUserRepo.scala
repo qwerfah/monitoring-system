@@ -17,21 +17,18 @@ class SlickUserRepo(implicit val context: DataContext) extends UserRepo[DBIO] {
     import context.roleMapper
 
     override def get: DBIO[Seq[User]] =
-        context.users.filter(!_.isDeleted).result
+        context.users.result
 
     override def getById(id: Int): DBIO[Option[User]] =
-        context.users.filter(u => !u.isDeleted && u.id === id).result.headOption
+        context.users.filter(_.id === id).result.headOption
 
     override def getByUid(uid: Uid): DBIO[Option[User]] =
-        context.users
-            .filter(u => !u.isDeleted && u.uid === uid)
-            .result
-            .headOption
+        context.users.filter(_.uid === uid).result.headOption
 
     override def getUserByLogin(login: String): DBIO[Option[User]] =
         context.users
             .filter(u =>
-                !u.isDeleted && (u.role === (SystemAdmin: UserRole)
+                (u.role === (SystemAdmin: UserRole)
                 || u.role === (EquipmentAdmin: UserRole)
                 || u.role === (EquipmentUser: UserRole))
                 && u.login === login
@@ -41,9 +38,7 @@ class SlickUserRepo(implicit val context: DataContext) extends UserRepo[DBIO] {
 
     override def getServiceByLogin(login: String): DBIO[Option[User]] =
         context.users
-            .filter(u =>
-                !u.isDeleted && u.role === (Service: UserRole) && u.login === login
-            )
+            .filter(u => u.role === (Service: UserRole) && u.login === login)
             .result
             .headOption
 
@@ -53,8 +48,7 @@ class SlickUserRepo(implicit val context: DataContext) extends UserRepo[DBIO] {
         )) += user
 
     override def update(user: User): DBIO[Int] = {
-        val targetRows =
-            context.users.filter(u => !u.isDeleted && u.uid === user.uid)
+        val targetRows = context.users.filter(_.uid === user.uid)
         for {
             booleanOption <- targetRows.result.headOption
             affected <- booleanOption
@@ -63,36 +57,7 @@ class SlickUserRepo(implicit val context: DataContext) extends UserRepo[DBIO] {
         } yield affected
     }
 
-    override def removeById(id: Int): DBIO[Int] = {
-        val targetRows =
-            context.users.filter(u => !u.isDeleted && u.id === id)
-        for {
-            booleanOption <- targetRows.result.headOption
-            affected <- booleanOption
-                .map(u => targetRows.update(u.copy(isDeleted = true)))
-                .getOrElse(DBIO.successful(0))
-        } yield affected
-    }
+    override def removeById(id: Int): DBIO[Int] = context.users.filter(_.id === id).delete
 
-    override def removeByUid(uid: Uid): DBIO[Int] = {
-        val targetRows =
-            context.users.filter(u => !u.isDeleted && u.uid === uid)
-        for {
-            booleanOption <- targetRows.result.headOption
-            affected <- booleanOption
-                .map(u => targetRows.update(u.copy(isDeleted = true)))
-                .getOrElse(DBIO.successful(0))
-        } yield affected
-    }
-
-    override def restoreByUid(uid: Uid): DBIO[Int] = {
-        val targetRows =
-            context.users.filter(u => !u.isDeleted && u.uid === uid)
-        for {
-            booleanOption <- targetRows.result.headOption
-            affected <- booleanOption
-                .map(u => targetRows.update(u.copy(isDeleted = false)))
-                .getOrElse(DBIO.successful(0))
-        } yield affected
-    }
+    override def removeByUid(uid: Uid): DBIO[Int] = context.users.filter(_.uid === uid).delete
 }

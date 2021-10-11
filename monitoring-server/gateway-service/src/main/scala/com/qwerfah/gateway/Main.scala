@@ -30,6 +30,7 @@ object Main extends TwitterServer {
                     .andThen(RequestReportingFilter)
                     .andThen(
                       GatewaySessionController.api
+                          .:+:(UserController.api)
                           .:+:(EquipmentController.api)
                           .:+:(DocumentationController.api)
                           .:+:(MonitoringController.api)

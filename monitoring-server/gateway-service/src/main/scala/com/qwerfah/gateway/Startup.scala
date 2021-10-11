@@ -79,6 +79,8 @@ object Startup {
 
     implicit val defaultSessionService =
         new DefaultSessionService[Future](sessionClient)
+    implicit val defaultUserService =
+        new DefaultUserService[Future](sessionClient)
     implicit val defaultEquipmentService =
         new DefaultEquipmentService[Future](equipmentClient)
     implicit val defaultDocumentationService =

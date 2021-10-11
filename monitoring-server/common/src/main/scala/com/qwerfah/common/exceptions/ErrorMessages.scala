@@ -51,6 +51,10 @@ final case class NoUser(uid: Uid) extends ErrorMessage {
     override def getMessage = s"User with uid $uid not found."
 }
 
+final case class DuplicateUser(login: String) extends ErrorMessage {
+    override def getMessage = s"User with login $login already exists."
+}
+
 final case class NoMonitor(uid: Uid) extends ErrorMessage {
     override def getMessage = s"Monitor with uid $uid not found."
 }

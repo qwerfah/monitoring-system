@@ -48,6 +48,17 @@ object UserController extends Controller {
                 userService.register(request) map { _.asOutput }
         }
 
+    private val addUser =
+        post(
+          "users" :: jsonBody[UserRequest] :: headerOption("Authorization")
+        ) { (request: UserRequest, header: Option[String]) =>
+            authorize(
+              header,
+              serviceRoles,
+              _ => userService.add(request)
+            )
+        }
+
     private val updateUser =
         patch(
           "users" :: path[Uid] :: jsonBody[UserRequest] :: headerOption(
@@ -67,18 +78,11 @@ object UserController extends Controller {
                 authorize(header, serviceRoles, _ => userService.remove(uid))
         }
 
-    private val restoreUser =
-        patch(
-          "users" :: path[Uid] :: "restore" :: headerOption("Authorization")
-        ) { (uid: Uid, header: Option[String]) =>
-            authorize(header, serviceRoles, _ => userService.restore(uid))
-        }
-
     val api = "api" :: getUsers
         .:+:(getUser)
         .:+:(register)
+        .:+:(addUser)
         .:+:(updateUser)
         .:+:(deleteUser)
-        .:+:(restoreUser)
         .handle(errorHandler)
 }

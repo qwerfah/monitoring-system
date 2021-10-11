@@ -16,8 +16,7 @@ object Mappings {
           MessageDigest
               .getInstance("MD5")
               .digest(request.password.getBytes("UTF-8")),
-          request.role,
-          false
+          request.role
         )
     }
 

@@ -32,7 +32,23 @@
     "
   >
     <div>
-      <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">Регистрация</h2>
+      <div class="flex flex-row justify-left">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="35"
+          height="35"
+          fill="currentColor"
+          class="bi bi-person-circle text-indigo-500"
+          viewBox="0 0 16 16"
+        >
+          <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+          <path
+            fill-rule="evenodd"
+            d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"
+          />
+        </svg>
+        <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900 self-center w-5/6">Регистрация</h2>
+      </div>
       <p class="mt-2 text-center text-sm text-gray-600">
         Заполните форму или
         <a href="/login" class="font-medium text-indigo-600 hover:text-indigo-500"> войдите в аккаунт </a>
@@ -41,34 +57,6 @@
     <form [formGroup]="userInfo" novalidate (ngSubmit)="submit()" class="mt-8 space-y-6">
       <input type="hidden" name="remember" value="true" />
       <div class="rounded-md -space-y-px">
-        <div class="form-group">
-          <label for="name" class="sr-only">ФИО</label>
-          <input
-            id="name"
-            name="name"
-            type="name"
-            autocomplete="current-password"
-            required
-            class="
-              appearance-none
-              rounded-lg
-              relative
-              block
-              w-full
-              px-3
-              py-2
-              border border-gray-200
-              placeholder-gray-500
-              text-gray-900
-              focus:
-              outline-none
-              focus:ring-indigo-500 focus:border-indigo-500 focus:z-10
-              sm:text-sm
-            "
-            placeholder="ФИО"
-            formControlName="name"
-          />
-        </div>
         <div class="form-group">
           <input
             id="login-field"
@@ -129,7 +117,7 @@
           <input
             id="confirmation"
             name="confirmation"
-            type="confirmation"
+            type="password"
             autocomplete="current-password"
             required
             class="
@@ -156,35 +144,30 @@
       </div>
 
       <div
-        class="bg-red-200 relative text-red-500 p-2 rounded-lg border border-red-500"
-        *ngIf="userInfo.controls.name.invalid && userInfo.controls.name.touched"
-      >
-        Требуется ввести ФИО
-      </div>
-
-      <div
-        class="bg-red-200 relative text-red-500 p-2 rounded-lg border border-red-500"
+        class="bg-red-200 relative text-red-500 p-1 pl-2 rounded-lg border border-red-500 text-sm"
         *ngIf="userInfo.controls.login.invalid && userInfo.controls.login.touched"
       >
         Требуется ввести логин
       </div>
 
       <div
-        class="bg-red-200 relative text-red-500 p-2 rounded-lg border border-red-500"
+        class="bg-red-200 relative text-red-500 p-1 pl-2 rounded-lg border border-red-500 text-sm"
         *ngIf="userInfo.controls.password.invalid && userInfo.controls.password.touched"
       >
-        Неверный формат пароля
+        Неверный формат пароля: пароль должен включать один строчный, один прописной, один специальный и один числовой
+        символ.
       </div>
 
       <div
-        class="bg-red-200 relative text-red-500 p-2 rounded-lg border border-red-500"
+        class="bg-red-200 relative text-red-500 p-1 pl-2 rounded-lg border border-red-500 text-sm"
         *ngIf="userInfo.controls.confirmation.invalid && userInfo.controls.confirmation.touched"
       >
-        Повторите пароль
+        Пароли не совпадают
       </div>
 
       <div class="form-group">
         <button
+          [disabled]="isLoading"
           type="submit"
           class="
             group
@@ -207,6 +190,7 @@
           <span class="absolute left-0 inset-y-0 flex items-center pl-3">
             <!-- Heroicon name: solid/lock-closed -->
             <svg
+              *ngIf="!isLoading"
               class="h-5 w-5 text-indigo-500 group-hover:text-indigo-400"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
@@ -217,6 +201,23 @@
                 fill-rule="evenodd"
                 d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
                 clip-rule="evenodd"
+              />
+            </svg>
+            <svg
+              *ngIf="isLoading"
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              fill="currentColor"
+              class="bi bi-arrow-repeat animate-spin"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M11.534 7h3.932a.25.25 0 0 1 .192.41l-1.966 2.36a.25.25 0 0 1-.384 0l-1.966-2.36a.25.25 0 0 1 .192-.41zm-11 2h3.932a.25.25 0 0 0 .192-.41L2.692 6.23a.25.25 0 0 0-.384 0L.342 8.59A.25.25 0 0 0 .534 9z"
+              />
+              <path
+                fill-rule="evenodd"
+                d="M8 3c-1.552 0-2.94.707-3.857 1.818a.5.5 0 1 1-.771-.636A6.002 6.002 0 0 1 13.917 7H12.9A5.002 5.002 0 0 0 8 3zM3.1 9a5.002 5.002 0 0 0 8.757 2.182.5.5 0 1 1 .771.636A6.002 6.002 0 0 1 2.083 9H3.1z"
               />
             </svg>
           </span>

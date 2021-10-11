@@ -1,5 +1,7 @@
 package com.qwerfah.common.db
 
+import scala.util.Try
+
 /** Database manager trait. Services are suppose to use dbManager to explicitly
   * separate repository concept from db mechanism. Also provides ability to
   * perform sequince of actions transactionaly.
@@ -13,6 +15,14 @@ trait DbManager[F[_], DB[_]] {
       *   Result of effect type.
       */
     def execute[A](action: DB[A]): F[A]
+
+    /** Execute db action with error chatching and return result of effect type wrapped with [[Try]].
+      * @param action
+      *   Db action of higher-kinded type.
+      * @return
+      *   Result of effect type.
+      */
+    def tryExecute[A](action: DB[A]): F[Try[A]]
 
     /** Execute db action transactionally and return result of effect type.
       * @param action

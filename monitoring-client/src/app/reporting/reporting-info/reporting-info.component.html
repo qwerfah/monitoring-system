@@ -1,0 +1,109 @@
+<app-fullscreen-loader *ngIf="isLoading"></app-fullscreen-loader>
+<div class="flex flex-col w-full h-full bg-white rounded p-5 space-y-4 text-sm overflow-y-auto" *ngIf="!isLoading">
+  <div class="flex flex-col w-full items-center border-b-2 border-blue-500">
+    <h2 class="bold">Статистика функционирования оборудования</h2>
+  </div>
+  <div class="flex bg-white w-full max-h-1/2 overflow-y-auto place-content-center">
+    <table class="table-fixed w-full">
+      <thead>
+        <tr>
+          <th scope="col" class="w-2/12">Модель</th>
+          <th scope="col" class="w-2/12">Число параметров</th>
+          <th scope="col" class="w-2/12">Число развернутых экземпляров</th>
+          <th scope="col" class="w-2/12">Число активных экземпляров</th>
+          <th scope="col" class="w-2/12">Число неактивных экземпляров</th>
+          <th scope="col" class="w-2/12">Число законсервированных экземпляров</th>
+          <th scope="col" class="w-2/12">Число экранов мониторинга</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <ng-container *ngIf="!modelStats || !(modelStats | notEmpty)">
+          <tr>
+            <th scope="row" class="text-center p-10" colspan="11">Нет данных о функционировании системы</th>
+            <td></td>
+          </tr>
+        </ng-container>
+
+        <ng-container *ngIf="modelStats | notEmpty">
+          <ng-container *ngFor="let stats of modelStats">
+            <tr class="w-full h-11 hover:bg-indigo-700 hover:text-white">
+              <td class="text-center truncate">
+                {{ stats.modelName }}
+              </td>
+              <td class="text-center truncate">
+                {{ stats.paramCount }}
+              </td>
+              <td class="text-center truncate">
+                {{ stats.instanceCount }}
+              </td>
+              <td class="text-center truncate">
+                {{ stats.activeInstanceCount }}
+              </td>
+              <td class="text-center truncate">
+                {{ stats.inactiveInstanceCount }}
+              </td>
+              <td class="text-center truncate">
+                {{ stats.decommissionedInstanceCount }}
+              </td>
+              <td class="text-center truncate">
+                {{ stats.monitorCount }}
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+  <div class="flex flex-col w-full items-center border-b-2 border-blue-500">
+    <h2 class="bold">Статистика функционирования системы</h2>
+  </div>
+  <div class="flex bg-white w-full max-h-1/2 overflow-y-auto place-content-center">
+    <table class="table-fixed w-full">
+      <thead>
+        <tr>
+          <th scope="col" class="w-2/12">Сервис</th>
+          <th scope="col" class="w-2/12">Число обработанных запросов</th>
+          <th scope="col" class="w-2/12">Число успешных ответов (2хх)</th>
+          <th scope="col" class="w-2/12">Число ошибок клиента (4хх)</th>
+          <th scope="col" class="w-2/12">Число ошибок сервера (5хх)</th>
+          <th scope="col" class="w-2/12">Среднее время обработки запроса (мс)</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <ng-container *ngIf="!serviceStats || !(serviceStats | notEmpty)">
+          <tr>
+            <th scope="row" class="text-center p-10" colspan="11">Нет данных о функционировании системы</th>
+            <td></td>
+          </tr>
+        </ng-container>
+
+        <ng-container *ngIf="serviceStats | notEmpty">
+          <ng-container *ngFor="let stats of serviceStats">
+            <tr class="w-full h-11 hover:bg-indigo-700 hover:text-white">
+              <td class="text-center truncate">
+                {{ stats.serviceId }}
+              </td>
+              <td class="text-center truncate">
+                {{ stats.requestCount }}
+              </td>
+              <td class="text-center truncate">
+                {{ stats.okCount }}
+              </td>
+              <td class="text-center truncate">
+                {{ stats.userErrorCount }}
+              </td>
+              <td class="text-center truncate">
+                {{ stats.serverErrorCount }}
+              </td>
+              <td class="text-center truncate">
+                {{ stats.avgRequestTime }}
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+      </tbody>
+    </table>
+  </div>
+</div>

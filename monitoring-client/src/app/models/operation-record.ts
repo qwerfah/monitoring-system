@@ -3,12 +3,12 @@ import { HttpMethod } from './http-method';
 export class OperationRecord {
   constructor(
     public uid: string,
-    userName: string | null,
-    serviceId: string,
-    route: string,
-    method: HttpMethod,
-    status: number,
-    elapsed: number,
-    time: Date
+    public userName: string | null,
+    public serviceId: string,
+    public route: string,
+    public method: HttpMethod,
+    public status: number,
+    public elapsed: number,
+    public time: Date
   ) {}
 }

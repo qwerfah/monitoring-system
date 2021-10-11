@@ -1,6 +1,14 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { of } from 'rxjs';
+import { delay } from 'rxjs/operators';
+import { User } from 'src/app/models/user';
+import { UserRequest } from 'src/app/models/user-request';
+import { UserRole } from 'src/app/models/user-role';
+import { SessionService } from 'src/app/services/session.service';
 
 @Component({
   selector: 'registration-form',
@@ -10,25 +18,24 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 export class RegistrationFormComponent implements OnInit {
   userInfo: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  isLoading: boolean = false;
+
+  constructor(
+    private fb: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private sessionService: SessionService,
+    private snackBar: MatSnackBar
+  ) {
     this.userInfo = fb.group({
-      name: [null, [Validators.required]],
       login: [null, [Validators.required]],
       password: [
         null,
-        [
-          Validators.required,
-          Validators.minLength(6),
-          Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$'),
-        ],
+        [Validators.required, Validators.minLength(6), Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$')],
       ],
       confirmation: [
         null,
-        [
-          Validators.required,
-          Validators.minLength(6),
-          Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$'),
-        ],
+        [Validators.required, Validators.minLength(6), Validators.pattern('^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,}$')],
       ],
     });
   }
@@ -39,10 +46,35 @@ export class RegistrationFormComponent implements OnInit {
     if (this.userInfo.invalid) {
       this.userInfo.markAllAsTouched();
     } else {
-      console.log(`Email: ${this.userInfo.controls.name.value}`);
-      console.log(`Email: ${this.userInfo.controls.login.value}`);
-      console.log(`Password: ${this.userInfo.controls.password.value}`);
-      console.log(`Password: ${this.userInfo.controls.confirmation.value}`);
+      let user = new UserRequest(
+        this.userInfo.controls.login.value,
+        this.userInfo.controls.password.value,
+        UserRole.EquipmentUser
+      );
+
+      this.isLoading = true;
+
+      this.sessionService.register(user).subscribe(
+        (user) => {
+          this.router.navigate(['/login']);
+        },
+        (error: HttpErrorResponse) => {
+          this.isLoading = false;
+          switch (error.status) {
+            case 0: {
+              this.snackBar.open('Ошибка регистрации: отсутсвтует соединение с сервером', 'Ок');
+              break;
+            }
+            case 502: {
+              this.snackBar.open('Ошибка регистрации: сервис недоступен', 'Ок');
+              break;
+            }
+            case 422: {
+              this.snackBar.open('Ошибка регистрации: пользователь с данным именем уже существует', 'Ок');
+            }
+          }
+        }
+      );
     }
   }
 }

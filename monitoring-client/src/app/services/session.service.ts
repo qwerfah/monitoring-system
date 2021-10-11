@@ -6,6 +6,7 @@ import { map, tap } from 'rxjs/operators';
 import { Credentials } from '../models/credentials';
 import { User, UserWithToken } from '../models/user';
 import { Token } from '../models/token';
+import { UserRequest } from '../models/user-request';
 
 @Injectable({
   providedIn: 'root',
@@ -60,7 +61,7 @@ export class SessionService {
    * @param user New user data.
    * @returns Observable with registered user data.
    */
-  register(user: User): Observable<User> {
+  register(user: UserRequest): Observable<User> {
     return this.http.post<User>(`${this.gatewayUri}/session/register`, user);
   }
 

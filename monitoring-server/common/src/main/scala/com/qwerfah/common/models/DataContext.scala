@@ -31,15 +31,13 @@ abstract class DataContext(jdbcProfile: JdbcProfile) extends SlickEnumSupport {
         def login = column[String]("LOGIN", O.Unique, O.Length(30))
         def password = column[Array[Byte]]("PASSWORD")
         def role = column[UserRole]("USER_ROLE")
-        def isDeleted = column[Boolean]("IS_DELETED")
 
         def * = (
           id.?,
           uid,
           login,
           password,
-          role,
-          isDeleted
+          role
         ).<>(User.tupled, User.unapply)
     }
 

@@ -77,8 +77,7 @@ class GeneratorContext(implicit jdbcProfile: JdbcProfile, config: Config)
               randomUid,
               cred.login,
               hashString(cred.password),
-              UserRole.Service,
-              false
+              UserRole.Service
             )
 
         DBIO.seq(users ++= services)

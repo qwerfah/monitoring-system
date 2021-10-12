@@ -19,6 +19,23 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USER_NAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
+      - name: Build and publish backend
+        run: |
+          cd ./monitoring-server
+          sbt "gateway/docker:publish"
+          sbt "session/docker:publish"
+          sbt "equipment/docker:publish"
+          sbt "documentation/docker:publish"
+          sbt "monitoring/docker:publish"
+          sbt "generator/docker:publish"
+          sbt "reporting/docker:publish"
+
+      - name: Build and publish frontend
+        run: |
+          cd ./monitoring-client
+          docker build . -t qwerheh/monitoring-client:latest
+          docker push qwerheh/monitoring-client
+
       - name: Copy server docker-compose.yml to AWS via ssh
         uses: appleboy/scp-action@master
         with:

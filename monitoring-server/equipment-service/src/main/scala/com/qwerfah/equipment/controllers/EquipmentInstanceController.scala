@@ -41,7 +41,7 @@ object EquipmentInstanceController extends Controller {
     private val getInstances =
         get("instances" :: headerOption("Authorization")) {
             header: Option[String] =>
-                authorize(header, serviceRoles, _ => instanceService.getAll)
+                authorize(header, serviceRoles, _ => instanceService.getAll())
         }
 
     private val getInstance = get(

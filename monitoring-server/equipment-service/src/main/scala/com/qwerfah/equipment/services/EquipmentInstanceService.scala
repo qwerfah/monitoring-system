@@ -8,11 +8,14 @@ import com.qwerfah.common.services.response._
 import com.qwerfah.common.Uid
 
 trait EquipmentInstanceService[F[_]] {
-    def getAll: F[ServiceResponse[Seq[InstanceResponse]]]
+    def getAll(
+      modelUid: Option[Uid] = None,
+      status: Option[EquipmentStatus] = None
+    ): F[ServiceResponse[Seq[InstanceResponse]]]
     def get(uid: Uid): F[ServiceResponse[InstanceResponse]]
-    def getByModelUid(modelUid: Uid): F[ServiceResponse[Seq[InstanceResponse]]]
     def getMonitors(): F[ServiceResponse[Seq[InstanceMonitorResponse]]]
     def getMonitors(uid: Uid): F[ServiceResponse[Seq[InstanceMonitorResponse]]]
+
     def add(
       modelUid: Uid,
       instance: AddInstanceRequest
@@ -25,6 +28,7 @@ trait EquipmentInstanceService[F[_]] {
       uid: Uid,
       instance: UpdateInstanceRequest
     ): F[ServiceResponse[ResponseMessage]]
+
     def remove(uid: Uid): F[ServiceResponse[ResponseMessage]]
     def restore(uid: Uid): F[ServiceResponse[ResponseMessage]]
 }

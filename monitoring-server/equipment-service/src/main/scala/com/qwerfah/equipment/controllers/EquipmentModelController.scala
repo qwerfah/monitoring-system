@@ -50,7 +50,19 @@ object EquipmentModelController extends Controller {
     private val getModelInstances = get(
       "models" :: path[Uid] :: "instances" :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
-        authorize(header, serviceRoles, _ => instanceService.getByModelUid(uid))
+        authorize(header, serviceRoles, _ => instanceService.getAll(Some(uid)))
+    }
+
+    private val getActiveModelInstances = get(
+      "models" :: path[Uid] :: "instances" :: "active" :: headerOption(
+        "Authorization"
+      )
+    ) { (uid: Uid, header: Option[String]) =>
+        authorize(
+          header,
+          serviceRoles,
+          _ => instanceService.getAll(Some(uid), Some(EquipmentStatus.Active))
+        )
     }
 
     private val getModelParams = get(
@@ -113,6 +125,7 @@ object EquipmentModelController extends Controller {
     val api = "api" :: getModels
         .:+:(getModel)
         .:+:(getModelInstances)
+        .:+:(getActiveModelInstances)
         .:+:(getModelParams)
         .:+:(getModelFiles)
         .:+:(addModel)

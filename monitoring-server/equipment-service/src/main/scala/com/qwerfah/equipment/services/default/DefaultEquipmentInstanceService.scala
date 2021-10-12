@@ -39,8 +39,11 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](
     import MonitoringDecoders._
     import CommonDecoders._
 
-    override def getAll: F[ServiceResponse[Seq[InstanceResponse]]] =
-        dbManager.execute(instanceRepo.getWithModelName) map {
+    override def getAll(
+      modelUid: Option[Uid],
+      status: Option[EquipmentStatus]
+    ): F[ServiceResponse[Seq[InstanceResponse]]] =
+        dbManager.execute(instanceRepo.getWithModelName(modelUid, status)) map {
             _.asResponse.as200
         }
 
@@ -48,15 +51,6 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](
         dbManager.execute(instanceRepo.getByUidWithModelName(uid)) map {
             case Some(instance) => instance.asResponse.as200
             case None           => NoInstance(uid).as404
-        }
-
-    override def getByModelUid(
-      modelUid: Uid
-    ): F[ServiceResponse[Seq[InstanceResponse]]] =
-        dbManager.execute(
-          instanceRepo.getByModelUidWithModelName(modelUid)
-        ) map {
-            _.asResponse.as200
         }
 
     override def getMonitors(
@@ -75,7 +69,8 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](
             case None => Monad[F].pure(NoInstance(uid).as404)
         }
 
-    override def getMonitors(): F[ServiceResponse[Seq[InstanceMonitorResponse]]] =
+    override def getMonitors()
+      : F[ServiceResponse[Seq[InstanceMonitorResponse]]] =
         monitorClient.sendAndDecode[Seq[MonitorResponse]](
           HttpMethod.Get,
           s"/api/monitors"
@@ -114,7 +109,8 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](
       request: AddMonitorRequest
     ): F[ServiceResponse[InstanceMonitorResponse]] =
         dbManager.execute(instanceRepo.getByUidWithModel(instanceUid)) flatMap {
-            case Some((instance, model)) =>
+            case Some((instance, model))
+                if instance.status == EquipmentStatus.Active =>
                 request.params
                     .map(uid =>
                         dbManager.execute(paramRepo.getByUid(uid)) map {
@@ -137,8 +133,7 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](
                             Monad[F].pure(NoParams(errors.map(e => e._1)).as404)
                     }
                 }
-
-            case None => Monad[F].pure(NoInstance(instanceUid).as404)
+            case _ => Monad[F].pure(NoInstance(instanceUid).as404)
         }
 
     override def update(

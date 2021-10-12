@@ -11,7 +11,10 @@ trait EquipmentInstanceRepo[DB[_]] {
       * @return
       *   Sequence of pairs instance - model name.
       */
-    def getWithModelName: DB[Seq[(EquipmentInstance, String)]]
+    def getWithModelName(
+      modelUid: Option[Uid],
+      status: Option[EquipmentStatus]
+    ): DB[Seq[(EquipmentInstance, String)]]
 
     /** Get equipment instance by its internal id.
       * @param id
@@ -47,17 +50,6 @@ trait EquipmentInstanceRepo[DB[_]] {
     def getByModelUid(
       modelUid: Uid
     ): DB[Seq[EquipmentInstance]]
-
-    /** Get all equipment instances associated with specified equipment model
-      * along with associated model name.
-      * @param modelUid
-      *   Equipment model uid.
-      * @return
-      *   Equipment instances of the given model.
-      */
-    def getByModelUidWithModelName(
-      modelUid: Uid
-    ): DB[Seq[(EquipmentInstance, String)]]
 
     /** Get equipment instance with specified uid along with associated
       * equipment model.

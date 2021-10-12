@@ -30,7 +30,7 @@ jobs:
           sbt "generator/docker:publish"
           sbt "reporting/docker:publish"
 
-      - name: Build and publish backend
+      - name: Build and publish frontend
         run: |
           cd ./monitoring-client
           docker build . -t qwerheh/monitoring-client:latest

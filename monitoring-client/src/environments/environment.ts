@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  gatewayUri: 'http://localhost:8081',
+  gatewayUri: 'http://18.157.125.2:8081',
 };
 
 /*

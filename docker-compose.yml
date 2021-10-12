@@ -1,6 +1,16 @@
 version: "3"
 
 services:
+  client:
+    image: qwerheh/monitoring-client:latest
+    restart: always
+    container_name: monitoring-client
+    ports: ["4200:4200"]
+    depends_on:
+      [gateway, session, equipment, documentation, monitoring, generator, reporting]
+    networks:
+      - service_network
+
   gateway:
     image: qwerheh/gateway-service:1.0
     restart: always

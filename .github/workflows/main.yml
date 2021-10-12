@@ -37,7 +37,7 @@ jobs:
           source: "./monitoring-client/docker-compose.yml"
           target: "/home/ubuntu/"
 
-      - name: docker-compose in AWS
+      - name: server up in AWS
         uses: appleboy/ssh-action@v0.1.3
         with:
           host: ${{ secrets.HOST }}
@@ -47,6 +47,14 @@ jobs:
             ./monitoring-server
             sudo docker-compose down
             sudo docker-compose up -d
-            ../monitoring-client
+
+      - name: client up in AWS
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          host: ${{ secrets.CLIENT_HOST }}
+          username: ${{ secrets.CLIENT_USER_NAME }}
+          key: ${{ secrets.CLIENT_PASSWORD }}
+          script: |
+            ./monitoring-client
             sudo docker-compose down
             sudo docker-compose up -d

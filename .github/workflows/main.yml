@@ -44,7 +44,7 @@ jobs:
           username: ${{ secrets.USER_NAME }}
           key: ${{ secrets.PASSWORD }}
           script: |
-            ./monitoring-server
+            cd ./monitoring-server
             sudo docker-compose down
             sudo docker-compose up -d
 
@@ -55,6 +55,6 @@ jobs:
           username: ${{ secrets.CLIENT_USER_NAME }}
           key: ${{ secrets.CLIENT_PASSWORD }}
           script: |
-            ./monitoring-client
+            cd ./monitoring-client
             sudo docker-compose down
             sudo docker-compose up -d

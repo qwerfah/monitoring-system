@@ -18,7 +18,7 @@ object JsonSchemas {
                         "pattern": "^(?!\\s*$$).+"
                     },
                     "description": {
-                        "type": "string",
+                        "type": ["string", "null"],
                         "minLength": 1,
                         "maxLength": 300,
                         "pattern": "^(?!\\s*$$).+"
@@ -79,7 +79,7 @@ object JsonSchemas {
                         "pattern": "^(?!\\s*$$).+"
                     },
                     "description": {
-                        "type": "string",
+                        "type": ["string", "null"],
                         "minLength": 1,
                         "maxLength": 300,
                         "pattern": "^(?!\\s*$$).+"
@@ -119,17 +119,17 @@ object JsonSchemas {
                         "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
                     },
                     "modelUid": {
-                        "type": "string",
+                        "type": ["string", "null"],
                         "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
                     },
                     "name": {
-                        "type": "string",
+                        "type": ["string", "null"],
                         "minLength": 1,
                         "maxLength": 100,
                         "pattern": "^(?!\\s*$$).+"
                     },
                     "measurmentUnits": {
-                        "type": "string",
+                        "type": ["string", "null"],
                         "minLength": 1,
                         "maxLength": 30,
                         "pattern": "^(?!\\s*$$).+"

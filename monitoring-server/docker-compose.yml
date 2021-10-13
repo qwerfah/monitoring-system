@@ -121,7 +121,7 @@ services:
     restart: always
     container_name: generator-service
     ports: ["8086:8086"]
-    depends_on: [generator_db]
+    depends_on: [generator_db, equipment, monitoring]
     networks:
       - generator_network
       - service_network

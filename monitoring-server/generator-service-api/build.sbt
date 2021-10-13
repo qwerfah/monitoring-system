@@ -1,4 +1,4 @@
-name := "monitoring-service-api"
+name := "generator-service-api"
 
 version := "1.0"
 

@@ -190,7 +190,6 @@ lazy val commonDependencies = Seq(
   "com.github.finagle" %% "finchx-core" % "0.32.1",
   "com.github.finagle" %% "finchx-circe" % "0.32.1",
   "com.twitter" %% "twitter-server" % "21.8.0",
-  
   "io.circe" %% "circe-generic" % "0.15.0-M1",
   "io.circe" %% "circe-json-schema" % "0.2.0",
   "io.circe" % "circe-literal_2.13" % "0.15.0-M1",
@@ -215,7 +214,8 @@ lazy val settings = Seq(
 def dockerSettings(port: Int) = Seq(
   dockerBaseImage := "openjdk:11",
   dockerExposedPorts ++= Seq(port, port),
-  dockerRepository := Some("qwerheh")
+  dockerRepository := Some("qwerheh"),
+  scriptClasspath := Seq("*")
 )
 
 lazy val compilerOptions = Seq(

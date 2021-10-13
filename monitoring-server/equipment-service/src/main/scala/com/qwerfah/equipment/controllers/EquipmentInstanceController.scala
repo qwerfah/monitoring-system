@@ -20,9 +20,10 @@ import com.qwerfah.equipment.repos.slick._
 import com.qwerfah.equipment.models._
 import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.Startup
-import com.qwerfah.equipment.json.Decoders
+import com.qwerfah.equipment.json.{Decoders => EquipmentDecoders}
 
 import com.qwerfah.monitoring.resources.AddMonitorRequest
+import com.qwerfah.monitoring.json.{Decoders => MonitoringDecoders}
 
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.Uid
@@ -32,7 +33,8 @@ import com.qwerfah.common.resources.UserRole
 
 object EquipmentInstanceController extends Controller {
     import Startup._
-    import Decoders._
+    import EquipmentDecoders._
+    import MonitoringDecoders._
 
     private val instanceService = implicitly[EquipmentInstanceService[Future]]
     private val paramService = implicitly[ParamService[Future]]

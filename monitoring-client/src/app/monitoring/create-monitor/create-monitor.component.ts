@@ -82,7 +82,7 @@ export class CreateMonitorComponent implements OnInit {
 
   setModel(model: EquipmentModel): void {
     this.selectedModel = model;
-    this.equipmentService.getModelInstances(model.uid).subscribe(
+    this.equipmentService.getActiveModelInstances(model.uid).subscribe(
       (instances) => {
         this.instances = instances;
       },

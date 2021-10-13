@@ -14,6 +14,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { mergeAll } from 'rxjs/operators';
 import { FileMeta } from 'src/app/models/file-meta';
 import { DocumentationService } from 'src/app/services/documentation.service';
+import { UserRole } from 'src/app/models/user-role';
+import { UserWithToken } from 'src/app/models/user';
+import { SessionService } from 'src/app/services/session.service';
 
 @Component({
   selector: 'app-equipment-model-info',
@@ -29,12 +32,21 @@ export class EquipmentModelInfoComponent implements OnInit {
   params: Param[];
   instances: EquipmentInstance[];
 
+  UserRole = UserRole;
+
+  currentUser: UserWithToken | undefined = undefined;
+
   constructor(
     private route: ActivatedRoute,
+    private sessionService: SessionService,
     private equipmentService: EquipmentService,
     private documentationService: DocumentationService,
     private snackBar: MatSnackBar
-  ) {}
+  ) {
+    sessionService.currentUser$.subscribe((user) => {
+      this.currentUser = user;
+    });
+  }
 
   ngOnInit() {
     this.modelUid = this.route.snapshot.params['uid'];
@@ -92,6 +104,14 @@ export class EquipmentModelInfoComponent implements OnInit {
     );
   }
 
+  /** Check if current logged in user has sufficient rights to access element.
+   * @param roles Array of sufficient user roles.
+   * @returns True if current user role is sufficient, otherwise false.
+   */
+  isAllowed(roles: UserRole[]): boolean {
+    return this.currentUser !== undefined && roles.indexOf(this.currentUser.role) !== -1;
+  }
+
   downloadFile(file: FileMeta) {
     this.documentationService.getFile(file.uid).subscribe((blob) => {
       // It is necessary to create a new blob object with mime-type explicitly set
@@ -128,20 +148,79 @@ export class EquipmentModelInfoComponent implements OnInit {
         (err: HttpErrorResponse) => {
           switch (err.status) {
             case 0: {
-              this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
+              this.snackBar.open('Ошибка загрузки файла: отсутсвтует соединение с сервером', 'Ок');
               break;
             }
             case 502: {
-              this.snackBar.open('Ошибка: сервис документации недоступен', 'Ок');
+              this.snackBar.open('Ошибка загрузки файла: сервис документации недоступен', 'Ок');
               break;
             }
             case 404: {
-              this.snackBar.open('Ошибка: модель не найдена', 'Ок');
+              this.snackBar.open('Ошибка загрузки файла: модель не найдена', 'Ок');
             }
           }
           this.isLoading = false;
         }
       );
     }
+  }
+
+  removeFile(fileUid: string): void {
+    if (!confirm(`Удалить файл ${this.files.find((u) => u.uid === fileUid)?.filename}?`)) return;
+
+    this.documentationService.removeFile(fileUid).subscribe(
+      (msg) => {
+        this.files.splice(
+          this.files.findIndex((f) => f.uid === fileUid),
+          1
+        );
+        this.snackBar.open('Успех: файл удален', 'Ок');
+      },
+      (err: HttpErrorResponse) => {
+        switch (err.status) {
+          case 0: {
+            this.snackBar.open('Ошибка удаления файла: отсутсвтует соединение с сервером', 'Ок');
+            break;
+          }
+          case 502: {
+            this.snackBar.open('Ошибка удаления файла: сервис документации недоступен', 'Ок');
+            break;
+          }
+          case 404: {
+            this.snackBar.open('Ошибка удаления файла: файл не найден', 'Ок');
+          }
+        }
+      }
+    );
+  }
+
+  removeParam(paramUid: string): void {
+    if (!confirm(`Удалить параметр ${this.params.find((u) => u.uid === paramUid)?.name}?`)) return;
+
+    this.equipmentService.removeParam(paramUid).subscribe(
+      (msg) => {
+        this.params.splice(
+          this.params.findIndex((p) => p.uid === paramUid),
+          1
+        );
+        this.snackBar.open('Успех: параметр удален', 'Ок');
+      },
+      (err: HttpErrorResponse) => {
+        switch (err.status) {
+          case 0: {
+            this.snackBar.open('Ошибка удаления параметра: отсутсвтует соединение с сервером', 'Ок');
+            break;
+          }
+          case 502: {
+            this.snackBar.open('Ошибка удаления параметра: сервис оборудования недоступен', 'Ок');
+            break;
+          }
+          case 404: {
+            this.snackBar.open('Ошибка удаления параметра: параметр не найден', 'Ок');
+          }
+        }
+        this.isLoading = false;
+      }
+    );
   }
 }

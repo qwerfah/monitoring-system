@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { FileMeta } from '../models/file-meta';
+import { Message } from '../models/message';
 
 @Injectable({
   providedIn: 'root',
@@ -24,5 +25,9 @@ export class DocumentationService {
     let formData: FormData = new FormData();
     formData.append('file', file, file.name);
     return this.http.post<FileMeta>(`${this.gatewayUri}/api/documentation/models/${modelUid}/files`, formData);
+  }
+
+  removeFile(fileUid: string): Observable<Message> {
+    return this.http.delete<Message>(`${this.gatewayUri}/api/documentation/files/${fileUid}`);
   }
 }

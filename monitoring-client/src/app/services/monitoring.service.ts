@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { Message } from '../models/message';
 
 import { Monitor } from '../models/monitor';
 import { MonitorRequest } from '../models/monitor-request';
@@ -38,5 +39,13 @@ export class MonitoringService {
 
   addMonitor(instanceUid: string, monitor: MonitorRequest): Observable<Monitor> {
     return this.http.post<Monitor>(`${this.gatewayUri}/api/monitoring/instances/${instanceUid}/monitors`, monitor);
+  }
+
+  removeMonitor(uid: string): Observable<Message> {
+    return this.http.delete<Message>(`${this.gatewayUri}/api/monitoring/monitors/${uid}`);
+  }
+
+  removeMonitorParam(monitorUid: string, paramUid: string): Observable<Message> {
+    return this.http.delete<Message>(`${this.gatewayUri}/api/monitoring/monitors/${monitorUid}/params/${paramUid}`);
   }
 }

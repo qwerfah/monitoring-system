@@ -42,13 +42,13 @@ object OperationRecordController extends Controller {
     private implicit val tokenService = implicitly[TokenService[Future]]
 
     private val getRecords = get(
-      "reports" :: "records" :: headerOption[String]("Authorization")
+      "records" :: headerOption[String]("Authorization")
     ) { header: Option[String] =>
         authorize(header, serviceRoles, _ => recordService.get)
     }
 
     private val getRecord = get(
-      "reports" :: "records" :: path[Uid] :: headerOption[String](
+      "records" :: path[Uid] :: headerOption[String](
         "Authorization"
       )
     ) { (uid: Uid, header: Option[String]) =>
@@ -56,7 +56,7 @@ object OperationRecordController extends Controller {
     }
 
     private val getRecordsByParams = get(
-      "reports" :: "records" :: paramOption[String]("serviceId") :: paramOption[
+      "records" :: paramOption[String]("serviceId") :: paramOption[
         HttpMethod
       ]("method") :: paramOption[
         Int
@@ -89,7 +89,7 @@ object OperationRecordController extends Controller {
     }
 
     private val removeRecord = delete(
-      "reports" :: "records" :: path[Uid] :: headerOption[String](
+      "records" :: path[Uid] :: headerOption[String](
         "Authorization"
       )
     ) { (uid: Uid, header: Option[String]) =>
@@ -97,7 +97,7 @@ object OperationRecordController extends Controller {
     }
 
     private val removeServiceRecords = delete(
-      "reports" :: path[String] :: "records" :: headerOption[String](
+      "services" :: path[String] :: "records" :: headerOption[String](
         "Authorization"
       )
     ) { (serviceId: String, header: Option[String]) =>
@@ -105,7 +105,7 @@ object OperationRecordController extends Controller {
     }
 
     private val restoreRecord = patch(
-      "reports" :: "records" :: path[Uid] :: "restore" :: headerOption[String](
+      "records" :: path[Uid] :: "restore" :: headerOption[String](
         "Authorization"
       )
     ) { (uid: Uid, header: Option[String]) =>
@@ -113,7 +113,7 @@ object OperationRecordController extends Controller {
     }
 
     private val restoreServiceRecords = patch(
-      "reports" :: path[String] :: "records" :: "restore" :: headerOption[
+      "services" :: path[String] :: "records" :: "restore" :: headerOption[
         String
       ](
         "Authorization"
@@ -122,7 +122,7 @@ object OperationRecordController extends Controller {
         authorize(header, serviceRoles, _ => recordService.restore(serviceId))
     }
 
-    val api = getRecords
+    val api = "api" :: "reports" :: getRecords
         .:+:(getRecord)
         .:+:(getRecordsByParams)
         .:+:(removeRecord)

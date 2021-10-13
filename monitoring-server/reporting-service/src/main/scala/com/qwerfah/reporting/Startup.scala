@@ -39,6 +39,26 @@ import com.qwerfah.common.repos.local.LocalTokenRepo
 object Startup {
     implicit val config = ConfigFactory.load
 
+    val equipmentClient =
+        new DefaultHttpClient(
+          ServiceTag.Monitoring,
+          Credentials(
+            config.getString("serviceId"),
+            config.getString("secret")
+          ),
+          config.getString("equipmentUrl")
+        )
+
+    val monitoringClient =
+        new DefaultHttpClient(
+          ServiceTag.Monitoring,
+          Credentials(
+            config.getString("serviceId"),
+            config.getString("secret")
+          ),
+          config.getString("monitoringUrl")
+        )
+
     implicit val pgdb = Database.forConfig("postgres")
     implicit val dbProfile = PostgresProfile
     implicit val context = new ReportingContext
@@ -50,6 +70,8 @@ object Startup {
 
     implicit val defaultOperationRecordService =
         new DefaultOperationRecordService[Future, DBIO]
+    implicit val defaultStatService =
+        new DefaultStatService[Future, DBIO](equipmentClient, monitoringClient)
     implicit val defaultTokenService = new DefaultTokenService[Future, DBIO]
 
     def startup() = Await.result(dbManager.execute(context.setup))

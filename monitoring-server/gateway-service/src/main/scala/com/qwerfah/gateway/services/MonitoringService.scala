@@ -23,4 +23,6 @@ trait MonitoringService[F[_]] {
     def updateMonitor(uid: Uid, request: UpdateMonitorRequest): F[Response]
 
     def removeMonitor(uid: Uid): F[Response]
+
+    def removeMonitorParam(monitorUid: Uid, paramUid: Uid): F[Response]
 }

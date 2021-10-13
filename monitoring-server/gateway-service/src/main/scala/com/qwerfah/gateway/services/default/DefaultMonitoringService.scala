@@ -65,4 +65,13 @@ class DefaultMonitoringService[F[_]: Monad](
 
     override def removeMonitor(uid: Uid): F[Response] =
         monitoringClient.send(HttpMethod.Delete, s"/api/monitors/$uid")
+
+    override def removeMonitorParam(
+      monitorUid: Uid,
+      paramUid: Uid
+    ): F[Response] =
+        monitoringClient.send(
+          HttpMethod.Delete,
+          s"/api/monitors/$monitorUid/params/$paramUid"
+        )
 }

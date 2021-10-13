@@ -114,6 +114,18 @@ object MonitoringController extends Controller {
         )
     }
 
+    private def removeMonitorParam = delete(
+      "monitors" :: path[Uid] :: "params" :: path[Uid] :: headerOption(
+        "Authorization"
+      )
+    ) { (monitorUid: Uid, paramUid: Uid, header: Option[String]) =>
+        authorizeRaw(
+          header,
+          writeRoles,
+          _ => monitoringService.removeMonitorParam(monitorUid, paramUid)
+        )
+    }
+
     val api = "api" :: "monitoring" :: getMonitors
         .:+:(getInstanceMonitors)
         .:+:(getMonitor)

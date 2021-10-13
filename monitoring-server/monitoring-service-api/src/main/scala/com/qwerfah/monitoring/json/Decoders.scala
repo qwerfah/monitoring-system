@@ -1,7 +1,5 @@
 package com.qwerfah.monitoring.json
 
-import java.time.LocalDateTime
-
 import io.circe.{Decoder, HCursor}
 
 import cats.implicits._

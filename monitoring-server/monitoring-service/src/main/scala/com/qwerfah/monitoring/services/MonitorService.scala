@@ -5,7 +5,7 @@ import com.qwerfah.monitoring.resources._
 
 import com.qwerfah.equipment.resources._
 
-import com.qwerfah.generator.resources.ParamValueResponse
+import com.qwerfah.generator.resources._
 
 import com.qwerfah.common.services.response._
 import com.qwerfah.common.Uid
@@ -25,6 +25,8 @@ trait MonitorService[F[_]] {
       *   Monitor with specified uid or error in case of failure.
       */
     def getMonitor(uid: Uid): F[ServiceResponse[MonitorResponse]]
+
+    def getMonitorCount(uids: Seq[Uid]): F[ServiceResponse[Int]]
 
     /** Get all monitors for specified instance.
       * @param instanceUid

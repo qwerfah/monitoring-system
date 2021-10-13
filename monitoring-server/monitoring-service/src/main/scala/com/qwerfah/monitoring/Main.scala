@@ -9,9 +9,8 @@ import io.finch.circe._
 import io.circe.generic.auto._
 
 import com.qwerfah.monitoring.controllers._
-import com.qwerfah.common.json.Encoders
-import com.twitter.finagle.SimpleFilter
 
+import com.qwerfah.common.json.Encoders
 import com.qwerfah.common.controllers._
 
 object Main extends TwitterServer {
@@ -25,11 +24,13 @@ object Main extends TwitterServer {
     val server =
         Http.serve(
           config.getString("port"),
-          RequestLoggingFilter.andThen(
-            MonitorController.api
-                .:+:(MonitoringSessionController.api)
-                .toServiceAs[Application.Json]
-          )
+          RequestLoggingFilter
+              .andThen(RequestReportingFilter)
+              .andThen(
+                MonitorController.api
+                    .:+:(MonitoringSessionController.api)
+                    .toServiceAs[Application.Json]
+              )
         )
     onExit {
         server.close()

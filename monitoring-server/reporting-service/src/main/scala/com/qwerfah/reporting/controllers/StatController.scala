@@ -42,13 +42,13 @@ object StatController extends Controller {
     }
 
     private val getServiceStats = get(
-      "models" :: "stats" :: headerOption[String](
+      "services" :: "stats" :: headerOption[String](
         "Authorization"
       )
     ) { header: Option[String] =>
         authorize(header, serviceRoles, _ => statService.getServiceStats())
     }
-    
+
     val api = "api" :: "reports" :: getModelStats
         .:+:(getServiceStats)
         .handle(errorHandler)

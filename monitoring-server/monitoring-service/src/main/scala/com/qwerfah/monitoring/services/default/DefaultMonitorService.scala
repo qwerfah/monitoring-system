@@ -12,7 +12,7 @@ import com.qwerfah.monitoring.Mappings
 import com.qwerfah.equipment.resources._
 import com.qwerfah.equipment.json.{Decoders => EquipmentDecoders}
 
-import com.qwerfah.generator.resources.ParamValueResponse
+import com.qwerfah.generator.resources._
 import com.qwerfah.generator.json.{Decoders => GeneratorDecoders}
 
 import com.qwerfah.common.db.DbManager
@@ -41,6 +41,13 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
         dbManager.execute(monitorRepo.get(uid)) map {
             case Some(value) => value.asResponse.as200
             case None        => NoMonitor(uid).as404
+        }
+
+    override def getMonitorCount(uids: Seq[Uid]): F[ServiceResponse[Int]] =
+        uids.map { uid =>
+            dbManager.execute(monitorRepo.getByInstanceUid(uid))
+        }.sequence map { res =>
+            res.flatten.length.as200
         }
 
     override def getInstanceMonitors(

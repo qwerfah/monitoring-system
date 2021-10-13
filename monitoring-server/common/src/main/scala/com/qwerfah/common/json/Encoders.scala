@@ -2,7 +2,7 @@ package com.qwerfah.common.json
 
 import io.circe.{Encoder, Json}
 
-import scala.language.reflectiveCalls
+
 
 import com.qwerfah.common.exceptions._
 import com.qwerfah.common.services.response.ResponseMessage

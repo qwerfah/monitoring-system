@@ -47,6 +47,18 @@ object MonitorController extends Controller {
                 )
         }
 
+    private val getMonitorCount = get(
+      "monitors" :: "count" :: jsonBody[Seq[Uid]] :: headerOption(
+        "Authorization"
+      )
+    ) { (uids: Seq[Uid], header: Option[String]) =>
+        authorize(
+          header,
+          serviceRoles,
+          _ => monitorService.getMonitorCount(uids)
+        )
+    }
+
     private val getMonitorParams = get(
       "monitors" :: path[Uid] :: "params" :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
@@ -250,6 +262,7 @@ object MonitorController extends Controller {
 
     val api = "api" :: getMonitors
         .:+:(getMonitor)
+        .:+:(getMonitorCount)
         .:+:(getMonitorParams)
         .:+:(getMonitorParamValues)
         .:+:(getInstanceMonitors)

@@ -6,6 +6,11 @@ import cats.Monad
 import cats.data.EitherT
 import cats.implicits._
 
+import io.circe._
+import io.circe.generic.auto._
+import io.circe.parser._
+import io.circe.syntax._
+
 import com.qwerfah.reporting.services.StatService
 import com.qwerfah.reporting.repos.OperationRecordRepo
 import com.qwerfah.reporting.resources.{ModelStat, ServiceStat}
@@ -48,59 +53,42 @@ class DefaultStatService[F[_]: Monad, DB[_]: Monad](
         EitherT(f)
     }
 
-    private def getInstances(
-      modelUid: Uid
-    ): EitherT[F, ErrorResponse, Seq[InstanceResponse]] = {
-        val f = equipmentClient.sendAndDecode[Seq[InstanceResponse]](
-          HttpMethod.Get,
-          s"/api/models/$modelUid/instances"
-        ) map {
-            case s: SuccessResponse[Seq[InstanceResponse]] => Right(s.result)
-            case e: ErrorResponse                          => Left(e)
-        }
-        EitherT(f)
-    }
-
     private def getInstanceCount(
+      modelUid: Uid,
       instances: Seq[InstanceResponse]
     ): EitherT[F, ErrorResponse, (Int, Int, Int)] = {
-        val active = instances.count(_.status == EquipmentStatus.Active)
-        val inactive = instances.count(_.status == EquipmentStatus.Inactive)
-        val dec = instances.count(_.status == EquipmentStatus.Decommissioned)
+        val modelInstances = instances.filter(_.modelUid == modelUid)
+        val active = modelInstances.count(_.status == EquipmentStatus.Active)
+        val inactive =
+            modelInstances.count(_.status == EquipmentStatus.Inactive)
+        val dec =
+            modelInstances.count(_.status == EquipmentStatus.Decommissioned)
         EitherT.rightT((active, inactive, dec))
     }
 
-    private def getMonitorCount(
-      instanceUid: Uid
-    ): F[Either[ErrorResponse, Int]] =
-        monitoringClient.sendAndDecode[Seq[MonitorResponse]](
-          HttpMethod.Get,
-          s"/api/instances/$instanceUid/monitors"
-        ) map {
-            case s: SuccessResponse[Seq[MonitorResponse]] =>
-                Right(s.result.length)
-            case e: ErrorResponse => Left(e)
-        }
-
     private def getTotalMonitorCount(
+      modelUid: Uid,
       instances: Seq[InstanceResponse]
     ): EitherT[F, ErrorResponse, Int] = {
-        val f = instances.map(i => getMonitorCount(i.uid)).sequence map {
-            _.fold(Right(0)) {
-                case (Left(a), _)         => Left(a)
-                case (Right(a), Right(b)) => Right(a + b)
-                case (_, Left(b))         => Left(b)
-            }
+        val f = monitoringClient.sendAndDecode[Int](
+          HttpMethod.Get,
+          s"/api/monitors/count",
+          Option(
+            instances.filter(_.modelUid == modelUid).map(_.uid).asJson.toString
+          )
+        ) map {
+            case s: SuccessResponse[Int] =>
+                Right(s.result)
+            case e: ErrorResponse => Left(e)
         }
         EitherT(f)
     }
 
-    def getModelStat(model: ModelResponse) = {
+    def getModelStat(model: ModelResponse, instances: Seq[InstanceResponse]) = {
         for {
             paramCount <- getParamCount(model.uid)
-            instances <- getInstances(model.uid)
-            instanceCounts <- getInstanceCount(instances)
-            monitorCount <- getTotalMonitorCount(instances)
+            instanceCounts <- getInstanceCount(model.uid, instances)
+            monitorCount <- getTotalMonitorCount(model.uid, instances)
 
         } yield ModelStat(
           model.uid,
@@ -119,11 +107,22 @@ class DefaultStatService[F[_]: Monad, DB[_]: Monad](
           HttpMethod.Get,
           "/api/models"
         ) flatMap {
-            case s: SuccessResponse[Seq[ModelResponse]] =>
-                s.result.map(model => getModelStat(model)).sequence.value map {
-                    case Left(e)      => e
-                    case Right(stats) => stats.as200
+            case s1: SuccessResponse[Seq[ModelResponse]] =>
+                equipmentClient.sendAndDecode[Seq[InstanceResponse]](
+                  HttpMethod.Get,
+                  "/api/instances"
+                ) flatMap {
+                    case s2: SuccessResponse[Seq[InstanceResponse]] =>
+                        s1.result
+                            .map(model => getModelStat(model, s2.result))
+                            .sequence
+                            .value map {
+                            case Left(e)      => e
+                            case Right(stats) => stats.as200
+                        }
+                    case e: ErrorResponse => Monad[F].pure(e)
                 }
+
             case e: ErrorResponse => Monad[F].pure(e)
         }
 

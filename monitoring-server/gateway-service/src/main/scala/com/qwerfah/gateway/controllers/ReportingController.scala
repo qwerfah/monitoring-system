@@ -30,13 +30,13 @@ object ReportingController extends Controller {
 
     private def reportingService = implicitly[ReportingService[Future]]
 
-    private val getModelStats = delete(
+    private val getModelStats = get(
       "models" :: "stats" :: headerOption("Authorization")
     ) { header: Option[String] =>
         authorizeRaw(header, readRoles, _ => reportingService.getModelStats)
     }
 
-    private val getServiceStats = delete(
+    private val getServiceStats = get(
       "services" :: "stats" :: headerOption("Authorization")
     ) { header: Option[String] =>
         authorizeRaw(header, readRoles, _ => reportingService.getServiceStats)

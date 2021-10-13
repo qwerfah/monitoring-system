@@ -83,6 +83,7 @@ export class UserTableComponent implements OnInit {
   }
 
   removeUser(userUid: string): void {
+    if (!confirm(`Удалить пользователя ${this.users.find((u) => u.uid === userUid)?.login}?`)) return;
     this.userService.removeUser(userUid).subscribe(
       (msg) => {
         this.isLoading = false;

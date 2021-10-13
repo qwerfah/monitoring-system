@@ -45,6 +45,10 @@ export class EquipmentService {
     return this.http.get<EquipmentInstance[]>(`${this.gatewayUri}/api/equipment/models/${modelUid}/instances`);
   }
 
+  getActiveModelInstances(modelUid: string): Observable<EquipmentInstance[]> {
+    return this.http.get<EquipmentInstance[]>(`${this.gatewayUri}/api/equipment/models/${modelUid}/instances/active`);
+  }
+
   getInstance(instanceUid: string): Observable<EquipmentInstance> {
     return this.http.get<EquipmentInstance>(`${this.gatewayUri}/api/equipment/instances/${instanceUid}`);
   }

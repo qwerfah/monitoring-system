@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
-import { ModelStat } from '../models/model.stat';
-import { ServiceStat } from '../models/service.stat';
+import { ModelStat } from '../models/model-stat';
+import { ServiceStat } from '../models/service-stat';
 
 @Injectable({
   providedIn: 'root',

@@ -34,6 +34,7 @@ object Main extends TwitterServer {
                           .:+:(EquipmentController.api)
                           .:+:(DocumentationController.api)
                           .:+:(MonitoringController.api)
+                          .:+:(ReportingController.api)
                           .toServiceAs[Application.Json]
                     )
               )

@@ -88,6 +88,18 @@ object EquipmentController extends Controller {
         )
     }
 
+    private def getActiveModelInstances = get(
+      "models" :: path[Uid] :: "instances" :: "active" :: headerOption(
+        "Authorization"
+      )
+    ) { (modelUid: Uid, header: Option[String]) =>
+        authorizeRaw(
+          header,
+          readRoles,
+          _ => equipmentService.getActiveModelInstances(modelUid)
+        )
+    }
+
     private def getInstance = get(
       "instances" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
@@ -205,6 +217,7 @@ object EquipmentController extends Controller {
         .:+:(removeModel)
         .:+:(getInstances)
         .:+:(getModelInstances)
+        .:+:(getActiveModelInstances)
         .:+:(getInstance)
         .:+:(addInstance)
         .:+:(updateInstance)

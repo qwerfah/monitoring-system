@@ -54,6 +54,9 @@ class DefaultEquipmentService[F[_]: Monad](client: HttpClient[F])
     override def getModelInstances(modelUid: Uid): F[Response] =
         client.send(HttpMethod.Get, s"/api/models/$modelUid/instances")
 
+    override def getActiveModelInstances(modelUid: Uid): F[Response] =
+        client.send(HttpMethod.Get, s"/api/models/$modelUid/instances/active")
+
     override def getInstance(uid: Uid): F[Response] =
         client.send(HttpMethod.Get, s"/api/instances/$uid")
 

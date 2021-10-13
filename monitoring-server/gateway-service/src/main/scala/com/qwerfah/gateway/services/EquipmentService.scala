@@ -21,6 +21,8 @@ trait EquipmentService[F[_]] {
 
     def getModelInstances(modelUid: Uid): F[Response]
 
+    def getActiveModelInstances(modelUid: Uid): F[Response]
+
     def getInstance(uid: Uid): F[Response]
 
     def addInstance(modelUid: Uid, request: AddInstanceRequest): F[Response]

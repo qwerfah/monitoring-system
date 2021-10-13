@@ -117,7 +117,7 @@ lazy val reporting = project
       dockerSettings(8087),
       libraryDependencies ++= commonDependencies
     )
-    .dependsOn(common, reportingApi)
+    .dependsOn(common, reportingApi, equipmentApi, monitoringApi)
     .enablePlugins(JavaAppPackaging, DockerPlugin)
 
 lazy val gatewayApi = project

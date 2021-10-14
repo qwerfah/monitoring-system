@@ -63,6 +63,7 @@ jobs:
           script: |
             cd ./monitoring-server
             sudo docker-compose down
+            sudo docker volume rm monitoring-server_monitoring_volume
             sudo docker-compose pull
             sudo docker-compose up -d
 

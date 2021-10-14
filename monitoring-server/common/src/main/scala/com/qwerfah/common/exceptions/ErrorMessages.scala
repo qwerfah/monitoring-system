@@ -37,6 +37,11 @@ final case class NoModel(uid: Uid) extends ErrorMessage {
     override def getMessage = s"Equipment model with uid $uid not found."
 }
 
+final case class BadModelRemove(uid: Uid) extends ErrorMessage {
+    override def getMessage =
+        s"Can't delete equipment model with uid $uid: one or more services in remove request chain return error.."
+}
+
 final case class NoParam(uid: Uid) extends ErrorMessage {
     override def getMessage = s"Equipment model param with uid $uid not found."
 }

@@ -199,7 +199,7 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
                       monitorRepo.removeByInstanceUid(instanceUid)
                     )
                 } map { _ => InstanceMonitorsRemoved(instanceUid).as200 }
-            case _ => Monad[F].pure(NoInstanceMonitors(instanceUid).as404)
+            case _ => Monad[F].pure(InstanceMonitorsRemoved(instanceUid).as200)
         }
 
     override def restoreMonitor(uid: Uid): F[ServiceResponse[ResponseMessage]] =
@@ -245,16 +245,14 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
       monitorUid: Uid
     ): F[ServiceResponse[ResponseMessage]] =
         dbManager.execute(monitorParamRepo.removeByMonitorUid(monitorUid)) map {
-            case i if i > 0 => MonitorParamsRemoved(monitorUid).as200
-            case _          => NoMonitorParams(monitorUid).as404
+            _ => MonitorParamsRemoved(monitorUid).as200
         }
 
     override def removeMonitorParamsForParam(
       paramUid: Uid
     ): F[ServiceResponse[ResponseMessage]] =
         dbManager.execute(monitorParamRepo.removeByParamUid(paramUid)) map {
-            case i if i > 0 => ParamTrackingsRemoved(paramUid).as200
-            case _          => NoParamTrackings(paramUid).as404
+            _ => ParamTrackingsRemoved(paramUid).as200
         }
 
     override def restoreMonitorParam(
@@ -272,16 +270,14 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
     ): F[ServiceResponse[ResponseMessage]] =
         dbManager.execute(
           monitorParamRepo.restoreByMonitorUid(monitorUid)
-        ) map {
-            case i if i > 0 => MonitorParamsRestored(monitorUid).as200
-            case _          => NoMonitorParams(monitorUid).as404
+        ) map { _ =>
+            MonitorParamsRestored(monitorUid).as200
         }
 
     override def restoreMonitorParamsForParam(
       paramUid: Uid
     ): F[ServiceResponse[ResponseMessage]] =
         dbManager.execute(monitorParamRepo.restoreByParamUid(paramUid)) map {
-            case i if i > 0 => ParamTrackingsRestored(paramUid).as200
-            case _          => NoParamTrackings(paramUid).as404
+            _ => ParamTrackingsRestored(paramUid).as200
         }
 }

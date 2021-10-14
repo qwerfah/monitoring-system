@@ -103,13 +103,35 @@ class DefaultEquipmentModelService[F[_]: Monad, DB[_]: Monad](
         }
 
     override def remove(uid: Uid): F[ServiceResponse[ResponseMessage]] =
-        dbManager.execute(modelRepo.removeByUid(uid)) flatMap {
-            case 1 =>
-                for {
-                    _ <- dbManager.execute(instnaceRepo.removeByModelUid(uid))
-                    _ <- dbManager.execute(paramRepo.removeByModelUid(uid))
-                } yield ModelRemoved(uid).as200
-            case _ => Monad[F].pure(NoModel(uid).as404)
+        dbManager
+            .execute(instnaceRepo.getByModelUid(uid)) flatMap { instances =>
+            instances
+                .map(i => instanceService.remove(i.uid) map { (_, i.uid) })
+                .sequence flatMap {
+                case res if res.collect { case (e: ErrorResponse, _) =>
+                        e
+                    }.isEmpty =>
+                    documentationClient.send(
+                      HttpMethod.Delete,
+                      s"/api/models/$uid/files"
+                    ) flatMap {
+                        case response if response.status == Status.Ok =>
+                            dbManager.execute(
+                              modelRepo.removeByUid(uid)
+                            ) map { _ =>
+                                ModelRemoved(uid).as200
+                            }
+                        case _ => {
+                            instances.map(i => instanceService.restore(i.uid))
+                            Monad[F].pure(BadModelRemove(uid).as422)
+                        }
+                    }
+                case res =>
+                    res.collect { case (_: SuccessResponse[ResponseMessage], uid: Uid) =>
+                        uid
+                    }.map(uid => instanceService.restore(uid))
+                    Monad[F].pure(BadModelRemove(uid).as422)
+            }
         }
 
     override def restore(uid: Uid): F[ServiceResponse[ResponseMessage]] = for {

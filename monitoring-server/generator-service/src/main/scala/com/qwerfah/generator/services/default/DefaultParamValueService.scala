@@ -88,8 +88,10 @@ class DefaultParamValueService[F[_]: Monad, DB[_]: Monad](
     override def removeByInstanceUid(
       instanceUid: Uid
     ): F[ServiceResponse[ResponseMessage]] =
-        dbManager.execute(paramValueRepo.removeByInstanceUid(instanceUid)) map {
-            _ => InstanceParamValuesRemoved(instanceUid).as200
+        dbManager.executeTransactionally(
+          paramValueRepo.removeByInstanceUid(instanceUid)
+        ) map { _ =>
+            InstanceParamValuesRemoved(instanceUid).as200
         }
 
     override def restore(uid: Uid): F[ServiceResponse[ResponseMessage]] =

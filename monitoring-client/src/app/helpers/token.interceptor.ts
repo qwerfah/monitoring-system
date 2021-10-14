@@ -22,10 +22,6 @@ export class TokenInterceptor implements HttpInterceptor {
     const isBasePath = request.url.startsWith(this.gatewayUri);
     const isNotRefresh = !request.url.includes(`${this.gatewayUri}/api/session/refresh`);
 
-    console.log(request);
-
-    //console.log(request);
-
     if (currentUser !== undefined && isBasePath && isNotRefresh) {
       request = this.addAccessToken(request, currentUser.token.access);
     }

@@ -11,6 +11,7 @@ import { EquipmentInstanceInfoComponent } from './equipment-instance-info/equipm
 import { EquipmentInstancesTableComponent } from './equipment-instances-table/equipment-instances-table.component';
 import { CreateEquipmentInstanceComponent } from './create-equipment-instance/create-equipment-instance.component';
 import { GeneralModule } from '../general/general.module';
+import { EditEquipmentInstanceComponent } from './edit-equipment-instance/edit-equipment-instance.component';
 
 @NgModule({
   imports: [
@@ -24,6 +25,11 @@ import { GeneralModule } from '../general/general.module';
     MatSnackBarModule,
     GeneralModule,
   ],
-  declarations: [EquipmentInstancesTableComponent, EquipmentInstanceInfoComponent, CreateEquipmentInstanceComponent],
+  declarations: [
+    EquipmentInstancesTableComponent,
+    EquipmentInstanceInfoComponent,
+    CreateEquipmentInstanceComponent,
+    EditEquipmentInstanceComponent,
+  ],
 })
 export class EquipmentInstancesModule {}

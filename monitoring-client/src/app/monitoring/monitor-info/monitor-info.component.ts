@@ -11,6 +11,9 @@ import { Param } from 'src/app/models/param';
 import { ParamValue } from 'src/app/models/param-value';
 import { MonitoringService } from 'src/app/services/monitoring.service';
 import { delay, repeat, repeatWhen } from 'rxjs/operators';
+import { SessionService } from 'src/app/services/session.service';
+import { UserWithToken } from 'src/app/models/user';
+import { UserRole } from 'src/app/models/user-role';
 
 type ParamChartDataType = { name: string; series: { name: Date; value: number }[] };
 
@@ -23,6 +26,7 @@ export class MonitorInfoComponent implements OnInit {
   monitorUid: string;
   instanceUid: string;
 
+  isAdding: boolean = false;
   isLoading: boolean = true;
 
   monitor: Monitor;
@@ -31,11 +35,20 @@ export class MonitorInfoComponent implements OnInit {
 
   chartData: ParamChartDataType[];
 
+  UserRole = UserRole;
+
+  currentUser: UserWithToken | undefined = undefined;
+
   constructor(
     private route: ActivatedRoute,
+    private sessionService: SessionService,
     private monitoringService: MonitoringService,
     private snackBar: MatSnackBar
-  ) {}
+  ) {
+    sessionService.currentUser$.subscribe((user) => {
+      this.currentUser = user;
+    });
+  }
 
   ngOnInit() {
     this.monitorUid = this.route.snapshot.params['uid'];
@@ -96,6 +109,56 @@ export class MonitorInfoComponent implements OnInit {
           this.isLoading = false;
         }
       );
+  }
+
+  /** Check if current logged in user has sufficient rights to access element.
+   * @param roles Array of sufficient user roles.
+   * @returns True if current user role is sufficient, otherwise false.
+   */
+  isAllowed(roles: UserRole[]): boolean {
+    return this.currentUser !== undefined && roles.indexOf(this.currentUser.role) !== -1;
+  }
+
+  openModal() {
+    this.isAdding = true;
+  }
+
+  addMonitorParams(params: string[] | null) {
+    this.isAdding = false;
+
+    console.log(params);
+
+    if (params === null) return;
+
+    this.isLoading = true;
+
+    zip(this.monitoringService.addMonitorParams(this.monitorUid, params)).subscribe(
+      (result) => {
+        this.monitoringService.getMonitorParams(this.monitorUid).subscribe((params) => (this.params = params));
+        this.snackBar.open('Успех: параметры добавлены', 'Ок');
+        this.isLoading = false;
+      },
+      (err: HttpErrorResponse) => {
+        switch (err.status) {
+          case 0: {
+            this.snackBar.open('Ошибка добавления параметров: отсутсвтует соединение с сервером', 'Ок');
+            break;
+          }
+          case 502: {
+            this.snackBar.open('Ошибка добавления параметров: сервис недоступен', 'Ок');
+            break;
+          }
+          case 404: {
+            this.snackBar.open('Ошибка добавления параметров: данные не найдены', 'Ок');
+            break;
+          }
+          case 500: {
+            this.snackBar.open('Ошибка добавления параметров: неизвестная ошибка', 'Ок');
+          }
+        }
+        this.isLoading = false;
+      }
+    );
   }
 
   private onlyUnique(value: string, index: number, self: string[]): boolean {
@@ -161,7 +224,7 @@ export class MonitorInfoComponent implements OnInit {
 
     this.monitoringService.removeMonitorParam(this.monitorUid, paramUid).subscribe(
       (msg) => {
-        this.params.slice(
+        this.params.splice(
           this.params.findIndex((m) => m.uid === paramUid),
           1
         );

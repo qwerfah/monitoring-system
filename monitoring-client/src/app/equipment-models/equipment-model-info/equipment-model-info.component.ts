@@ -17,6 +17,7 @@ import { DocumentationService } from 'src/app/services/documentation.service';
 import { UserRole } from 'src/app/models/user-role';
 import { UserWithToken } from 'src/app/models/user';
 import { SessionService } from 'src/app/services/session.service';
+import { ParamRequest } from 'src/app/models/param-request';
 
 @Component({
   selector: 'app-equipment-model-info',
@@ -25,6 +26,8 @@ import { SessionService } from 'src/app/services/session.service';
 })
 export class EquipmentModelInfoComponent implements OnInit {
   isLoading: boolean = true;
+  isAdding: boolean = false;
+
   modelUid: string;
 
   model: EquipmentModel;
@@ -112,7 +115,43 @@ export class EquipmentModelInfoComponent implements OnInit {
     return this.currentUser !== undefined && roles.indexOf(this.currentUser.role) !== -1;
   }
 
-  downloadFile(file: FileMeta) {
+  openModal(): void {
+    this.isAdding = true;
+  }
+
+  addParam(param: ParamRequest | null): void {
+    this.isAdding = false;
+
+    if (param === null) return;
+
+    this.isLoading = true;
+
+    this.equipmentService.addParam(this.modelUid, param).subscribe(
+      (param) => {
+        this.params.push(param);
+        this.isLoading = false;
+        this.snackBar.open('Успех: параметр добавлен', 'Ок');
+      },
+      (err: HttpErrorResponse) => {
+        switch (err.status) {
+          case 0: {
+            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
+            break;
+          }
+          case 502: {
+            this.snackBar.open('Ошибка: сервис документации недоступен', 'Ок');
+            break;
+          }
+          case 404: {
+            this.snackBar.open('Ошибка: модель не найдена', 'Ок');
+          }
+        }
+        this.isLoading = false;
+      }
+    );
+  }
+
+  downloadFile(file: FileMeta): void {
     this.documentationService.getFile(file.uid).subscribe((blob) => {
       // It is necessary to create a new blob object with mime-type explicitly set
       // otherwise only Chrome works like it should
@@ -217,6 +256,10 @@ export class EquipmentModelInfoComponent implements OnInit {
           }
           case 404: {
             this.snackBar.open('Ошибка удаления параметра: параметр не найден', 'Ок');
+            break;
+          }
+          case 422: {
+            this.snackBar.open('Ошибка удаления параметра: не удалось удалить все связные сущности', 'Ок');
           }
         }
         this.isLoading = false;

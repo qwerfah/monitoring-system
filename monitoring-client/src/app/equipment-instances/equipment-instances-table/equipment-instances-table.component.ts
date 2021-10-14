@@ -114,7 +114,7 @@ export class EquipmentInstancesTableComponent implements OnInit {
 
     this.equipmentService.removeInstance(instanceUid).subscribe(
       (msg) => {
-        this.instances.slice(
+        this.instances.splice(
           this.instances.findIndex((i) => i.uid === instanceUid),
           1
         );
@@ -127,7 +127,7 @@ export class EquipmentInstancesTableComponent implements OnInit {
             break;
           }
           case 502: {
-            this.snackBar.open('Ошибка удаления: сервис оборудования недоступен', 'Ок');
+            this.snackBar.open('Ошибка удаления: один из сервисов недоступен', 'Ок');
             break;
           }
           case 500: {

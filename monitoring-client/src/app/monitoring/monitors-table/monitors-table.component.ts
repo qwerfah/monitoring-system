@@ -109,11 +109,11 @@ export class MonitorsTableComponent implements OnInit {
 
     this.monitoringService.removeMonitor(monitorUid).subscribe(
       (msg) => {
-        this.monitors.slice(
+        this.monitors.splice(
           this.monitors.findIndex((m) => m.uid === monitorUid),
           1
         );
-        this.snackBar.open('Успех: экземпляр удален', 'Ок');
+        this.snackBar.open('Успех: экран мониторинга удален', 'Ок');
       },
       (err: HttpErrorResponse) => {
         switch (err.status) {
@@ -130,7 +130,7 @@ export class MonitorsTableComponent implements OnInit {
             break;
           }
           case 404: {
-            this.snackBar.open('Ошибка удаления: экземпляр не найден', 'Ок');
+            this.snackBar.open('Ошибка удаления: экран мониторинга не найден', 'Ок');
           }
         }
       }

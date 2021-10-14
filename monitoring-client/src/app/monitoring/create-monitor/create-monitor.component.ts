@@ -129,18 +129,12 @@ export class CreateMonitorComponent implements OnInit {
   }
 
   submit() {
-    if (
-      this.monitorForm.invalid ||
-      !this.selectedModel ||
-      !this.selectedInstance ||
-      !this.paramsControl.value ||
-      this.paramsControl.value.length === 0
-    ) {
+    if (this.monitorForm.invalid || !this.selectedModel || !this.selectedInstance) {
       this.monitorForm.markAllAsTouched();
       this.isInvalid = true;
     } else {
       this.isInvalid = false;
-      let params = (this.paramsControl.value as Param[]).map((p: Param) => p.uid);
+      let params = this.paramsControl.value ? (this.paramsControl.value as Param[]).map((p: Param) => p.uid) : [];
       let monitor = new MonitorRequest(
         this.monitorForm.controls.name.value,
         this.monitorForm.controls.description.value,

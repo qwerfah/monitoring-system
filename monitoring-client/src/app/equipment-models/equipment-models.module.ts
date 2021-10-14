@@ -11,6 +11,8 @@ import { EquipmentModelsRoutingModule } from './equipment-models-routing.module'
 
 import { PipeModule } from '../pipes/pipes.module';
 import { GeneralModule } from '../general/general.module';
+import { AddParamComponent } from '../monitoring/add-param/add-param.component';
+import { CreateParamComponent } from './create-param/create-param.component';
 
 @NgModule({
   imports: [
@@ -21,8 +23,13 @@ import { GeneralModule } from '../general/general.module';
     FormsModule,
     ReactiveFormsModule,
     MatSnackBarModule,
-    GeneralModule
+    GeneralModule,
   ],
-  declarations: [EquipmentModelsTableComponent, EquipmentModelInfoComponent, CreateEquipmentModelComponent],
+  declarations: [
+    EquipmentModelsTableComponent,
+    EquipmentModelInfoComponent,
+    CreateEquipmentModelComponent,
+    CreateParamComponent,
+  ],
 })
 export class EquipmentModelsModule {}

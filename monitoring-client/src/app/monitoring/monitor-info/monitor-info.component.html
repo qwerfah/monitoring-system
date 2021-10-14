@@ -6,6 +6,12 @@
   </div>
 </ng-template>
 <app-fullscreen-loader *ngIf="isLoading"></app-fullscreen-loader>
+<app-add-param
+  *ngIf="isAdding"
+  [monitor]="monitor"
+  [trackedParams]="params"
+  (addEvent)="addMonitorParams($event)"
+></app-add-param>
 <div class="flex flex-col w-full bg-white rounded p-10 space-y-4 text-sm overflow-y-auto" *ngIf="monitor">
   <div class="flex flex-col w-full pl-4 pt-2 items-center border-b-2 border-blue-500">
     <h2>Экран мониторинга</h2>
@@ -29,10 +35,36 @@
     <table class="table-fixed w-full">
       <thead>
         <tr>
-          <th scope="col" class="p-2">№</th>
-          <th scope="col" class="p-2 w-6/12">Наименование</th>
-          <th scope="col" class="p-2 w-6/12">Единицы измерения</th>
-          <th scope="col"></th>
+          <th class="p-2">
+            <button
+              *ngIf="isAllowed([UserRole.EquipmentAdmin, UserRole.SystemAdmin])"
+              (click)="openModal()"
+              class="
+                bi bi-plus
+                hover:bg-indigo-600 hover:text-white
+                rounded-full
+                focus:outline-none
+                active:bg-indigo-800
+              "
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="30"
+                height="30"
+                fill="currentColor"
+                class="bi bi-plus"
+                type="button"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                />
+              </svg>
+            </button>
+          </th>
+          <th scope="col" class="w-6/12">Наименование</th>
+          <th scope="col" class="w-6/12">Единицы измерения</th>
+          <th scope="col" class="w-1/12"></th>
         </tr>
       </thead>
 
@@ -46,7 +78,7 @@
 
         <ng-container *ngIf="params | notEmpty">
           <ng-container *ngFor="let param of params; index as i">
-            <tr id="heading{{ i }}" class="hover:bg-indigo-700 hover:text-white w-full h-9">
+            <tr id="heading{{ i }}" class="w-full h-9">
               <td class="pl-3 text-center">
                 {{ i + 1 }}
               </td>
@@ -57,11 +89,11 @@
                 {{ param.measurmentUnits }}
               </td>
               <td class="text-center truncate">
-                <button (click)="removeMonitorParam(param.uid)" class="focus:outline-none">
+                <button (click)="removeMonitorParam(param.uid)" class="focus:outline-none hover:text-indigo-700">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
+                    width="25"
+                    height="25"
                     fill="currentColor"
                     class="bi bi-trash"
                     viewBox="0 0 16 16"

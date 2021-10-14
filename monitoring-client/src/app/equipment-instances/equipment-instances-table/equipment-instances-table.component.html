@@ -40,7 +40,7 @@
           <th scope="col" class="w-3/12">Модель</th>
           <th scope="col" class="w-3/12">Описание</th>
           <th scope="col" class="w-3/12">Статус</th>
-          <th scope="col"></th>
+          <th scope="col" class="w-1/12"></th>
         </tr>
       </thead>
 
@@ -54,26 +54,21 @@
 
         <ng-container *ngIf="instances | notEmpty">
           <ng-container *ngFor="let instance of instances; index as i">
-            <tr
-              *ngIf="i % 2"
-              id="heading{{ i }}"
-              class="hover:bg-indigo-700 hover:text-white w-full h-9"
-              routerLink="/instances/{{ instance.uid }}"
-            >
+            <tr *ngIf="i % 2" id="heading{{ i }}" class="hover:bg-indigo-700 hover:text-white w-full h-9">
               <td class="pl-3 text-center"></td>
-              <td class="text-center">
+              <td class="text-center" routerLink="/instances/{{ instance.uid }}">
                 {{ i + 1 }}
               </td>
-              <td class="text-center truncate">
+              <td class="text-center truncate" routerLink="/instances/{{ instance.uid }}">
                 {{ instance.name }}
               </td>
-              <td class="text-center truncate">
+              <td class="text-center truncate" routerLink="/instances/{{ instance.uid }}">
                 {{ instance.modelName }}
               </td>
-              <td class="text-center truncate">
+              <td class="text-center truncate" routerLink="/instances/{{ instance.uid }}">
                 {{ instance.description }}
               </td>
-              <td class="text-center truncate">
+              <td class="text-center truncate" routerLink="/instances/{{ instance.uid }}">
                 {{ instance.status }}
               </td>
               <td class="text-center truncate">
@@ -84,8 +79,8 @@
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
+                    width="20"
+                    height="20"
                     fill="currentColor"
                     class="bi bi-trash"
                     viewBox="0 0 16 16"
@@ -105,22 +100,21 @@
               *ngIf="!(i % 2)"
               id="heading{{ i }}"
               class="bg-blue-100 hover:bg-indigo-700 hover:text-white w-full h-9"
-              routerLink="/instances/{{ instance.uid }}"
             >
               <td class="pl-3 text-center"></td>
               <td class="text-center">
                 {{ i + 1 }}
               </td>
-              <td class="text-center truncate">
+              <td class="text-center truncate" routerLink="/instances/{{ instance.uid }}">
                 {{ instance.name }}
               </td>
-              <td class="text-center truncate">
+              <td class="text-center truncate" routerLink="/instances/{{ instance.uid }}">
                 {{ instance.modelName }}
               </td>
-              <td class="text-center truncate">
+              <td class="text-center truncate" routerLink="/instances/{{ instance.uid }}">
                 {{ instance.description }}
               </td>
-              <td class="text-center truncate">
+              <td class="text-center truncate" routerLink="/instances/{{ instance.uid }}">
                 {{ instance.status }}
               </td>
               <td class="text-center truncate">
@@ -131,8 +125,8 @@
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
+                    width="20"
+                    height="20"
                     fill="currentColor"
                     class="bi bi-trash"
                     viewBox="0 0 16 16"

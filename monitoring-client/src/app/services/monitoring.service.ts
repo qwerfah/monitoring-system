@@ -41,6 +41,12 @@ export class MonitoringService {
     return this.http.post<Monitor>(`${this.gatewayUri}/api/monitoring/instances/${instanceUid}/monitors`, monitor);
   }
 
+  addMonitorParams(monitorUid: string, params: string[]): Observable<Message> {
+    return this.http.post<Message>(`${this.gatewayUri}/api/monitoring/monitors/${monitorUid}/params`, {
+      params: params,
+    });
+  }
+
   removeMonitor(uid: string): Observable<Message> {
     return this.http.delete<Message>(`${this.gatewayUri}/api/monitoring/monitors/${uid}`);
   }

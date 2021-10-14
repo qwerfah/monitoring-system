@@ -114,7 +114,7 @@ export class EquipmentModelsTableComponent implements OnInit {
 
     this.equipmentService.removeModel(modelUid).subscribe(
       (msg) => {
-        this.models.slice(
+        this.models.splice(
           this.models.findIndex((m) => m.uid === modelUid),
           1
         );
@@ -136,6 +136,10 @@ export class EquipmentModelsTableComponent implements OnInit {
           }
           case 404: {
             this.snackBar.open('Ошибка удаления: модель не найдена', 'Ок');
+            break;
+          }
+          case 422: {
+            this.snackBar.open('Ошибка удаления: не удалось удалить все связные сущности', 'Ок');
           }
         }
       }

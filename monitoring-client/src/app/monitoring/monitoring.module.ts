@@ -11,6 +11,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { MonitorsTableComponent } from './monitors-table/monitors-table.component';
 import { CreateMonitorComponent } from './create-monitor/create-monitor.component';
+import { AddParamComponent } from './add-param/add-param.component';
 import { MonitorInfoComponent } from './monitor-info/monitor-info.component';
 import { MonitoringRoutingModule } from './monitoring-routing.module';
 import { PipeModule } from '../pipes/pipes.module';
@@ -32,6 +33,6 @@ import { GeneralModule } from '../general/general.module';
     MatSelectModule,
     GeneralModule,
   ],
-  declarations: [MonitorsTableComponent, MonitorInfoComponent, CreateMonitorComponent],
+  declarations: [MonitorsTableComponent, MonitorInfoComponent, CreateMonitorComponent, AddParamComponent],
 })
 export class MonitoringModule {}

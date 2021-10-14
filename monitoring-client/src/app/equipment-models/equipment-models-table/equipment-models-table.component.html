@@ -38,7 +38,7 @@
           <th scope="col" class="w-1/12">№</th>
           <th scope="col" class="w-4/12">Наименование</th>
           <th scope="col" class="w-7/12">Описание</th>
-          <th scope="col"></th>
+          <th scope="col" class="w-1/12"></th>
         </tr>
       </thead>
 
@@ -51,20 +51,15 @@
 
         <ng-container *ngIf="models | notEmpty">
           <ng-container *ngFor="let model of models; index as i">
-            <tr
-              *ngIf="i % 2"
-              id="heading{{ i }}"
-              class="hover:bg-indigo-700 hover:text-white w-full h-9"
-              routerLink="/models/{{ model.uid }}"
-            >
+            <tr *ngIf="i % 2" id="heading{{ i }}" class="hover:bg-indigo-700 hover:text-white w-full h-9">
               <td class="text-center"></td>
               <td class="text-center">
                 {{ i + 1 }}
               </td>
-              <td class="text-center truncate">
+              <td class="text-center truncate" routerLink="/models/{{ model.uid }}">
                 {{ model.name }}
               </td>
-              <td class="text-center truncate">
+              <td class="text-center truncate" routerLink="/models/{{ model.uid }}">
                 {{ model.description }}
               </td>
               <td class="text-center">
@@ -75,8 +70,8 @@
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
+                    width="20"
+                    height="20"
                     fill="currentColor"
                     class="bi bi-trash"
                     viewBox="0 0 16 16"
@@ -96,16 +91,15 @@
               *ngIf="!(i % 2)"
               id="heading{{ i }}"
               class="bg-blue-100 hover:bg-indigo-700 hover:text-white w-full h-9"
-              routerLink="/models/{{ model.uid }}"
             >
               <td class="text-center"></td>
               <td class="text-center">
                 {{ i + 1 }}
               </td>
-              <td class="text-center truncate">
+              <td class="text-center truncate" routerLink="/models/{{ model.uid }}">
                 {{ model.name }}
               </td>
-              <td class="text-center truncate">
+              <td class="text-center truncate" routerLink="/models/{{ model.uid }}">
                 {{ model.description }}
               </td>
               <td class="text-center truncate">
@@ -116,8 +110,8 @@
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
+                    width="20"
+                    height="20"
                     fill="currentColor"
                     class="bi bi-trash"
                     viewBox="0 0 16 16"

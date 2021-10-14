@@ -57,8 +57,8 @@ export class EquipmentService {
     return this.http.post<EquipmentInstance>(`${this.gatewayUri}/api/equipment/models/${modelUid}/instances`, request);
   }
 
-  updateInstance(instanceUid: string, request: EquipmentInstanceRequest): Observable<Message> {
-    return this.http.patch<Message>(`${this.gatewayUri}/api/equipment/instances/${instanceUid}`, request);
+  updateInstance(instanceUid: string, request: EquipmentInstanceRequest): Observable<EquipmentInstance> {
+    return this.http.patch<EquipmentInstance>(`${this.gatewayUri}/api/equipment/instances/${instanceUid}`, request);
   }
 
   removeInstance(instanceUid: string): Observable<Message> {

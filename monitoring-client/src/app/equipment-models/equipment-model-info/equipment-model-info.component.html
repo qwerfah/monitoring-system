@@ -1,4 +1,5 @@
 <app-fullscreen-loader *ngIf="isLoading"></app-fullscreen-loader>
+<app-create-param *ngIf="isAdding" (addEvent)="addParam($event)"></app-create-param>
 <div class="flex flex-col w-full bg-white rounded p-5 space-y-4 text-sm overflow-y-auto" *ngIf="model">
   <div class="flex flex-col w-full items-center border-b-2 border-blue-500">
     <h2>Модель оборудования</h2>
@@ -26,9 +27,8 @@
               accept=".pdf,.doc,.docx"
             />
           </th>
-          <th scope="col" class="p-2 w-8/12">Имя</th>
-          <th scope="col" class="p-2 w-4/12">Ссылка</th>
-          <th scope="col"></th>
+          <th scope="col" class="w-8/12">Имя</th>
+          <th scope="col" class="w-4/12">Действия</th>
         </tr>
       </thead>
 
@@ -46,21 +46,31 @@
               <td class="text-center truncate" colspan="2">
                 {{ file.filename }}
               </td>
-              <td class="text-center">
-                <button class="p-2 bg-indigo-600 text-white hover:bg-indigo-700 rounded" (click)="downloadFile(file)">
-                  Скачать
-                </button>
-              </td>
               <td class="text-center truncate">
+                <button class="hover:text-indigo-700 focus:outline-none" (click)="downloadFile(file)">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="25"
+                    height="25"
+                    fill="currentColor"
+                    class="bi bi-arrow-down-circle"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"
+                    />
+                  </svg>
+                </button>
                 <button
                   *ngIf="isAllowed([UserRole.EquipmentAdmin, UserRole.SystemAdmin])"
                   (click)="removeFile(file.uid)"
-                  class="focus:outline-none"
+                  class="pl-4 focus:outline-none hover:text-indigo-700"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
+                    width="25"
+                    height="25"
                     fill="currentColor"
                     class="bi bi-trash"
                     viewBox="0 0 16 16"
@@ -88,10 +98,36 @@
     <table class="table-fixed w-full">
       <thead>
         <tr>
-          <th scope="col" class="p-2">№</th>
-          <th scope="col" class="p-2 w-6/12">Наименование</th>
-          <th scope="col" class="p-2 w-6/12">Единицы измерения</th>
-          <th scope="col"></th>
+          <th scope="col" class="w-1/12">
+            <button
+              *ngIf="isAllowed([UserRole.EquipmentAdmin, UserRole.SystemAdmin])"
+              (click)="openModal()"
+              class="
+                bi bi-plus
+                hover:bg-indigo-600 hover:text-white
+                rounded-full
+                focus:outline-none
+                active:bg-indigo-800
+              "
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="30"
+                height="30"
+                fill="currentColor"
+                class="bi bi-plus"
+                type="button"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z"
+                />
+              </svg>
+            </button>
+          </th>
+          <th scope="col" class="w-6/12">Наименование</th>
+          <th scope="col" class="w-6/12">Единицы измерения</th>
+          <th scope="col" class="w-1/12"></th>
         </tr>
       </thead>
 
@@ -105,7 +141,7 @@
 
         <ng-container *ngIf="params | notEmpty">
           <ng-container *ngFor="let param of params; index as i">
-            <tr id="heading{{ i }}" class="hover:bg-indigo-700 hover:text-white w-full h-9">
+            <tr id="heading{{ i }}" class="w-full h-9">
               <td class="pl-3 text-center">
                 {{ i + 1 }}
               </td>
@@ -119,12 +155,12 @@
                 <button
                   *ngIf="isAllowed([UserRole.EquipmentAdmin, UserRole.SystemAdmin])"
                   (click)="removeParam(param.uid)"
-                  class="focus:outline-none"
+                  class="focus:outline-none hover:text-indigo-700"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
+                    width="25"
+                    height="25"
                     fill="currentColor"
                     class="bi bi-trash"
                     viewBox="0 0 16 16"

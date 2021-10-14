@@ -25,7 +25,7 @@ object Decoders {
                         description <- c
                             .downField("description")
                             .as[Option[String]]
-                            params <- c.downField("params").as[Seq[Uid]]
+                        params <- c.downField("params").as[Seq[Uid]]
                     } yield AddMonitorRequest(name, description, params)
                 case Invalid(errors) =>
                     throw InvalidJsonBodyException(errors)
@@ -71,6 +71,18 @@ object Decoders {
                     for {
                         paramUid <- c.downField("paramUid").as[Uid]
                     } yield MonitorParamRequest(paramUid)
+                case Invalid(errors) =>
+                    throw InvalidJsonBodyException(errors)
+            }
+        }
+
+    implicit val decodeMonitorParamsRequest: Decoder[MonitorParamsRequest] =
+        (c: HCursor) => {
+            monitorParamsRequestSchema.validate(c.value) match {
+                case Valid(()) =>
+                    for {
+                        params <- c.downField("params").as[Seq[Uid]]
+                    } yield MonitorParamsRequest(params)
                 case Invalid(errors) =>
                     throw InvalidJsonBodyException(errors)
             }

@@ -54,6 +54,15 @@ class DefaultMonitoringService[F[_]: Monad](
           Some(request.asJson.toString)
         )
 
+    override def addMonitorParams(
+      monitorUid: Uid,
+      request: MonitorParamsRequest
+    ): F[Response] = monitoringClient.send(
+      HttpMethod.Post,
+      s"/api/monitors/$monitorUid/params",
+      Some(request.asJson.toString)
+    )
+
     override def updateMonitor(
       uid: Uid,
       request: UpdateMonitorRequest

@@ -97,7 +97,25 @@ object JsonSchemas {
                 "properties": {
                     "paramUid": {
                         "type": "string",
-                        "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
+                            "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
+                    }
+                }
+            }
+            """
+    )
+
+    val monitorParamsRequestSchema: Schema = Schema.load(
+      json"""
+            {
+                "type": "object",
+                "required": ["params"],
+                "properties": {
+                    "paramUid": {
+                        "type": "array",
+                            "items": {
+                            "type": "string",
+                            "pattern": "[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}"
+                        }
                     }
                 }
             }

@@ -148,6 +148,20 @@ object MonitorController extends Controller {
         )
     }
 
+    private val addMonitorParams = post(
+      "monitors" :: path[Uid] :: "params" :: jsonBody[
+        MonitorParamsRequest
+      ] :: headerOption(
+        "Authorization"
+      )
+    ) { (uid: Uid, request: MonitorParamsRequest, header: Option[String]) =>
+        authorize(
+          header,
+          serviceRoles,
+          _ => monitorService.addMonitorParams(uid, request)
+        )
+    }
+
     private val removeMonitor = delete(
       "monitors" :: path[Uid] :: headerOption("Authorization")
     ) { (uid: Uid, header: Option[String]) =>
@@ -270,6 +284,7 @@ object MonitorController extends Controller {
         .:+:(addMonitor)
         .:+:(updateMonitor)
         .:+:(addMonitorParam)
+        .:+:(addMonitorParams)
         .:+:(removeMonitor)
         .:+:(removeInstanceMonitors)
         .:+:(restoreMonitor)

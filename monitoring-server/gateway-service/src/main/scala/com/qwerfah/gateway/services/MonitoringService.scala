@@ -20,6 +20,8 @@ trait MonitoringService[F[_]] {
 
     def addMonitor(instanceUid: Uid, request: AddMonitorRequest): F[Response]
 
+    def addMonitorParams(monitorUid: Uid, request: MonitorParamsRequest): F[Response]
+
     def updateMonitor(uid: Uid, request: UpdateMonitorRequest): F[Response]
 
     def removeMonitor(uid: Uid): F[Response]

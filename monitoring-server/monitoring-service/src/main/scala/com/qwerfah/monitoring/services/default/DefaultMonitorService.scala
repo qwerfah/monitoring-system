@@ -145,6 +145,26 @@ class DefaultMonitorService[F[_]: Monad, DB[_]: Monad](
         }
     }
 
+    override def addMonitorParams(
+      monitorUid: Uid,
+      params: MonitorParamsRequest
+    ): F[ServiceResponse[ResponseMessage]] =
+        dbManager.execute(monitorRepo.get(monitorUid)) flatMap {
+            case Some(value) =>
+                params.params
+                    .map(puid =>
+                        dbManager.execute(
+                          monitorParamRepo.add(
+                            MonitorParam(monitorUid, puid, false)
+                          )
+                        )
+                    )
+                    .sequence map { res =>
+                    MonitorParamAdded(monitorUid).as201
+                }
+            case None => Monad[F].pure(NoMonitor(monitorUid).as404)
+        }
+
     override def updateMonitor(
       uid: Uid,
       request: UpdateMonitorRequest

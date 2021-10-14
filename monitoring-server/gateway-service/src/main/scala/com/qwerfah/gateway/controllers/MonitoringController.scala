@@ -92,6 +92,23 @@ object MonitoringController extends Controller {
             )
     }
 
+    private def addMonitorParams = post(
+      "monitors" :: path[Uid] :: "params" :: jsonBody[
+        MonitorParamsRequest
+      ] :: headerOption("Authorization")
+    ) {
+        (
+          monitorUid: Uid,
+          request: MonitorParamsRequest,
+          header: Option[String]
+        ) =>
+            authorizeRaw(
+              header,
+              writeRoles,
+              _ => monitoringService.addMonitorParams(monitorUid, request)
+            )
+    }
+
     private def updateMonitor = patch(
       "monitors" :: path[Uid] :: jsonBody[UpdateMonitorRequest] :: headerOption(
         "Authorization"
@@ -132,6 +149,7 @@ object MonitoringController extends Controller {
         .:+:(getMonitorParams)
         .:+:(getMonitorParamValues)
         .:+:(addMonitor)
+        .:+:(addMonitorParams)
         .:+:(updateMonitor)
         .:+:(removeMonitor)
         .:+:(removeMonitorParam)

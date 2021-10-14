@@ -21,3 +21,5 @@ final case class MonitorResponse(
 )
 
 final case class MonitorParamRequest(paramUid: Uid)
+
+final case class MonitorParamsRequest(params: Seq[Uid])

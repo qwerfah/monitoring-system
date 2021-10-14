@@ -87,6 +87,11 @@ trait MonitorService[F[_]] {
       param: MonitorParamRequest
     ): F[ServiceResponse[ResponseMessage]]
 
+    def addMonitorParams(
+      monitorUid: Uid,
+      params: MonitorParamsRequest
+    ): F[ServiceResponse[ResponseMessage]]
+
     /** Update existing monitor data.
       * @param uid
       *   Monitor uid.

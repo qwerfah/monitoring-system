@@ -155,4 +155,37 @@ export class MonitorInfoComponent implements OnInit {
 
     return values;
   }
+
+  removeMonitorParam(paramUid: string): void {
+    if (!confirm(`Удалить параметр ${this.params.find((p) => p.uid === paramUid)?.name}?`)) return;
+
+    this.monitoringService.removeMonitorParam(this.monitorUid, paramUid).subscribe(
+      (msg) => {
+        this.params.slice(
+          this.params.findIndex((m) => m.uid === paramUid),
+          1
+        );
+        this.snackBar.open('Успех: параметр удален', 'Ок');
+      },
+      (err: HttpErrorResponse) => {
+        switch (err.status) {
+          case 0: {
+            this.snackBar.open('Ошибка удаления: отсутсвтует соединение с сервером', 'Ок');
+            break;
+          }
+          case 502: {
+            this.snackBar.open('Ошибка удаления: сервис недоступен', 'Ок');
+            break;
+          }
+          case 500: {
+            this.snackBar.open('Ошибка удаления: внутренняя ошибка сервера', 'Ок');
+            break;
+          }
+          case 404: {
+            this.snackBar.open('Ошибка удаления: параметр не найден', 'Ок');
+          }
+        }
+      }
+    );
+  }
 }

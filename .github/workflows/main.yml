@@ -18,7 +18,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USER_NAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-
+          
       - name: Build and publish backend
         run: |
           cd ./monitoring-server
@@ -63,6 +63,8 @@ jobs:
           script: |
             cd ./monitoring-server
             sudo docker-compose down
+            sudo docker volume rm monitoring-server_monitoring_volume
+            sudo docker-compose pull
             sudo docker-compose up -d
 
       - name: client up in AWS
@@ -74,4 +76,5 @@ jobs:
           script: |
             cd ./monitoring-client
             sudo docker-compose down
+            sudo docker-compose pull
             sudo docker-compose up -d

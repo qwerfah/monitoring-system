@@ -134,5 +134,6 @@ object MonitoringController extends Controller {
         .:+:(addMonitor)
         .:+:(updateMonitor)
         .:+:(removeMonitor)
+        .:+:(removeMonitorParam)
         .handle(errorHandler)
 }

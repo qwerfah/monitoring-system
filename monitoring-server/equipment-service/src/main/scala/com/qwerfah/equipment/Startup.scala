@@ -91,7 +91,10 @@ object Startup {
     implicit val defaultModelService =
         new DefaultEquipmentModelService[Future, DBIO](documentationClient)
 
-    implicit val defaultParamService = new DefaultParamService[Future, DBIO]
+    implicit val defaultParamService = new DefaultParamService[Future, DBIO](
+      monitoringClient,
+      generatorClient
+    )
     implicit val defaultTokenService = new DefaultTokenService[Future, DBIO]
 
     implicit val actorSystem = ActorSystem("such-system")

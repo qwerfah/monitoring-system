@@ -81,17 +81,15 @@ class DefaultParamValueService[F[_]: Monad, DB[_]: Monad](
     override def removeByParamUid(
       paramUid: Uid
     ): F[ServiceResponse[ResponseMessage]] =
-        dbManager.execute(paramValueRepo.removeByParamUid(paramUid)) map {
-            case 1 => ParamValuesRemoved(paramUid).as200
-            case _ => NoValuesForParam(paramUid).as404
+        dbManager.execute(paramValueRepo.removeByParamUid(paramUid)) map { _ =>
+            ParamValuesRemoved(paramUid).as200
         }
 
     override def removeByInstanceUid(
       instanceUid: Uid
     ): F[ServiceResponse[ResponseMessage]] =
         dbManager.execute(paramValueRepo.removeByInstanceUid(instanceUid)) map {
-            case 1 => InstanceParamValuesRemoved(instanceUid).as200
-            case _ => NoParamValuesForInstance(instanceUid).as404
+            _ => InstanceParamValuesRemoved(instanceUid).as200
         }
 
     override def restore(uid: Uid): F[ServiceResponse[ResponseMessage]] =
@@ -103,17 +101,15 @@ class DefaultParamValueService[F[_]: Monad, DB[_]: Monad](
     override def restoreByParamUid(
       paramUid: Uid
     ): F[ServiceResponse[ResponseMessage]] =
-        dbManager.execute(paramValueRepo.restoreByParamUid(paramUid)) map {
-            case 1 => ParamValuesRestored(paramUid).as200
-            case _ => NoValuesForParam(paramUid).as404
+        dbManager.execute(paramValueRepo.restoreByParamUid(paramUid)) map { _ =>
+            ParamValuesRestored(paramUid).as200
         }
 
     override def restoreByInstanceUid(
       instanceUid: Uid
     ): F[ServiceResponse[ResponseMessage]] = dbManager.execute(
       paramValueRepo.restoreByInstanceUid(instanceUid)
-    ) map {
-        case 1 => InstanceParamValuesRestored(instanceUid).as200
-        case _ => NoParamValuesForInstance(instanceUid).as404
+    ) map { _ =>
+        InstanceParamValuesRestored(instanceUid).as200
     }
 }

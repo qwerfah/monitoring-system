@@ -36,5 +36,5 @@ class DefaultDocumentationService[F[_]: Monad](
     }
 
     override def removeFile(uid: Uid): F[Response] =
-        documentationClient.send(HttpMethod.Delete, "/api/files")
+        documentationClient.send(HttpMethod.Delete, s"/api/files/$uid")
 }

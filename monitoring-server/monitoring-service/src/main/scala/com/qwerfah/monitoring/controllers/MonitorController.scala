@@ -211,7 +211,7 @@ object MonitorController extends Controller {
     }
 
     private val removeMonitorParamsForParam = delete(
-      "params" :: path[Uid] :: "monitors" :: headerOption(
+      "monitors" :: "params" :: path[Uid] :: headerOption(
         "Authorization"
       )
     ) { (paramUid: Uid, header: Option[String]) =>
@@ -223,7 +223,7 @@ object MonitorController extends Controller {
     }
 
     private val restoreMonitorParam = patch(
-      "monitors" :: path[Uid] :: "params" :: path[
+      "monitors" :: path[Uid] :: "params" :: "restore" :: path[
         Uid
       ] :: "restore" :: headerOption(
         "Authorization"
@@ -249,7 +249,7 @@ object MonitorController extends Controller {
     }
 
     private val restoreMonitorParamsForParam = patch(
-      "params" :: path[Uid] :: "monitors" :: "restore" :: headerOption(
+      "monitors" :: "params" :: path[Uid] :: "restore" :: headerOption(
         "Authorization"
       )
     ) { (paramUid: Uid, header: Option[String]) =>

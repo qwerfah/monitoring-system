@@ -75,10 +75,6 @@ class MonitoringContext(implicit jdbcProfile: JdbcProfile, config: Config)
       users.schema
           .++(monitors.schema)
           .++(monitorParams.schema)
-          .dropIfExists,
-      users.schema
-          .++(monitors.schema)
-          .++(monitorParams.schema)
           .createIfNotExists,
       monitors.exists.result flatMap { exisits =>
           if (!exisits) monitors ++= initialMonitors else DBIO.successful(None)

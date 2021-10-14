@@ -89,7 +89,11 @@
                 {{ param.measurmentUnits }}
               </td>
               <td class="text-center truncate">
-                <button (click)="removeMonitorParam(param.uid)" class="focus:outline-none hover:text-indigo-700">
+                <button
+                  *ngIf="isAllowed([UserRole.EquipmentAdmin, UserRole.SystemAdmin])"
+                  (click)="removeMonitorParam(param.uid)"
+                  class="focus:outline-none hover:text-indigo-700"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="25"

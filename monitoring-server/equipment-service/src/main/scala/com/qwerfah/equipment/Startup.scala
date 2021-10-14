@@ -52,7 +52,7 @@ object Startup {
     )
 
     val generatorClient = new DefaultHttpClient(
-      ServiceTag.Monitoring,
+      ServiceTag.Generator,
       Credentials(
         config.getString("serviceId"),
         config.getString("secret")
@@ -61,7 +61,7 @@ object Startup {
     )
 
     val documentationClient = new DefaultHttpClient(
-      ServiceTag.Monitoring,
+      ServiceTag.Documentation,
       Credentials(
         config.getString("serviceId"),
         config.getString("secret")

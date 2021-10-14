@@ -21,8 +21,22 @@ class SlickMonitorParamRepo(implicit val context: MonitoringContext)
             .filter(p => !p.isDeleted && p.monitorUid === monitorUid)
             .result
 
-    override def add(monitorParam: MonitorParam): DBIO[Int] =
-        context.monitorParams += monitorParam
+    override def add(monitorParam: MonitorParam): DBIO[Int] = {
+        val targetRows = context.monitorParams.filter(p =>
+            p.isDeleted && p.monitorUid === monitorParam.monitorUid && p.paramUid === monitorParam.paramUid
+        )
+        (for {
+            booleanOption <- targetRows.result.headOption
+            affected <- booleanOption
+                .map(p => targetRows.update(p.copy(isDeleted = false)))
+                .getOrElse(DBIO.successful(0))
+        } yield affected) flatMap {
+            case i if i > 0 => DBIO.successful(i)
+            case 0          => context.monitorParams += monitorParam
+            case _          => DBIO.successful(0)
+        }
+
+    }
 
     override def removeByParamUid(paramUid: Uid): DBIO[Int] = {
         val targetRows = context.monitorParams.filter(p =>

@@ -82,7 +82,9 @@ class SlickParamValueRepo(implicit val context: GeneratorContext)
         for {
             values <- targetRows.result
             affected <- DBIO.sequence(
-              values.map(v => targetRows.update(v.copy(isDeleted = true)))
+              values.map(v =>
+                  context.paramValues.update(v.copy(isDeleted = true))
+              )
             ) map { _.sum }
         } yield affected
     }
@@ -115,7 +117,9 @@ class SlickParamValueRepo(implicit val context: GeneratorContext)
         for {
             values <- targetRows.result
             affected <- DBIO.sequence(
-              values.map(v => targetRows.update(v.copy(isDeleted = false)))
+              values.map(v =>
+                  targetRows.update(v.copy(id = v.id, isDeleted = false))
+              )
             ) map { _.sum }
         } yield affected
     }

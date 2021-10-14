@@ -33,6 +33,7 @@ import com.qwerfah.common.repos.slick.SlickUserRepo
 import com.qwerfah.common.repos.local.LocalTokenRepo
 import com.twitter.util.JavaTimer
 import com.twitter.util.Duration
+import com.qwerfah.common.controllers.RequestReportingFilter
 
 object Startup {
     implicit val config = ConfigFactory.load
@@ -78,8 +79,11 @@ object Startup {
     def startup() = Await.result(dbManager.execute(context.setup))
 
     implicit val actorSystem = ActorSystem("such-system")
-    val rabbitControl = actorSystem.actorOf(Props[RabbitControl]())
+    implicit val rabbitControl = actorSystem.actorOf(Props[RabbitControl]())
     implicit val recoveryStrategy = RecoveryStrategy.none
+
+    object RequestReportingFilter
+      extends RequestReportingFilter[Request, Future]
 
     val timer = new JavaTimer
     timer.schedule(Duration.fromSeconds(config.getInt("genPeriod"))) {

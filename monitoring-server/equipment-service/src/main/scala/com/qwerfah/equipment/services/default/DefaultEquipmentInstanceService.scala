@@ -150,7 +150,7 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](
     override def remove(uid: Uid): F[ServiceResponse[ResponseMessage]] =
         generatorClient.sendAndDecode[ResponseMessage](
           HttpMethod.Delete,
-          s"/api/instances$uid/params/values"
+          s"/api/instances/$uid/params/values"
         ) flatMap {
             case _: SuccessResponse[ResponseMessage] =>
                 monitorClient.sendAndDecode[ResponseMessage](
@@ -188,7 +188,7 @@ class DefaultEquipmentInstanceService[F[_]: Monad, DB[_]: Monad](
                             case e: ErrorResponse =>
                                 generatorClient.sendAndDecode[ResponseMessage](
                                   HttpMethod.Delete,
-                                  s"/api/instances$uid/params/values"
+                                  s"/api/instances/$uid/params/values/restore"
                                 ) map { _ => e }
                         }
                     case e: ErrorResponse =>

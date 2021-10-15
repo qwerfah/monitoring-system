@@ -18,13 +18,14 @@ import { UserRole } from 'src/app/models/user-role';
 import { UserWithToken } from 'src/app/models/user';
 import { SessionService } from 'src/app/services/session.service';
 import { ParamRequest } from 'src/app/models/param-request';
+import { UserDependentComponent } from 'src/app/helpers/user-dependent.component';
 
 @Component({
   selector: 'app-equipment-model-info',
   templateUrl: './equipment-model-info.component.html',
   styleUrls: ['./equipment-model-info.component.css'],
 })
-export class EquipmentModelInfoComponent implements OnInit {
+export class EquipmentModelInfoComponent extends UserDependentComponent implements OnInit {
   isLoading: boolean = true;
   isAdding: boolean = false;
 
@@ -35,29 +36,23 @@ export class EquipmentModelInfoComponent implements OnInit {
   params: Param[];
   instances: EquipmentInstance[];
 
-  UserRole = UserRole;
-
-  currentUser: UserWithToken | undefined = undefined;
-
   constructor(
     private route: ActivatedRoute,
-    private sessionService: SessionService,
+    sessionService: SessionService,
     private equipmentService: EquipmentService,
     private documentationService: DocumentationService,
     private snackBar: MatSnackBar
   ) {
-    sessionService.currentUser$.subscribe((user) => {
-      this.currentUser = user;
-    });
+    super(sessionService);
   }
 
   ngOnInit() {
     this.modelUid = this.route.snapshot.params['uid'];
 
     zip(
-      this.equipmentService.getModel(this.modelUid),
-      this.equipmentService.getModelParams(this.modelUid),
-      this.equipmentService.getModelInstances(this.modelUid)
+      this.equipmentService.getModel(this.modelUid, this.snackBar),
+      this.equipmentService.getModelParams(this.modelUid, this.snackBar),
+      this.equipmentService.getModelInstances(this.modelUid, this.snackBar)
     ).subscribe(
       (result) => {
         this.model = result[0];
@@ -65,54 +60,16 @@ export class EquipmentModelInfoComponent implements OnInit {
         this.instances = result[2];
         this.isLoading = false;
       },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка: сервис оборудования недоступен', 'Ок');
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка: модель не найдена', 'Ок');
-          }
-        }
-        this.isLoading = false;
-      }
+      () => (this.isLoading = false)
     );
 
-    this.documentationService.getFilesMeta(this.modelUid).subscribe(
+    this.documentationService.getFilesMeta(this.modelUid, this.snackBar).subscribe(
       (files) => {
         this.files = files;
         this.isLoading = false;
       },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка: сервис документации недоступен', 'Ок');
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка: модель не найдена', 'Ок');
-          }
-        }
-        this.isLoading = false;
-      }
+      () => (this.isLoading = false)
     );
-  }
-
-  /** Check if current logged in user has sufficient rights to access element.
-   * @param roles Array of sufficient user roles.
-   * @returns True if current user role is sufficient, otherwise false.
-   */
-  isAllowed(roles: UserRole[]): boolean {
-    return this.currentUser !== undefined && roles.indexOf(this.currentUser.role) !== -1;
   }
 
   openModal(): void {
@@ -126,28 +83,13 @@ export class EquipmentModelInfoComponent implements OnInit {
 
     this.isLoading = true;
 
-    this.equipmentService.addParam(this.modelUid, param).subscribe(
+    this.equipmentService.addParam(this.modelUid, param, this.snackBar).subscribe(
       (param) => {
         this.params.push(param);
         this.isLoading = false;
         this.snackBar.open('Успех: параметр добавлен', 'Ок');
       },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка: сервис документации недоступен', 'Ок');
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка: модель не найдена', 'Ок');
-          }
-        }
-        this.isLoading = false;
-      }
+      () => (this.isLoading = false)
     );
   }
 
@@ -178,28 +120,13 @@ export class EquipmentModelInfoComponent implements OnInit {
     if (fileList.length > 0) {
       let file: File = fileList[0];
       this.isLoading = true;
-      this.documentationService.uploadFile(this.modelUid, file).subscribe(
+      this.documentationService.uploadFile(this.modelUid, file, this.snackBar).subscribe(
         (file) => {
           this.isLoading = false;
           this.files.push(file);
-          this.snackBar.open('Успех: файл загружен', 'Ок');
+          this.snackBar.open('Успех: файл загружен', 'Ок', { duration: 5000 });
         },
-        (err: HttpErrorResponse) => {
-          switch (err.status) {
-            case 0: {
-              this.snackBar.open('Ошибка загрузки файла: отсутсвтует соединение с сервером', 'Ок');
-              break;
-            }
-            case 502: {
-              this.snackBar.open('Ошибка загрузки файла: сервис документации недоступен', 'Ок');
-              break;
-            }
-            case 404: {
-              this.snackBar.open('Ошибка загрузки файла: модель не найдена', 'Ок');
-            }
-          }
-          this.isLoading = false;
-        }
+        () => (this.isLoading = false)
       );
     }
   }
@@ -207,63 +134,27 @@ export class EquipmentModelInfoComponent implements OnInit {
   removeFile(fileUid: string): void {
     if (!confirm(`Удалить файл ${this.files.find((u) => u.uid === fileUid)?.filename}?`)) return;
 
-    this.documentationService.removeFile(fileUid).subscribe(
-      (msg) => {
-        this.files.splice(
-          this.files.findIndex((f) => f.uid === fileUid),
-          1
-        );
-        this.snackBar.open('Успех: файл удален', 'Ок');
-      },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка удаления файла: отсутсвтует соединение с сервером', 'Ок');
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка удаления файла: сервис документации недоступен', 'Ок');
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка удаления файла: файл не найден', 'Ок');
-          }
-        }
-      }
-    );
+    this.documentationService.removeFile(fileUid, this.snackBar).subscribe(() => {
+      this.files.splice(
+        this.files.findIndex((f) => f.uid === fileUid),
+        1
+      );
+      this.snackBar.open('Успех: файл удален', 'Ок', { duration: 5000 });
+    });
   }
 
   removeParam(paramUid: string): void {
     if (!confirm(`Удалить параметр ${this.params.find((u) => u.uid === paramUid)?.name}?`)) return;
 
-    this.equipmentService.removeParam(paramUid).subscribe(
-      (msg) => {
+    this.equipmentService.removeParam(paramUid, this.snackBar).subscribe(
+      () => {
         this.params.splice(
           this.params.findIndex((p) => p.uid === paramUid),
           1
         );
-        this.snackBar.open('Успех: параметр удален', 'Ок');
+        this.snackBar.open('Успех: параметр удален', 'Ок', { duration: 5000 });
       },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка удаления параметра: отсутсвтует соединение с сервером', 'Ок');
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка удаления параметра: сервис оборудования недоступен', 'Ок');
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка удаления параметра: параметр не найден', 'Ок');
-            break;
-          }
-          case 422: {
-            this.snackBar.open('Ошибка удаления параметра: не удалось удалить все связные сущности', 'Ок');
-          }
-        }
-        this.isLoading = false;
-      }
+      () => (this.isLoading = false)
     );
   }
 }

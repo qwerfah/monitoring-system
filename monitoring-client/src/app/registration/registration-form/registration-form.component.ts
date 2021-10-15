@@ -54,30 +54,10 @@ export class RegistrationFormComponent implements OnInit {
 
       this.isLoading = true;
 
-      this.userService.register(user).subscribe(
-        (user) => {
-          this.snackBar.open('Успех: пользователь зарегистрирован', 'Ок', { duration: 5000 });
-          this.router.navigate(['/login']);
-        },
-        (error: HttpErrorResponse) => {
-          this.isLoading = false;
-          switch (error.status) {
-            case 0: {
-              this.snackBar.open('Ошибка регистрации: отсутсвтует соединение с сервером', 'Ок', { duration: 5000 });
-              break;
-            }
-            case 502: {
-              this.snackBar.open('Ошибка регистрации: сервис недоступен', 'Ок', { duration: 5000 });
-              break;
-            }
-            case 422: {
-              this.snackBar.open('Ошибка регистрации: пользователь с данным именем уже существует', 'Ок', {
-                duration: 5000,
-              });
-            }
-          }
-        }
-      );
+      this.userService.register(user, this.snackBar).subscribe(() => {
+        this.snackBar.open('Успех: пользователь зарегистрирован', 'Ок', { duration: 5000 });
+        this.router.navigate(['/login']);
+      });
     }
   }
 }

@@ -22,27 +22,12 @@ export class UserTableComponent implements OnInit {
   constructor(private userService: UserService, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
-    this.userService.getUsers().subscribe(
+    this.userService.getUsers(this.snackBar).subscribe(
       (users) => {
         this.users = users;
         this.isLoading = false;
       },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок', { duration: 5000 });
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка: сервис пользователей недоступен', 'Ок', { duration: 5000 });
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка: данные не найдены', 'Ок', { duration: 5000 });
-          }
-        }
-        this.isLoading = false;
-      }
+      (err) => (this.isLoading = false)
     );
   }
 
@@ -57,34 +42,19 @@ export class UserTableComponent implements OnInit {
 
     this.isLoading = true;
 
-    this.userService.addUser(user).subscribe(
+    this.userService.addUser(user, this.snackBar).subscribe(
       (user) => {
         this.isLoading = false;
         this.users.push(user);
         this.snackBar.open('Успех: пользователь создан', 'Ок', { duration: 5000 });
       },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок', { duration: 5000 });
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка: сервис пользователей недоступен', 'Ок', { duration: 5000 });
-            break;
-          }
-          case 422: {
-            this.snackBar.open('Ошибка: пользователь с таким логином уже существует', 'Ок', { duration: 5000 });
-          }
-        }
-        this.isLoading = false;
-      }
+      (err) => (this.isLoading = false)
     );
   }
 
   removeUser(userUid: string): void {
     if (!confirm(`Удалить пользователя ${this.users.find((u) => u.uid === userUid)?.login}?`)) return;
-    this.userService.removeUser(userUid).subscribe(
+    this.userService.removeUser(userUid, this.snackBar).subscribe(
       (msg) => {
         this.isLoading = false;
         this.users.splice(
@@ -93,22 +63,7 @@ export class UserTableComponent implements OnInit {
         );
         this.snackBar.open('Успех: пользователь удален', 'Ок', { duration: 5000 });
       },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка удаления: отсутсвтует соединение с сервером', 'Ок', { duration: 5000 });
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка удаления: сервис пользователей недоступен', 'Ок', { duration: 5000 });
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка удаления: пользователь не найден', 'Ок', { duration: 5000 });
-          }
-        }
-        this.isLoading = false;
-      }
+      (err) => (this.isLoading = false)
     );
   }
 }

@@ -8,20 +8,28 @@ import { ServiceStat } from 'src/app/models/service-stat';
 import { ModelStat } from 'src/app/models/model-stat';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { SessionService } from 'src/app/services/session.service';
+import { UserDependentComponent } from 'src/app/helpers/user-dependent.component';
 
 @Component({
   selector: 'app-reporting-info',
   templateUrl: './reporting-info.component.html',
   styleUrls: ['./reporting-info.component.css'],
 })
-export class ReportingInfoComponent implements OnInit {
+export class ReportingInfoComponent extends UserDependentComponent implements OnInit {
   operationRecords: OperationRecord[];
   serviceStats: ServiceStat[];
   modelStats: ModelStat[];
 
   isLoading: boolean = true;
 
-  constructor(private reportingService: ReportingService, private snackBar: MatSnackBar) {
+  constructor(
+    sessionService: SessionService,
+    private reportingService: ReportingService,
+    private snackBar: MatSnackBar
+  ) {
+    super(sessionService);
+
     this.operationRecords = [];
     this.serviceStats = [];
     this.modelStats = [];
@@ -33,51 +41,21 @@ export class ReportingInfoComponent implements OnInit {
   }
 
   private getModelStats(): void {
-    this.reportingService.getModelStats().subscribe(
+    this.reportingService.getModelStats(this.snackBar).subscribe(
       (stats) => {
         this.isLoading = false;
         this.modelStats = stats;
       },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок', { duration: 5000 });
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка: сервис недоступен', 'Ок', { duration: 5000 });
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка: данные не найдены', 'Ок', { duration: 5000 });
-          }
-        }
-        this.isLoading = false;
-      }
+      () => (this.isLoading = false)
     );
   }
 
   private getServiceStats(): void {
-    this.reportingService.getServiceStats().subscribe(
+    this.reportingService.getServiceStats(this.snackBar).subscribe(
       (stats) => {
         this.serviceStats = stats;
       },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок', { duration: 5000 });
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка: сервис недоступен', 'Ок', { duration: 5000 });
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка: данные не найдены', 'Ок', { duration: 5000 });
-          }
-        }
-        this.isLoading = false;
-      }
+      () => (this.isLoading = false)
     );
   }
 }

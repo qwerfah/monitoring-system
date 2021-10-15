@@ -19,56 +19,37 @@ import { EquipmentService } from 'src/app/services/equipment.service';
 })
 export class CreateMonitorComponent implements OnInit {
   @Output() addEvent = new EventEmitter<[string, MonitorRequest] | null>();
+  @ViewChildren(MatMenuTrigger) trigger: QueryList<MatMenuTrigger>;
 
   Param = Param;
-
-  monitorForm: FormGroup;
-  paramsControl = new FormControl();
-
-  selectedModel: EquipmentModel | undefined;
-  selectedInstance: EquipmentInstance | undefined;
-
-  models: EquipmentModel[];
-  instances: EquipmentInstance[];
-  params: Param[];
 
   isLoading: boolean = true;
   isInvalid: boolean = false;
 
-  @ViewChildren(MatMenuTrigger) trigger: QueryList<MatMenuTrigger>;
+  monitorForm: FormGroup;
+  paramsControl = new FormControl();
+
+  selectedModel: EquipmentModel | undefined = undefined;
+  selectedInstance: EquipmentInstance | undefined = undefined;
+
+  models: EquipmentModel[];
+  instances: EquipmentInstance[];
+  params: Param[];
 
   constructor(private fb: FormBuilder, private equipmentService: EquipmentService, private snackBar: MatSnackBar) {
     this.monitorForm = fb.group({
       name: [null, [Validators.required, Validators.minLength(3)]],
       description: [null, [Validators.minLength(0)]],
     });
-
-    this.selectedModel = new EquipmentModel('', '', '');
-    this.selectedInstance = new EquipmentInstance('', '', '', '', '', InstanceStatus.Active);
   }
 
   ngOnInit() {
-    this.equipmentService.getModels().subscribe(
+    this.equipmentService.getModels(this.snackBar).subscribe(
       (models) => {
         this.models = models;
         this.isLoading = false;
       },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка: сервис оборудования недоступен', 'Ок');
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка: данные не найдены', 'Ок');
-          }
-        }
-        this.isLoading = false;
-      }
+      () => (this.isLoading = false)
     );
   }
 
@@ -82,50 +63,16 @@ export class CreateMonitorComponent implements OnInit {
 
   setModel(model: EquipmentModel): void {
     this.selectedModel = model;
-    this.equipmentService.getActiveModelInstances(model.uid).subscribe(
-      (instances) => {
-        this.instances = instances;
-      },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка: сервис оборудования недоступен', 'Ок');
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка: данные не найдены', 'Ок');
-          }
-        }
-      }
-    );
+    this.equipmentService.getActiveModelInstances(model.uid, this.snackBar).subscribe((instances) => {
+      this.instances = instances;
+    });
   }
 
   setInstance(instance: EquipmentInstance): void {
     this.selectedInstance = instance;
-    this.equipmentService.getInstanceParams(instance.uid).subscribe(
-      (params) => {
-        this.params = params;
-      },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка: сервис оборудования недоступен', 'Ок');
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка: данные не найдены', 'Ок');
-          }
-        }
-      }
-    );
+    this.equipmentService.getInstanceParams(instance.uid, this.snackBar).subscribe((params) => {
+      this.params = params;
+    });
   }
 
   submit() {

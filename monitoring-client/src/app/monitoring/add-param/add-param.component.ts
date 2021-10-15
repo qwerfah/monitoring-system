@@ -27,32 +27,10 @@ export class AddParamComponent implements OnInit {
   constructor(private equipmentService: EquipmentService, private snackBar: MatSnackBar) {}
 
   ngOnInit() {
-    this.equipmentService.getInstanceParams(this.monitor.instanceUid).subscribe(
-      (params) => {
-        this.params = params.filter((p1) => this.trackedParams.findIndex((p2) => p2.uid === p1.uid) < 0);
-        this.isLoading = false;
-      },
-      (err: HttpErrorResponse) => {
-        this.isLoading = false;
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка получения параметров: отсутсвтует соединение с сервером', 'Ок');
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка получения параметров: сервис оборудования недоступен', 'Ок');
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка получения параметров: данные не найдены', 'Ок');
-            break;
-          }
-          case 500: {
-            this.snackBar.open('Ошибка получения параметров: неизвестная ошибка', 'Ок');
-          }
-        }
-      }
-    );
+    this.equipmentService.getInstanceParams(this.monitor.instanceUid, this.snackBar).subscribe((params) => {
+      this.params = params.filter((p1) => this.trackedParams.findIndex((p2) => p2.uid === p1.uid) < 0);
+      this.isLoading = false;
+    });
   }
 
   submit() {

@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Observable } from 'rxjs';
 
 import { Param } from '../models/param';
@@ -10,82 +10,128 @@ import { EquipmentInstanceRequest } from '../models/equipment-instance-request';
 import { EquipmentModel } from '../models/equipment-model';
 import { EquipmentModelRequest } from '../models/equipment-model-request';
 import { EquipmentInstance } from '../models/equipment-instance';
+import { catchError } from 'rxjs/operators';
+import { ServiceBase } from './service.base';
 
 @Injectable({
   providedIn: 'root',
 })
-export class EquipmentService {
-  constructor(private http: HttpClient, @Inject('GATEWAY_URI') private gatewayUri: string) {}
-
-  getModels(): Observable<EquipmentModel[]> {
-    return this.http.get<EquipmentModel[]>(`${this.gatewayUri}/api/equipment/models`);
+export class EquipmentService extends ServiceBase {
+  constructor(private http: HttpClient, @Inject('GATEWAY_URI') private gatewayUri: string) {
+    super();
   }
 
-  getModel(modelUid: string): Observable<EquipmentModel> {
-    return this.http.get<EquipmentModel>(`${this.gatewayUri}/api/equipment/models/${modelUid}`);
+  getModels(snackBar: MatSnackBar | null = null): Observable<EquipmentModel[]> {
+    return this.http
+      .get<EquipmentModel[]>(`${this.gatewayUri}/api/equipment/models`)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 
-  addModel(request: EquipmentModelRequest): Observable<EquipmentModel> {
-    return this.http.post<EquipmentModel>(`${this.gatewayUri}/api/equipment/models`, request);
+  getModel(modelUid: string, snackBar: MatSnackBar | null = null): Observable<EquipmentModel> {
+    return this.http
+      .get<EquipmentModel>(`${this.gatewayUri}/api/equipment/models/${modelUid}`)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 
-  updateModel(modelUid: string, request: EquipmentModelRequest): Observable<Message> {
-    return this.http.patch<EquipmentModel>(`${this.gatewayUri}/api/equipment/models/${modelUid}`, request);
+  addModel(request: EquipmentModelRequest, snackBar: MatSnackBar | null = null): Observable<EquipmentModel> {
+    return this.http
+      .post<EquipmentModel>(`${this.gatewayUri}/api/equipment/models`, request)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 
-  removeModel(modelUid: string): Observable<Message> {
-    return this.http.delete<Message>(`${this.gatewayUri}/api/equipment/models/${modelUid}`);
+  updateModel(
+    modelUid: string,
+    request: EquipmentModelRequest,
+    snackBar: MatSnackBar | null = null
+  ): Observable<Message> {
+    return this.http
+      .patch<EquipmentModel>(`${this.gatewayUri}/api/equipment/models/${modelUid}`, request)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 
-  getInstances(): Observable<EquipmentInstance[]> {
-    return this.http.get<EquipmentInstance[]>(`${this.gatewayUri}/api/equipment/instances`);
+  removeModel(modelUid: string, snackBar: MatSnackBar | null = null): Observable<Message> {
+    return this.http
+      .delete<Message>(`${this.gatewayUri}/api/equipment/models/${modelUid}`)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 
-  getModelInstances(modelUid: string): Observable<EquipmentInstance[]> {
-    return this.http.get<EquipmentInstance[]>(`${this.gatewayUri}/api/equipment/models/${modelUid}/instances`);
+  getInstances(snackBar: MatSnackBar | null = null): Observable<EquipmentInstance[]> {
+    return this.http
+      .get<EquipmentInstance[]>(`${this.gatewayUri}/api/equipment/instances`)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 
-  getActiveModelInstances(modelUid: string): Observable<EquipmentInstance[]> {
-    return this.http.get<EquipmentInstance[]>(`${this.gatewayUri}/api/equipment/models/${modelUid}/instances/active`);
+  getModelInstances(modelUid: string, snackBar: MatSnackBar | null = null): Observable<EquipmentInstance[]> {
+    return this.http
+      .get<EquipmentInstance[]>(`${this.gatewayUri}/api/equipment/models/${modelUid}/instances`)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 
-  getInstance(instanceUid: string): Observable<EquipmentInstance> {
-    return this.http.get<EquipmentInstance>(`${this.gatewayUri}/api/equipment/instances/${instanceUid}`);
+  getActiveModelInstances(modelUid: string, snackBar: MatSnackBar | null = null): Observable<EquipmentInstance[]> {
+    return this.http
+      .get<EquipmentInstance[]>(`${this.gatewayUri}/api/equipment/models/${modelUid}/instances/active`)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 
-  addInstance(modelUid: string, request: EquipmentInstanceRequest): Observable<EquipmentInstance> {
-    return this.http.post<EquipmentInstance>(`${this.gatewayUri}/api/equipment/models/${modelUid}/instances`, request);
+  getInstance(instanceUid: string, snackBar: MatSnackBar | null = null): Observable<EquipmentInstance> {
+    return this.http
+      .get<EquipmentInstance>(`${this.gatewayUri}/api/equipment/instances/${instanceUid}`)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 
-  updateInstance(instanceUid: string, request: EquipmentInstanceRequest): Observable<EquipmentInstance> {
-    return this.http.patch<EquipmentInstance>(`${this.gatewayUri}/api/equipment/instances/${instanceUid}`, request);
+  addInstance(
+    modelUid: string,
+    request: EquipmentInstanceRequest,
+    snackBar: MatSnackBar | null = null
+  ): Observable<EquipmentInstance> {
+    return this.http
+      .post<EquipmentInstance>(`${this.gatewayUri}/api/equipment/models/${modelUid}/instances`, request)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 
-  removeInstance(instanceUid: string): Observable<Message> {
-    return this.http.delete<Message>(`${this.gatewayUri}/api/equipment/instances/${instanceUid}`);
+  updateInstance(
+    instanceUid: string,
+    request: EquipmentInstanceRequest,
+    snackBar: MatSnackBar | null = null
+  ): Observable<EquipmentInstance> {
+    return this.http
+      .patch<EquipmentInstance>(`${this.gatewayUri}/api/equipment/instances/${instanceUid}`, request)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 
-  getModelParams(modelUid: string): Observable<Param[]> {
-    return this.http.get<Param[]>(`${this.gatewayUri}/api/equipment/models/${modelUid}/params`);
+  removeInstance(instanceUid: string, snackBar: MatSnackBar | null = null): Observable<Message> {
+    return this.http
+      .delete<Message>(`${this.gatewayUri}/api/equipment/instances/${instanceUid}`)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 
-  getInstanceParams(instanaceUid: string): Observable<Param[]> {
-    return this.http.get<Param[]>(`${this.gatewayUri}/api/equipment/instances/${instanaceUid}/params`);
+  getModelParams(modelUid: string, snackBar: MatSnackBar | null = null): Observable<Param[]> {
+    return this.http
+      .get<Param[]>(`${this.gatewayUri}/api/equipment/models/${modelUid}/params`)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 
-  getParam(paramUid: string): Observable<Param> {
-    return this.http.get<Param>(`${this.gatewayUri}/api/equipment/params/${paramUid}`);
+  getInstanceParams(instanaceUid: string, snackBar: MatSnackBar | null = null): Observable<Param[]> {
+    return this.http
+      .get<Param[]>(`${this.gatewayUri}/api/equipment/instances/${instanaceUid}/params`)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 
-  addParam(modelUid: string, request: ParamRequest): Observable<Param> {
-    return this.http.post<Param>(`${this.gatewayUri}/api/equipment/models/${modelUid}/params`, request);
+  addParam(modelUid: string, request: ParamRequest, snackBar: MatSnackBar | null = null): Observable<Param> {
+    return this.http
+      .post<Param>(`${this.gatewayUri}/api/equipment/models/${modelUid}/params`, request)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 
-  updateParam(paramUid: string, request: ParamRequest): Observable<Message> {
-    return this.http.patch<Message>(`${this.gatewayUri}/api/equipment/params/${paramUid}`, request);
+  updateParam(paramUid: string, request: ParamRequest, snackBar: MatSnackBar | null = null): Observable<Message> {
+    return this.http
+      .patch<Message>(`${this.gatewayUri}/api/equipment/params/${paramUid}`, request)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 
-  removeParam(paramUid: string): Observable<Message> {
-    return this.http.delete<Message>(`${this.gatewayUri}/api/equipment/params/${paramUid}`);
+  removeParam(paramUid: string, snackBar: MatSnackBar | null = null): Observable<Message> {
+    return this.http
+      .delete<Message>(`${this.gatewayUri}/api/equipment/params/${paramUid}`)
+      .pipe(catchError(this.baseErrorHandler(snackBar)));
   }
 }

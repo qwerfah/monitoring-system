@@ -52,8 +52,6 @@ export class CreateUserComponent implements OnInit {
       this.role ?? UserRole.EquipmentUser
     );
 
-    console.log(user);
-
     this.addEvent.emit(user);
   }
 

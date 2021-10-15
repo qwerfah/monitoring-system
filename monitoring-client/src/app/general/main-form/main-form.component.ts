@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { TimeoutError } from 'rxjs';
+import { UserDependentComponent } from 'src/app/helpers/user-dependent.component';
 
 import { UserWithToken } from 'src/app/models/user';
 import { UserRole } from 'src/app/models/user-role';
@@ -11,16 +12,11 @@ import { SessionService } from 'src/app/services/session.service';
   templateUrl: './main-form.component.html',
   styleUrls: ['./main-form.component.css'],
 })
-export class MainFormComponent implements OnInit {
+export class MainFormComponent extends UserDependentComponent implements OnInit {
   isVisible: boolean = true;
-  currentUser: UserWithToken | undefined = undefined;
 
-  UserRole = UserRole;
-
-  constructor(private sessionService: SessionService, private router: Router) {
-    sessionService.currentUser$.subscribe((user) => {
-      this.currentUser = user;
-    });
+  constructor(sessionService: SessionService, private router: Router) {
+    super(sessionService);
   }
 
   ngOnInit() {}
@@ -33,14 +29,6 @@ export class MainFormComponent implements OnInit {
 
   onClicked(e: Event): void {
     this.isVisible = !this.isVisible;
-  }
-
-  /** Check if current logged in user has sufficient rights to access element.
-   * @param roles Array of sufficient user roles.
-   * @returns True if current user role is sufficient, otherwise false.
-   */
-  isAllowed(roles: UserRole[]): boolean {
-    return this.currentUser !== undefined && roles.indexOf(this.currentUser.role) !== -1;
   }
 
   logout(): void {

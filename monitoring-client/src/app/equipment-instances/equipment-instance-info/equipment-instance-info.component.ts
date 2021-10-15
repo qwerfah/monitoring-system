@@ -16,19 +16,16 @@ import { UserWithToken } from 'src/app/models/user';
 import { UserRole } from 'src/app/models/user-role';
 import { SessionService } from 'src/app/services/session.service';
 import { EquipmentInstanceRequest } from 'src/app/models/equipment-instance-request';
+import { UserDependentComponent } from 'src/app/helpers/user-dependent.component';
 
 @Component({
   selector: 'app-equipment-instance-info',
   templateUrl: './equipment-instance-info.component.html',
   styleUrls: ['./equipment-instance-info.component.css'],
 })
-export class EquipmentInstanceInfoComponent implements OnInit {
+export class EquipmentInstanceInfoComponent extends UserDependentComponent implements OnInit {
   isLoading: boolean = true;
   isEditing: boolean = false;
-
-  UserRole = UserRole;
-
-  currentUser: UserWithToken | undefined = undefined;
 
   instanceUid: string;
   instance: EquipmentInstance;
@@ -37,14 +34,12 @@ export class EquipmentInstanceInfoComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private sessionService: SessionService,
+    sessionService: SessionService,
     private equipmentService: EquipmentService,
     private monitoringService: MonitoringService,
     private snackBar: MatSnackBar
   ) {
-    sessionService.currentUser$.subscribe((user) => {
-      this.currentUser = user;
-    });
+    super(sessionService);
   }
 
   ngOnInit() {
@@ -96,40 +91,17 @@ export class EquipmentInstanceInfoComponent implements OnInit {
       }
     );
 
-    this.monitoringService.getInstancesMonitors(this.instanceUid).subscribe(
+    this.monitoringService.getInstancesMonitors(this.instanceUid, this.snackBar).subscribe(
       (monitors) => {
         this.monitors = monitors;
         this.isLoading = false;
       },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок', { duration: 5000 });
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка: сервис мониторинга недоступен', 'Ок', { duration: 5000 });
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка: данные не найдены', 'Ок', { duration: 5000 });
-          }
-        }
-        this.isLoading = false;
-      }
+      () => (this.isLoading = false)
     );
   }
 
   openModal() {
     this.isEditing = true;
-  }
-
-  /** Check if current logged in user has sufficient rights to access element.
-   * @param roles Array of sufficient user roles.
-   * @returns True if current user role is sufficient, otherwise false.
-   */
-  isAllowed(roles: UserRole[]): boolean {
-    return this.currentUser !== undefined && roles.indexOf(this.currentUser.role) !== -1;
   }
 
   updateInstance(request: EquipmentInstanceRequest | null) {
@@ -139,34 +111,15 @@ export class EquipmentInstanceInfoComponent implements OnInit {
 
     this.isLoading = true;
 
-    this.equipmentService.updateInstance(this.instanceUid, request).subscribe(
-      (instance) => {
+    this.equipmentService.updateInstance(this.instanceUid, request, this.snackBar).subscribe(
+      () => {
         this.instance.name = request.name;
         this.instance.description = request.description;
         this.instance.status = request.status;
         this.snackBar.open('Успех: данные обновлены', 'Ок', { duration: 5000 });
         this.isLoading = false;
       },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок', { duration: 5000 });
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка: сервис оборудования недоступен', 'Ок', { duration: 5000 });
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка: данные не найдены', 'Ок', { duration: 5000 });
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка: внутренняя ошибка сервера', 'Ок', { duration: 5000 });
-          }
-        }
-        this.isLoading = false;
-      }
+      () => (this.isLoading = false)
     );
   }
 }

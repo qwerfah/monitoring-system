@@ -1,21 +1,23 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { catchError, map, tap } from 'rxjs/operators';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ServiceBase } from './service.base';
 
 import { Credentials } from '../models/credentials';
-import { User, UserWithToken } from '../models/user';
+import { UserWithToken } from '../models/user';
 import { Token } from '../models/token';
-import { UserRequest } from '../models/user-request';
 
 @Injectable({
   providedIn: 'root',
 })
-export class SessionService {
+export class SessionService extends ServiceBase {
   private currentUserSubject: BehaviorSubject<UserWithToken | undefined>;
   public currentUser$: Observable<UserWithToken | undefined>;
 
   constructor(private http: HttpClient, @Inject('GATEWAY_URI') private gatewayUri: string) {
+    super();
     let user = localStorage.getItem('currentUser');
     this.currentUserSubject = new BehaviorSubject<UserWithToken | undefined>(user ? JSON.parse(user) : undefined);
     this.currentUser$ = this.currentUserSubject.asObservable();
@@ -25,17 +27,20 @@ export class SessionService {
    * @param creds User credentials.
    * @returns Observable instance with logged in user instance contains new access and refresh tokens.
    */
-  login(creds: Credentials): Observable<UserWithToken> {
-    return this.http.post<UserWithToken>(`${this.gatewayUri}/api/session/login`, creds).pipe(
-      map((user) => {
-        if (user && user.token && user.token.access) {
-          localStorage.setItem('currentUser', JSON.stringify(user));
-          this.currentUserSubject.next(user);
-        }
+  login(creds: Credentials, snackBar: MatSnackBar | null = null): Observable<UserWithToken> {
+    return this.http
+      .post<UserWithToken>(`${this.gatewayUri}/api/session/login`, creds)
+      .pipe(catchError(this.baseErrorHandler(snackBar)))
+      .pipe(
+        map((user) => {
+          if (user && user.token && user.token.access) {
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            this.currentUserSubject.next(user);
+          }
 
-        return user;
-      })
-    );
+          return user;
+        })
+      );
   }
 
   /** Refresh access and refresh tokens with refresh token for current logged in user.

@@ -10,52 +10,32 @@ import { EquipmentInstanceRequest } from 'src/app/models/equipment-instance-requ
 import { UserRole } from 'src/app/models/user-role';
 import { UserWithToken } from 'src/app/models/user';
 import { SessionService } from 'src/app/services/session.service';
+import { UserDependentComponent } from 'src/app/helpers/user-dependent.component';
 
 @Component({
   selector: 'app-equipment-instances-table',
   templateUrl: './equipment-instances-table.component.html',
   styleUrls: ['./equipment-instances-table.component.css'],
 })
-export class EquipmentInstancesTableComponent implements OnInit {
+export class EquipmentInstancesTableComponent extends UserDependentComponent implements OnInit {
   isAdding: boolean = false;
   isLoading: boolean = true;
 
   instances: EquipmentInstance[];
 
-  UserRole = UserRole;
-
-  currentUser: UserWithToken | undefined = undefined;
-
   constructor(
-    private sessionService: SessionService,
+    sessionService: SessionService,
     private equipmentService: EquipmentService,
     private snackBar: MatSnackBar
   ) {
-    sessionService.currentUser$.subscribe((user) => {
-      this.currentUser = user;
-    });
+    super(sessionService);
 
     equipmentService.getInstances().subscribe(
       (instances) => {
         this.instances = instances;
         this.isLoading = false;
       },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка: отсутсвтует соединение с сервером', 'Ок');
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка: сервис оборудования недоступен', 'Ок');
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка: данные не найдены', 'Ок');
-          }
-        }
-        this.isLoading = false;
-      }
+      (err) => (this.isLoading = false)
     );
   }
 
@@ -65,14 +45,6 @@ export class EquipmentInstancesTableComponent implements OnInit {
     this.isAdding = true;
   }
 
-  /** Check if current logged in user has sufficient rights to access element.
-   * @param roles Array of sufficient user roles.
-   * @returns True if current user role is sufficient, otherwise false.
-   */
-  isAllowed(roles: UserRole[]): boolean {
-    return this.currentUser !== undefined && roles.indexOf(this.currentUser.role) !== -1;
-  }
-
   addInstance(instnace: [EquipmentInstanceRequest, string] | null) {
     this.isAdding = false;
 
@@ -80,65 +52,28 @@ export class EquipmentInstancesTableComponent implements OnInit {
 
     this.isLoading = true;
 
-    this.equipmentService.addInstance(instnace[1], instnace[0]).subscribe(
+    this.equipmentService.addInstance(instnace[1], instnace[0], this.snackBar).subscribe(
       (instnace) => {
-        this.snackBar.open('Успех: экземпляр добавлен', 'Ок');
+        this.snackBar.open('Успех: экземпляр добавлен', 'Ок', { duration: 5000 });
         this.instances.push(instnace);
         this.isLoading = false;
       },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка добавления: отсутсвтует соединение с сервером', 'Ок');
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка добавления: сервис оборудования недоступен', 'Ок');
-            break;
-          }
-          case 500: {
-            this.snackBar.open('Ошибка добавления: внутренняя ошибка сервера', 'Ок');
-            break;
-          }
-          case 400: {
-            this.snackBar.open('Ошибка добавления: некорректные данные запроса', 'Ок');
-          }
-        }
-        this.isLoading = false;
-      }
+      () => (this.isLoading = false)
     );
   }
 
   removeInstance(instanceUid: string): void {
     if (!confirm(`Удалить экземпляр ${this.instances.find((u) => u.uid === instanceUid)?.name}?`)) return;
 
-    this.equipmentService.removeInstance(instanceUid).subscribe(
-      (msg) => {
+    this.equipmentService.removeInstance(instanceUid, this.snackBar).subscribe(
+      () => {
         this.instances.splice(
           this.instances.findIndex((i) => i.uid === instanceUid),
           1
         );
-        this.snackBar.open('Успех: экземпляр удален', 'Ок');
+        this.snackBar.open('Успех: экземпляр удален', 'Ок', { duration: 5000 });
       },
-      (err: HttpErrorResponse) => {
-        switch (err.status) {
-          case 0: {
-            this.snackBar.open('Ошибка удаления: отсутсвтует соединение с сервером', 'Ок');
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка удаления: один из сервисов недоступен', 'Ок');
-            break;
-          }
-          case 500: {
-            this.snackBar.open('Ошибка удаления: внутренняя ошибка сервера', 'Ок');
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка удаления: экземпляр не найден', 'Ок');
-          }
-        }
-      }
+      () => (this.isLoading = false)
     );
   }
 }

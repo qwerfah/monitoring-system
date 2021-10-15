@@ -53,29 +53,11 @@ export class AuthorizationFormComponent implements OnInit {
     this.isLoading = true;
     let creds = new Credentials(this.credentials.controls.login.value, this.credentials.controls.password.value);
 
-    console.log(`Email: ${this.credentials.controls.login.value}`);
-    console.log(`Password: ${this.credentials.controls.password.value}`);
-
-    this.sessionService.login(creds).subscribe(
+    this.sessionService.login(creds, this.snackBar).subscribe(
       (user) => {
         this.router.navigate([this.returnUrl]);
       },
-      (error: HttpErrorResponse) => {
-        this.isLoading = false;
-        switch (error.status) {
-          case 0: {
-            this.snackBar.open('Ошибка авторизации: отсутсвтует соединение с сервером', 'Ок');
-            break;
-          }
-          case 502: {
-            this.snackBar.open('Ошибка авторизации: сервис авторизации недоступен', 'Ок');
-            break;
-          }
-          case 404: {
-            this.snackBar.open('Ошибка авторизации: неверные учетные данные', 'Ок');
-          }
-        }
-      }
+      (err) => (this.isLoading = false)
     );
   }
 
